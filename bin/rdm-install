@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# -*- encoding: utf-8 -*-
+
+require 'rubygems'
+require 'bundler'
+require 'rdm'
+
+source_path = File.join(`pwd`.chomp, Rdm::SOURCE_FILENAME)
+begin
+  Rdm::SourceInstaller.install(source_path)
+rescue Errno::ENOENT
+  puts "#{Rdm::SOURCE_FILENAME} not found. Please run on directory containing #{Rdm::SOURCE_FILENAME}"
+end

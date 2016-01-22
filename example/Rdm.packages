@@ -1,0 +1,4 @@
+package "server"
+package "application/web"
+package "domain/core"
+package "infrastructure/repository"
