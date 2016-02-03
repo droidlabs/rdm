@@ -37,6 +37,8 @@ class Rdm::PackageImporter
       end
 
       def init_package(package, group:)
+        $LOAD_PATH.push(File.join(package.path, "lib"))
+
         package.external_dependencies(group).each do |dependency|
           require dependency
         end
