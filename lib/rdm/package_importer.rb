@@ -24,6 +24,9 @@ class Rdm::PackageImporter
         import_package(dependency, packages: packages, imported_packages: imported_packages)
       end
 
+      # only after importing dependencies - require package itself
+      require package_name
+
       imported_packages
     end
 
