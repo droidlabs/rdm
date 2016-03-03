@@ -16,6 +16,11 @@ class Rdm::PackageImporter
     def import_package(package_name, packages:, imported_packages: [], group: nil)
       return if imported_packages.include?(package_name.to_s)
       package = packages[package_name.to_s]
+
+      if package == nil
+        raise "Can't find package with name: #{package_name.to_s}"
+      end
+
       init_package(package, group: group)
       imported_packages << package_name
 
@@ -25,7 +30,11 @@ class Rdm::PackageImporter
       end
 
       # only after importing dependencies - require package itself
-      require package_name
+      begin
+        require package_name
+      rescue LoadError
+        raise "Can't require package #{package_name}, please create file #{package_name}/lib/#{package_name}.rb"
+      end
 
       imported_packages
     end
