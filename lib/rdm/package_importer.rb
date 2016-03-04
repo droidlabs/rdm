@@ -8,8 +8,8 @@ class Rdm::PackageImporter
       package_content = File.open(package_path).read
       package = package_parser.parse(package_content)
 
-      packages = fetch_packages(package.source)
-      import_package(package.name, packages: packages, group: group.to_s)
+      source = read_and_init_source(package.source)
+      import_package(package.name, packages: source.packages, group: group.to_s)
     end
 
     # Import package and initialize module
@@ -33,7 +33,9 @@ class Rdm::PackageImporter
       begin
         require package_name
       rescue LoadError
-        raise "Can't require package #{package_name}, please create file #{package_name}/lib/#{package_name}.rb"
+        if Rdm.settings.raises_missing_package_file_exception
+          raise "Can't require package #{package_name}, please create file #{package_name}/lib/#{package_name}.rb"
+        end
       end
 
       imported_packages
@@ -59,20 +61,29 @@ class Rdm::PackageImporter
         end
       end
 
-      def fetch_packages(source_path)
+      def read_and_init_source(source_path)
         root_path = File.dirname(source_path)
         source_content = File.open(source_path).read
+        source = source_parser.parse(source_content)
 
+        # Setup Rdm
+        if block = source.setup_block
+          Rdm.setup(&block)
+        end
+
+        # Parse and set packages
         packages = {}
-        source_parser.parse(source_content).each do |package|
-          package_path = File.join(root_path, package)
-          package_rb_path = File.join(package_path, Rdm::PACKAGE_FILENAME)
+        source.package_paths.each do |package_path|
+          package_full_path = File.join(root_path, package_path)
+          package_rb_path = File.join(package_full_path, Rdm::PACKAGE_FILENAME)
           package_content = File.open(package_rb_path).read
           package = package_parser.parse(package_content)
-          package.path = package_path
+          package.path = package_full_path
           packages[package.name] = package
         end
-        packages
+        source.packages = packages
+
+        source
       end
   end
 end

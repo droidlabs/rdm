@@ -70,11 +70,11 @@ class Rdm::Package
     end
 
     def exec_metadata(key, value)
-      if value
+      if value.nil?
+        @metadata[key]
+      else
         @metadata ||= {}
         @metadata[key] = value
-      else
-        @metadata[key]
       end
     end
 end

@@ -4,6 +4,7 @@ describe Rdm::PackageImporter do
   def build_package(name, dependencies: [])
     package = Rdm::Package.new
     package.name(name)
+    package.path = name
     dependencies.each do |dependency|
       package.import(dependency)
     end

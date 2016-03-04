@@ -1,19 +1,12 @@
 class Rdm::SourceParser
-  class Scope
-    attr_accessor :package_paths
-
-    def package(package_path)
-      self.package_paths ||= []
-      self.package_paths << package_path
-    end
-  end
-
   class << self
-    # Parse source file and return package paths
+    # Parse source file and return Source object
+    # @param source_content [String] Source file content
+    # @return [Rdm::Source] Source
     def parse(source_content)
-      scope = Scope.new
-      scope.instance_eval(source_content)
-      scope.package_paths
+      source = Rdm::Source.new
+      source.instance_eval(source_content)
+      source
     end
   end
 end
