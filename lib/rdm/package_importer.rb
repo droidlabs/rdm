@@ -1,6 +1,9 @@
 class Rdm::PackageImporter
   class << self
     # Initialize current package using Package.rb
+    # @param package_path [String] Package.rb file path
+    # @param group [Optional<String>] Dependency group
+    # @return [Rdm::Package] Current package
     def import_file(package_path, group: nil)
       if File.directory?(package_path)
         package_path = File.join(package_path, Rdm::PACKAGE_LOCK_FILENAME)
@@ -10,6 +13,8 @@ class Rdm::PackageImporter
 
       source = read_and_init_source(package.source)
       import_package(package.name, packages: source.packages, group: group.to_s)
+
+      package
     end
 
     # Import package and initialize module
@@ -34,7 +39,8 @@ class Rdm::PackageImporter
         require package_name
       rescue LoadError
         if Rdm.settings.raises_missing_package_file_exception
-          raise "Can't require package #{package_name}, please create file #{package_name}/lib/#{package_name}.rb"
+          package_require_path = "#{package_name}/#{package_subdir_name}/#{package_name}.rb"
+          raise "Can't require package #{package_name}, please create file #{package_require_path}"
         end
       end
 
@@ -50,8 +56,12 @@ class Rdm::PackageImporter
         Rdm::PackageParser
       end
 
+      def package_subdir_name
+        Rdm.settings.package_subdir_name.to_s
+      end
+
       def init_package(package, group:)
-        $LOAD_PATH.push(File.join(package.path, "lib"))
+        $LOAD_PATH.push(File.join(package.path, package_subdir_name))
 
         package.external_dependencies(group).each do |dependency|
           require dependency
@@ -62,28 +72,7 @@ class Rdm::PackageImporter
       end
 
       def read_and_init_source(source_path)
-        root_path = File.dirname(source_path)
-        source_content = File.open(source_path).read
-        source = source_parser.parse(source_content)
-
-        # Setup Rdm
-        if block = source.setup_block
-          Rdm.setup(&block)
-        end
-
-        # Parse and set packages
-        packages = {}
-        source.package_paths.each do |package_path|
-          package_full_path = File.join(root_path, package_path)
-          package_rb_path = File.join(package_full_path, Rdm::PACKAGE_FILENAME)
-          package_content = File.open(package_rb_path).read
-          package = package_parser.parse(package_content)
-          package.path = package_full_path
-          packages[package.name] = package
-        end
-        source.packages = packages
-
-        source
+        source_parser.read_and_init_source(source_path)
       end
   end
 end

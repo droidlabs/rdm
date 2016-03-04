@@ -3,7 +3,7 @@ class Rdm::SourceInstaller
     # Install source by locking all it's specs
     def install(source_path)
       source_content = File.open(source_path).read
-      source_parser.parse(source_content).each do |package_path|
+      source_parser.parse(source_content).package_paths.each do |package_path|
         full_path = File.join(File.dirname(source_path), package_path, Rdm::PACKAGE_FILENAME)
         lock(full_path, source_path: source_path, package_path: package_path)
       end

@@ -4,7 +4,5 @@ package do
 end
 
 dependency do
-  require_file "lib/core.rb"
-
   import "repository"
 end

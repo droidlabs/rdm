@@ -1,3 +1,7 @@
+setup do
+  role "example"
+end
+
 package "server"
 package "application/web"
 package "domain/core"
