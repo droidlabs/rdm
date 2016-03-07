@@ -1,5 +1,5 @@
 class Rdm::ConfigScope
-  def initialize(attributes)
+  def initialize(attributes = {})
     @attributes = {}
   end
 
@@ -9,5 +9,9 @@ class Rdm::ConfigScope
 
   def write_attribute(key, value)
     @attributes[key.to_s] = value
+  end
+
+  def method_missing(method_name, *args)
+    read_attribute(method_name)
   end
 end

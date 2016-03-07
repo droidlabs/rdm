@@ -4,4 +4,4 @@ require "rdm"
 
 Rdm.init(File.expand_path("../", __FILE__))
 
-Web::SampleController.new.create_something
+Web::SampleController.new.perform

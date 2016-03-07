@@ -11,8 +11,8 @@ class Rdm::Settings
     raises_missing_package_file_exception(true)
     package_subdir_name("package")
     configs_dir('configs')
-    config_path(':configs_dir/:config/default.yml')
-    role_config_path(':configs_dir/:config/:role.yml')
+    config_path(':configs_dir/:config_name/default.yml')
+    role_config_path(':configs_dir/:config_name/:role.yml')
   end
 
   SETTING_KEYS.each do |key|
@@ -48,16 +48,17 @@ class Rdm::Settings
 
     def replace_variables(value, except: nil, additional_vars: {})
       variables_keys = SETTING_VARIABLES - [except.to_sym]
+      new_value = value
       additional_vars.each do |key, variable|
-        if value.match(":#{key.to_s}")
-          value.gsub!(":#{key.to_s}", variable)
+        if new_value.match(":#{key.to_s}")
+          new_value = new_value.gsub(":#{key.to_s}", variable)
         end
       end
       variables_keys.each do |key|
-        if value.match(":#{key}")
-          value.gsub!(":#{key}", read_setting(key))
+        if new_value.match(":#{key}")
+          new_value = new_value.gsub(":#{key}", read_setting(key))
         end
       end
-      value
+      new_value
     end
 end

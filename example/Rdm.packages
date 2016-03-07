@@ -1,6 +1,13 @@
 setup do
-  role "example"
+  role "production"
+  configs_dir "configs"
+  config_path ":configs_dir/:config_name/default.yml"
+  role_config_path ":configs_dir/:config_name/:role.yml"
+  package_subdir_name "package"
 end
+
+config :database
+config :app
 
 package "server"
 package "application/web"

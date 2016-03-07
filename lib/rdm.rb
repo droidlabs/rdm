@@ -10,6 +10,9 @@ module Rdm
   require "rdm/package"
   require "rdm/package_parser"
   require "rdm/package_importer"
+  require "rdm/config"
+  require "rdm/config_scope"
+  require "rdm/config_manager"
 
   class << self
     # Initialize current package using Package.rb
@@ -24,7 +27,7 @@ module Rdm
 
     # Rdm's managed configuration
     def config
-      @config ||= Rdm::ConfigManager
+      @config ||= Rdm::ConfigManager.new
     end
 
     # Setup Rdm's internal settings

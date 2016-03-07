@@ -1,8 +1,8 @@
 class Core::SampleService
   #inject :sample_repository
 
-  def create_something
-    sample_repository.create_something
+  def perform
+    sample_repository.perform
   end
 
   def sample_repository

@@ -1,7 +1,7 @@
 class Rdm::Package
   DEFAULT_GROUP = "_default_"
 
-  attr_accessor :metadata, :local_dependencies, :external_dependencies, :file_dependencies, :path
+  attr_accessor :metadata, :local_dependencies, :external_dependencies, :file_dependencies, :config_dependencies, :path
 
   def local_dependencies(group = nil)
     fetch_dependencies(@local_dependencies || {}, group)
@@ -13,6 +13,10 @@ class Rdm::Package
 
   def file_dependencies(group = nil)
     fetch_dependencies(@file_dependencies || {}, group)
+  end
+
+  def config_dependencies(group = nil)
+    fetch_dependencies(@config_dependencies || {}, group)
   end
 
   # Import local dependency, e.g another package
@@ -34,6 +38,13 @@ class Rdm::Package
     @file_dependencies ||= {}
     @file_dependencies[current_group] ||= []
     @file_dependencies[current_group] << file
+  end
+
+  # Import config dependency
+  def import_config(dependency)
+    @config_dependencies ||= {}
+    @config_dependencies[current_group] ||= []
+    @config_dependencies[current_group] << dependency
   end
 
   def package

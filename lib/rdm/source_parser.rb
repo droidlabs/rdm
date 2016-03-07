@@ -7,7 +7,7 @@ class Rdm::SourceParser
     def read_and_init_source(source_path)
       root_path = File.dirname(source_path)
       source_content = File.open(source_path).read
-      source = parse(source_content)
+      source = parse(source_content, root_path: root_path)
 
       # Setup Rdm
       if block = source.setup_block
@@ -28,8 +28,8 @@ class Rdm::SourceParser
       # Init and set configs
       configs = {}
       source.config_names.each do |config_name|
-        default_path = settings.read_setting(:config_path, {config: config_name})
-        role_path = settings.read_setting(:config_path, {config: config_name})
+        default_path = settings.read_setting(:config_path, vars: {config_name: config_name})
+        role_path = settings.read_setting(:config_path, vars: {config_name: config_name})
 
         config = Rdm::Config.new
         config.default_path = default_path
@@ -45,8 +45,8 @@ class Rdm::SourceParser
     # Parse source file and return Source object
     # @param source_content [String] Source file content
     # @return [Rdm::Source] Source
-    def parse(source_content)
-      source = Rdm::Source.new
+    def parse(source_content, root_path: nil)
+      source = Rdm::Source.new(root_path: root_path)
       source.instance_eval(source_content)
       source
     end

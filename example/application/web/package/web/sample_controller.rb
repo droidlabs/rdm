@@ -1,8 +1,8 @@
 class Web::SampleController
   #inject :sample_service
 
-  def create_something
-    sample_service.create_something
+  def perform
+    sample_service.perform
   end
 
   def sample_service

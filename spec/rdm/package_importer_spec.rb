@@ -11,6 +11,12 @@ describe Rdm::PackageImporter do
     package
   end
 
+  def build_source(packages:)
+    source = Rdm::Source.new(root_path: nil)
+    source.init_with(packages: packages, configs: {})
+    source
+  end
+
   describe "#import_package" do
     subject { Rdm::PackageImporter }
 
@@ -18,9 +24,9 @@ describe Rdm::PackageImporter do
       it "imports all depended global packages" do
         web_pack = build_package("web", dependencies: ["core"])
         core_pack = build_package("core")
-        packages = {"web" => web_pack, "core" => core_pack}
+        source = build_source(packages: {"web" => web_pack, "core" => core_pack})
 
-        imported = subject.import_package("web", packages: packages)
+        imported = subject.import_package("web", source: source)
         expect(imported).to include("core")
       end
     end
@@ -34,9 +40,9 @@ describe Rdm::PackageImporter do
         core_pack = build_package("core")
         factory_pack = build_package("factory")
 
-        packages = {"web" => web_pack, "core" => core_pack, "factory" => factory_pack}
+        source = build_source(packages: {"web" => web_pack, "core" => core_pack, "factory" => factory_pack})
 
-        imported = subject.import_package("web", packages: packages, group: "test")
+        imported = subject.import_package("web", source: source, group: "test")
         expect(imported).to include("factory")
       end
 
@@ -48,9 +54,9 @@ describe Rdm::PackageImporter do
         core_pack = build_package("core")
         factory_pack = build_package("factory")
 
-        packages = {"web" => web_pack, "core" => core_pack, "factory" => factory_pack}
+        source = build_source(packages: {"web" => web_pack, "core" => core_pack, "factory" => factory_pack})
 
-        imported = subject.import_package("web", packages: packages)
+        imported = subject.import_package("web", source: source)
         expect(imported).to_not include("factory")
       end
     end

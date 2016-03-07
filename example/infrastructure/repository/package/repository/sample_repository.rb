@@ -1,5 +1,6 @@
 class Repository::SampleRepository
-  def create_something
-    puts "WORKS!"
+  def perform
+    config = Rdm.config
+    puts "WORKS! (#{config.app_name})"
   end
 end

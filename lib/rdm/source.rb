@@ -1,5 +1,9 @@
 class Rdm::Source
-  attr_reader :setup_block, :config_names, :package_paths
+  attr_reader :setup_block, :config_names, :package_paths, :root_path
+
+  def initialize(root_path:)
+    @root_path = root_path
+  end
 
   # Set setup block for source
   # @param block [Proc] Setup block

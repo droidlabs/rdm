@@ -12,15 +12,15 @@ class Rdm::PackageImporter
       package = package_parser.parse(package_content)
 
       source = read_and_init_source(package.source)
-      import_package(package.name, packages: source.packages, group: group.to_s)
+      import_package(package.name, source: source, group: group.to_s)
 
       package
     end
 
     # Import package and initialize module
-    def import_package(package_name, packages:, imported_packages: [], group: nil)
+    def import_package(package_name, source:, imported_packages: [], imported_configs: [], group: nil)
       return if imported_packages.include?(package_name.to_s)
-      package = packages[package_name.to_s]
+      package = source.packages[package_name.to_s]
 
       if package == nil
         raise "Can't find package with name: #{package_name.to_s}"
@@ -31,7 +31,16 @@ class Rdm::PackageImporter
 
       # also import local dependencies
       package.local_dependencies(group).each do |dependency|
-        import_package(dependency, packages: packages, imported_packages: imported_packages)
+        import_package(dependency, source: source, imported_packages: imported_packages)
+      end
+
+      # also import config dependencies
+      package.config_dependencies(group).each do |dependency|
+        unless imported_configs.include?(dependency)
+          import_config(dependency, source: source)
+        end
+
+        imported_configs << dependency
       end
 
       # only after importing dependencies - require package itself
@@ -45,6 +54,14 @@ class Rdm::PackageImporter
       end
 
       imported_packages
+    end
+
+    def import_config(config_name, source: source)
+      config = source.configs[config_name.to_s]
+      if config == nil
+        raise "Can't find config with name: #{config_name.to_s}"
+      end
+      Rdm.config.load_config(config, source: source)
     end
 
     private
