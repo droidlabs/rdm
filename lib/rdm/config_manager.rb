@@ -5,11 +5,14 @@ class Rdm::ConfigManager
   # @param config [Rdm::Config] Config entity
   # @return root scope [Rdm::ConfigScope] Updated root scope
   def load_config(config, source:)
-    full_default_path = File.join(source.root_path, config.default_path)
-    full_role_path = File.join(source.root_path, config.role_path)
-
-    update_using_file(full_default_path, raise_if_missing: true)
-    update_using_file(full_role_path, raise_if_missing: false)
+    if config.default_path
+      full_default_path = File.join(source.root_path, config.default_path)
+      update_using_file(full_default_path, raise_if_missing: true)
+    end
+    if config.role_path
+      full_role_path = File.join(source.root_path, config.role_path)
+      update_using_file(full_role_path, raise_if_missing: false)
+    end
     root_scope
   end
 

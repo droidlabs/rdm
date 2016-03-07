@@ -1,4 +1,7 @@
 class Rdm::SourceParser
+  class SourceValidationError < StandardError
+  end
+
   class << self
 
     # Read source file, parse and init it's packages and configs
@@ -13,6 +16,7 @@ class Rdm::SourceParser
       if block = source.setup_block
         Rdm.setup(&block)
       end
+      validate_rdm_settings!
 
       # Init and set packages
       packages = {}
@@ -29,7 +33,7 @@ class Rdm::SourceParser
       configs = {}
       source.config_names.each do |config_name|
         default_path = settings.read_setting(:config_path, vars: {config_name: config_name})
-        role_path = settings.read_setting(:config_path, vars: {config_name: config_name})
+        role_path = settings.read_setting(:role_config_path, vars: {config_name: config_name})
 
         config = Rdm::Config.new
         config.default_path = default_path
@@ -52,6 +56,20 @@ class Rdm::SourceParser
     end
 
     private
+      # Make sure that all required settings are in place
+      def validate_rdm_settings!
+        if Rdm.settings.read_setting(:role).nil?
+          raise SourceValidationError.new(
+            "Please set `role` value in Rdm.packages. E.g. \r\n setup do\r\n  role { ENV['RAILS_ENV'] }\r\n end"
+          )
+        end
+        if Rdm.settings.read_setting(:config_path).nil?
+          raise SourceValidationError.new(
+            "Please set `config_path` value in Rdm.packages. E.g. \r\n setup do\r\n  config_path :configs_dir/:config_name/default.yml'\r\n end"
+          )
+        end
+      end
+
       def settings
         Rdm.settings
       end

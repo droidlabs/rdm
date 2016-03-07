@@ -11,8 +11,6 @@ class Rdm::Settings
     raises_missing_package_file_exception(true)
     package_subdir_name("package")
     configs_dir('configs')
-    config_path(':configs_dir/:config_name/default.yml')
-    role_config_path(':configs_dir/:config_name/:role.yml')
   end
 
   SETTING_KEYS.each do |key|

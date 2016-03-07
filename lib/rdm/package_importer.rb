@@ -39,7 +39,6 @@ class Rdm::PackageImporter
         unless imported_configs.include?(dependency)
           import_config(dependency, source: source)
         end
-
         imported_configs << dependency
       end
 
@@ -54,14 +53,6 @@ class Rdm::PackageImporter
       end
 
       imported_packages
-    end
-
-    def import_config(config_name, source: source)
-      config = source.configs[config_name.to_s]
-      if config == nil
-        raise "Can't find config with name: #{config_name.to_s}"
-      end
-      Rdm.config.load_config(config, source: source)
     end
 
     private
@@ -86,6 +77,14 @@ class Rdm::PackageImporter
         package.file_dependencies(group).each do |file_path|
           require File.join(package.path, file_path)
         end
+      end
+
+      def import_config(config_name, source: source)
+        config = source.configs[config_name.to_s]
+        if config == nil
+          raise "Can't find config with name: #{config_name.to_s}"
+        end
+        Rdm.config.load_config(config, source: source)
       end
 
       def read_and_init_source(source_path)
