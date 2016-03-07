@@ -24,7 +24,7 @@ module Rdm
 
     # Rdm's managed configuration
     def config
-      @config ||= Rdm::ConfigurationManager
+      @config ||= Rdm::ConfigManager
     end
 
     # Setup Rdm's internal settings
