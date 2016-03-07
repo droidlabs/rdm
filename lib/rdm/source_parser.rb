@@ -14,7 +14,7 @@ class Rdm::SourceParser
         Rdm.setup(&block)
       end
 
-      # Parse and set packages
+      # Init and set packages
       packages = {}
       source.package_paths.each do |package_path|
         package_full_path = File.join(root_path, package_path)
@@ -24,8 +24,21 @@ class Rdm::SourceParser
         package.path = package_full_path
         packages[package.name] = package
       end
-      source.packages = packages
 
+      # Init and set configs
+      configs = {}
+      source.config_names.each do |config_name|
+        default_path = settings.read_setting(:config_path, {config: config_name})
+        role_path = settings.read_setting(:config_path, {config: config_name})
+
+        config = Rdm::Config.new
+        config.default_path = default_path
+        config.role_path = role_path
+        config.name = config_name
+        configs[config_name] = config
+      end
+
+      source.init_with(packages: packages, configs: configs)
       source
     end
 
@@ -39,6 +52,10 @@ class Rdm::SourceParser
     end
 
     private
+      def settings
+        Rdm.settings
+      end
+
       def package_parser
         Rdm::PackageParser
       end

@@ -22,6 +22,11 @@ module Rdm
       @settings ||= Rdm::Settings.new
     end
 
+    # Rdm's managed configuration
+    def config
+      @config ||= Rdm::ConfigurationManager
+    end
+
     # Setup Rdm's internal settings
     def setup(&block)
       settings.instance_eval(&block) if block_given?
