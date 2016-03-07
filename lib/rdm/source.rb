@@ -3,6 +3,8 @@ class Rdm::Source
 
   def initialize(root_path:)
     @root_path = root_path
+    @config_names = []
+    @package_paths = []
   end
 
   # Set setup block for source
@@ -14,14 +16,12 @@ class Rdm::Source
   # Add config to list of known configs
   # @param config_name [String] Config name
   def config(config_name)
-    @config_names ||= []
     @config_names << config_name.to_s
   end
 
   # Add package to list of known packages
   # @param package_path [String] Package path
   def package(package_path)
-    @package_paths ||= []
     @package_paths << package_path
   end
 

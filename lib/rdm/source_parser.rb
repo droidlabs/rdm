@@ -58,14 +58,14 @@ class Rdm::SourceParser
     private
       # Make sure that all required settings are in place
       def validate_rdm_settings!
-        if Rdm.settings.read_setting(:role).nil?
+        if settings.read_setting(:role).nil?
           raise SourceValidationError.new(
-            "Please set `role` value in Rdm.packages. E.g. \r\n setup do\r\n  role { ENV['RAILS_ENV'] }\r\n end"
+            "Please add `role` setting in Rdm.packages. E.g. \r\n setup do\r\n  role { ENV['RAILS_ENV'] }\r\n end"
           )
         end
-        if Rdm.settings.read_setting(:config_path).nil?
+        if settings.read_setting(:config_path).nil?
           raise SourceValidationError.new(
-            "Please set `config_path` value in Rdm.packages. E.g. \r\n setup do\r\n  config_path :configs_dir/:config_name/default.yml'\r\n end"
+            "Please add `config_path` setting in Rdm.packages. E.g. \r\n setup do\r\n  config_path :configs_dir/:config_name/default.yml'\r\n end"
           )
         end
       end

@@ -14,16 +14,16 @@ class Rdm::Settings
   end
 
   SETTING_KEYS.each do |key|
-    define_method(key) do |value = nil|
-      fetch_setting key, value
+    define_method(key) do |value = nil, &block|
+      fetch_setting key, value, &block
     end
   end
 
-  def fetch_setting(key, value = nil)
-    if value.nil?
+  def fetch_setting(key, value = nil, &block)
+    if value.nil? && !block_given?
       read_setting(key)
     else
-      write_setting(key, value)
+      write_setting(key, value || block)
     end
   end
 
