@@ -14,4 +14,10 @@ class Rdm::ConfigScope
   def method_missing(method_name, *args)
     read_attribute(method_name)
   end
+
+  def to_h
+    @attributes.each_with_object({}) do |(k, v), h|
+      h[k] = Rdm::ConfigScope === v ? v.to_h : v
+    end
+  end
 end

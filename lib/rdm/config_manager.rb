@@ -54,6 +54,10 @@ class Rdm::ConfigManager
     root_scope.send(method_name, *args)
   end
 
+  def to_h
+    root_scope.to_h
+  end
+
   private
     def root_scope
       @root_scope ||= Rdm::ConfigScope.new

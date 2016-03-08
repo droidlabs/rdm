@@ -79,7 +79,7 @@ class Rdm::PackageImporter
         end
       end
 
-      def import_config(config_name, source: source)
+      def import_config(config_name, source:)
         config = source.configs[config_name.to_s]
         if config == nil
           raise "Can't find config with name: #{config_name.to_s}"

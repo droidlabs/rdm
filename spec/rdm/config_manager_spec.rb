@@ -63,4 +63,25 @@ describe Rdm::ConfigManager do
       end
     end
   end
+
+  describe "to_h" do
+    before :each do
+      subject.update_using_hash(
+        site_name: "Sample app",
+        database: {
+          username: "username",
+          password: "password"
+        }
+      )
+    end
+
+    it "returns attributes in root scope" do
+      puts subject.inspect
+      expect(subject.to_h["site_name"]).to eq("Sample app")
+    end
+
+    it "returns attributes in child scope" do
+      expect(subject.to_h["database"]["username"]).to eq("username")
+    end
+  end
 end
