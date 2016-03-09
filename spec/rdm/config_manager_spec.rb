@@ -76,7 +76,6 @@ describe Rdm::ConfigManager do
     end
 
     it "returns attributes in root scope" do
-      puts subject.inspect
       expect(subject.to_h["site_name"]).to eq("Sample app")
     end
 

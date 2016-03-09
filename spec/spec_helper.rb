@@ -1,7 +1,7 @@
 require 'rdm'
 
 Rdm.setup do
-  raises_missing_package_file_exception(false)
+  silence_missing_package_file_exception(true)
 end
 
 RSpec.configure do |config|

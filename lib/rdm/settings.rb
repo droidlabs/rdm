@@ -1,6 +1,6 @@
 class Rdm::Settings
   SETTING_KEYS = [
-    :role, :raises_missing_package_file_exception, :package_subdir_name,
+    :role, :silence_missing_package_file_exception, :package_subdir_name,
     :configs_dir, :config_path, :role_config_path
   ]
 
@@ -8,7 +8,7 @@ class Rdm::Settings
 
   # Default settings
   def initialize
-    raises_missing_package_file_exception(true)
+    silence_missing_package_file_exception(false)
     package_subdir_name("package")
     configs_dir('configs')
   end
