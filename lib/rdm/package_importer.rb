@@ -46,7 +46,7 @@ class Rdm::PackageImporter
       begin
         require package_name
       rescue LoadError => e
-        unless Rdm.settings.silence_missing_package_file_exception
+        unless Rdm.settings.silence_missing_package_file
           package_require_path = "#{package_name}/#{package_subdir_name}/#{package_name}.rb"
           puts "WARNING: Can't require package #{package_name}, please make sure that file #{package_require_path} exists and it's valid."
           raise e

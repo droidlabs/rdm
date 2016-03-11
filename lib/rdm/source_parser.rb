@@ -22,11 +22,15 @@ class Rdm::SourceParser
       packages = {}
       source.package_paths.each do |package_path|
         package_full_path = File.join(root_path, package_path)
-        package_rb_path = File.join(package_full_path, Rdm::PACKAGE_FILENAME)
-        package_content = File.open(package_rb_path).read
-        package = package_parser.parse(package_content)
-        package.path = package_full_path
-        packages[package.name] = package
+        if File.exists?(package_full_path)
+          package_rb_path = File.join(package_full_path, Rdm::PACKAGE_FILENAME)
+          package_content = File.open(package_rb_path).read
+          package = package_parser.parse(package_content)
+          package.path = package_full_path
+          packages[package.name] = package
+        elsif !settings.silence_missing_package
+          raise "Missing package at folder: #{package_full_path}"
+        end
       end
 
       # Init and set configs
