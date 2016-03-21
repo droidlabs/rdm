@@ -3,6 +3,20 @@ require 'spec_helper'
 describe Rdm::ConfigManager do
   subject { Rdm::ConfigManager.new }
 
+  describe "#update_using_file" do
+    let(:fixtures_path) {
+      File.join(File.expand_path("../../", __FILE__), 'fixtures')
+    }
+
+    before :each do
+      subject.update_using_file(File.join(fixtures_path, "config.yml"))
+    end
+
+    it "parses yml with erb correctly" do
+      expect(subject.development.foo).to eq("bar")
+    end
+  end
+
   describe "#update_using_hash" do
     before :each do
       subject.update_using_hash(
