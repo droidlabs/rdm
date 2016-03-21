@@ -34,5 +34,16 @@ module Rdm
     def setup(&block)
       settings.instance_eval(&block) if block_given?
     end
+
+    def root=(value)
+      if @root && @root != value
+        puts "Rdm has already been initialized and Rdm.root was set to #{@root}"
+      end
+      @root = value
+    end
+
+    def root
+      @root
+    end
   end
 end

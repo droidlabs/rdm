@@ -12,6 +12,11 @@ class Rdm::PackageImporter
       package = package_parser.parse(package_content)
 
       source = read_and_init_source(package.source)
+
+      # Init Rdm.root based on Rdm.packages directory
+      Rdm.root = File.dirname(package.source)
+
+      # Import package and it's dependencies
       import_package(package.name, source: source, group: group.to_s)
 
       package
