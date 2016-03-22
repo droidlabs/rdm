@@ -1,4 +1,6 @@
 require 'yaml'
+require 'erb'
+
 class Rdm::ConfigManager
 
   # Update configuration based on given config file
@@ -21,7 +23,7 @@ class Rdm::ConfigManager
   # @return root scope [Rdm::ConfigScope] Updated root scope
   def update_using_file(path, raise_if_missing: true)
     if File.exists?(path)
-      compiled_file = ERB.new(File.read(path)).result
+      compiled_file = ::ERB.new(File.read(path)).result
       hash = YAML.load(compiled_file)
       update_using_hash(hash)
     elsif raise_if_missing
