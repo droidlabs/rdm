@@ -38,6 +38,9 @@ dependency do
 end
 EOF
       File.write(File.join(current_dir, package_relative_path, 'Package.rb'), package_rb_template)
+
+      source_content += "\npackage '#{package_relative_path}'"
+      File.write(source_path, source_content)
     end
   end
 end
