@@ -26,7 +26,7 @@ end
 OptionParser.new do |opts|
   opts.banner = "Usage: rdm-generate PACKAGE_NAME --path=RELATIVE_PATH --skip-rspec"
 
-  opts.on('-skip-rspec', 'Skip rspec generation') do
+  opts.on('--skip-rspec', 'Skip rspec generation') do
     options[:skip_rspec] = true
   end
 
