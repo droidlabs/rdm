@@ -29,12 +29,12 @@ class Rdm::PackageGenerator
 
       package_rb_template = <<EOF
 package do
-  name    "#{package_name}"
-  version "1.0.0"
+  name    '#{package_name}'
+  version '1.0.0'
 end
 
 dependency do
-  # TODO: add dependencies here
+  # import 'package_name'
 end
 EOF
       File.write(File.join(current_dir, package_relative_path, 'Package.rb'), package_rb_template)
