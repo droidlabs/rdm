@@ -22,7 +22,7 @@ class Rdm::PackageGenerator
       FileUtils.touch(File.join(current_dir, package_relative_path, '.gitignore'))
 
       if !skip_rspec
-        FileUtils.cd(File.join(current_dir, package_relative_path, package_subdir_name)) do
+        FileUtils.cd(File.join(current_dir, package_relative_path)) do
           system('rspec --init')
         end
       end
