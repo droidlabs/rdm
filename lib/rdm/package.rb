@@ -66,7 +66,7 @@ class Rdm::Package
   end
 
   def version(value = nil)
-    exec_metadata :verion, value
+    exec_metadata :version, value
   end
 
   private

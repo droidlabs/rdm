@@ -16,7 +16,13 @@ class Rdm::SourceInstaller
       locked = "source \"#{source_path}\"\r\n\r\n"
       locked += package_content
 
-      File.open("#{full_package_path}.lock", "w+").write(locked)
+      lock_file = "#{full_package_path}.lock"
+
+      if File.exist?(lock_file) && File.read(lock_file) != locked
+        File.open(lock_file, "w+") do |file|
+          file.write(locked)
+        end
+      end
     rescue Errno::ENOENT
       puts "Can't find package: #{package_path}"
     end
