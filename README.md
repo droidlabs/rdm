@@ -25,11 +25,13 @@ See sample application in "example" folder.
     ```
 
 1. Use package generator to create new package
+
     ```ruby
       rdm-generate package server --path=core/server
     ```
 
 1. Setup RDM in boot.rb or spec_helper.rb or any other initializer. Rdm.init should point to the directory where Rdm.packages file is located
+
     ```ruby
       require 'rdm'
       Rdm.init(File.expand_path("../../", __FILE__), :test)
