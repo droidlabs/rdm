@@ -2,6 +2,7 @@ class Web::SampleController
   #inject :sample_service
 
   def perform
+    puts "Web::SampleController called..."
     sample_service.perform
   end
 
