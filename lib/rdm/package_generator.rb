@@ -57,7 +57,7 @@ class Rdm::PackageGenerator
     Dir.chdir(File.join(File.dirname(__FILE__), "templates")) do
       copy_template(".rspec")
       copy_template(".gitignore")
-      copy_template("rspec/spec_helper.rb")
+      copy_template("spec/spec_helper.rb")
     end
   end
 
