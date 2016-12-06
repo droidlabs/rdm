@@ -26,9 +26,6 @@ class Rdm::PackageGenerator
   def source_content
     File.open(source_path).read
   end
-  def rdm_source
-    Rdm::SourceParser.parse(source_content)
-  end
 
   def create
     check_preconditions!
@@ -45,6 +42,7 @@ class Rdm::PackageGenerator
 
       File.write(File.join(package_relative_path, 'Package.rb'), package_rb_template)
     end
+    move_templates
     new_source_content = source_content + "\npackage '#{package_relative_path}'"
     File.write(source_path, new_source_content)
   end
@@ -53,6 +51,21 @@ class Rdm::PackageGenerator
     FileUtils.cd(File.join(package_relative_path)) do
       system('rspec --init')
     end
+  end
+
+  def move_templates
+    Dir.chdir(File.join(File.dirname(__FILE__), "templates")) do
+      copy_template(".rspec")
+      copy_template(".gitignore")
+      copy_template("rspec/spec_helper.rb")
+    end
+  end
+
+  def copy_template(filepath)
+    from = filepath
+    to   = File.join(current_dir, package_relative_path, filepath)
+    FileUtils.mkdir_p(File.dirname(to))
+    FileUtils.cp(from, to)
   end
 
   def check_preconditions!
