@@ -1,4 +1,19 @@
 require 'fileutils'
+require 'pathname'
+
+
+# http://stackoverflow.com/questions/8954706/render-an-erb-template-with-values-from-a-hash
+require 'erb'
+require 'ostruct'
+class ErbalT < OpenStruct
+  def self.render(template, locals)
+    self.new(locals).render(template)
+  end
+  def render(template)
+    ERB.new(template).result(binding)
+  end
+end
+
 
 class Rdm::PackageGenerator
   class << self
@@ -32,21 +47,27 @@ class Rdm::PackageGenerator
     package_subdir_name = Rdm.settings.send(:package_subdir_name)
 
     Dir.chdir(current_dir) do
-      FileUtils.mkdir_p(File.join(package_relative_path, package_subdir_name, package_name))
-      FileUtils.touch(File.join(package_relative_path, package_subdir_name, "#{package_name}.rb"))
-      FileUtils.touch(File.join(package_relative_path, '.gitignore'))
+      ensure_file([package_relative_path, package_subdir_name, "#{package_name}.rb"])
+      ensure_file([package_relative_path, '.gitignore'])
 
       if !skip_rspec
         init_rspec
       end
-
-      File.write(File.join(package_relative_path, 'Package.rb'), package_rb_template)
+      ensure_file(
+        [package_relative_path, 'Package.rb'],
+        template_content("package.rb.erb", {package_name: package_name})
+      )
     end
     move_templates
     new_source_content = source_content + "\npackage '#{package_relative_path}'"
     File.write(source_path, new_source_content)
   end
 
+  def ensure_file(path_array, content="")
+    filename = File.join(*path_array)
+    FileUtils.mkdir_p(File.dirname(filename))
+    File.write(filename, content)
+  end
   def init_rspec
     FileUtils.cd(File.join(package_relative_path)) do
       system('rspec --init')
@@ -68,6 +89,12 @@ class Rdm::PackageGenerator
     FileUtils.cp(from, to)
   end
 
+  def template_content(file, locals={})
+    template_path    = Pathname.new(File.join(File.dirname(__FILE__), "templates")).join(file)
+    template_content = File.read(template_path)
+    ErbalT.render(template_content, locals)
+  end
+
   def check_preconditions!
     if Dir.exist?(File.join(current_dir, package_relative_path))
       raise Rdm::Errors::PackageDirExists, "package dir exists"
@@ -76,18 +103,5 @@ class Rdm::PackageGenerator
     if rdm_source.package_paths.include?(package_relative_path)
       raise Rdm::Errors::PackageExists, "package exists"
     end
-  end
-
-  def package_rb_template
-v = <<EOF
-package do
-  name    '#{package_name}'
-  version '1.0.0'
-end
-
-dependency do
-  # import 'utils'
-end
-EOF
   end
 end
