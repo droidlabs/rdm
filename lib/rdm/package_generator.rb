@@ -89,7 +89,8 @@ class Rdm::PackageGenerator
     from = filepath
     to   = File.join(current_dir, package_relative_path, filepath)
     FileUtils.mkdir_p(File.dirname(to))
-    FileUtils.cp(from, to)
+    # copy_entry(src, dest, preserve = false, dereference_root = false, remove_destination = false)
+    FileUtils.copy_entry(from, to, false, false, true)
   end
 
   def template_content(file, locals={})
