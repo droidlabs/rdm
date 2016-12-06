@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'pathname'
+require "active_support/inflector"
 
 
 # http://stackoverflow.com/questions/8954706/render-an-erb-template-with-values-from-a-hash
@@ -47,12 +48,15 @@ class Rdm::PackageGenerator
     package_subdir_name = Rdm.settings.send(:package_subdir_name)
 
     Dir.chdir(current_dir) do
-      ensure_file([package_relative_path, package_subdir_name, "#{package_name}.rb"])
-      ensure_file([package_relative_path, '.gitignore'])
-
       if !skip_rspec
         init_rspec
       end
+
+      ensure_file([package_relative_path, '.gitignore'])
+      ensure_file(
+        [package_relative_path, package_subdir_name, "#{package_name}.rb"],
+        template_content("main_module_file.rb.erb", {package_name_camelized: package_name.camelize})
+      )
       ensure_file(
         [package_relative_path, 'Package.rb'],
         template_content("package.rb.erb", {package_name: package_name})
