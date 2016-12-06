@@ -61,16 +61,26 @@ class Rdm::PackageGenerator
         init_rspec
       end
     end
+
     move_templates
+    append_package_to_rdm_packages
+  end
+
+  def check_preconditions!
+    if Dir.exist?(File.join(current_dir, package_relative_path))
+      raise Rdm::Errors::PackageDirExists, "package dir exists"
+    end
+
+    if rdm_source.package_paths.include?(package_relative_path)
+      raise Rdm::Errors::PackageExists, "package exists"
+    end
+  end
+
+  def append_package_to_rdm_packages
     new_source_content = source_content + "\npackage '#{package_relative_path}'"
     File.write(source_path, new_source_content)
   end
 
-  def ensure_file(path_array, content="")
-    filename = File.join(*path_array)
-    FileUtils.mkdir_p(File.dirname(filename))
-    File.write(filename, content)
-  end
   def init_rspec
     FileUtils.cd(File.join(package_relative_path)) do
       system('rspec --init')
@@ -85,6 +95,13 @@ class Rdm::PackageGenerator
     end
   end
 
+private
+  def ensure_file(path_array, content="")
+    filename = File.join(*path_array)
+    FileUtils.mkdir_p(File.dirname(filename))
+    File.write(filename, content)
+  end
+
   def copy_template(filepath)
     from = filepath
     to   = File.join(current_dir, package_relative_path, filepath)
@@ -97,15 +114,5 @@ class Rdm::PackageGenerator
     template_path    = Pathname.new(File.join(File.dirname(__FILE__), "templates")).join(file)
     template_content = File.read(template_path)
     ErbalT.render(template_content, locals)
-  end
-
-  def check_preconditions!
-    if Dir.exist?(File.join(current_dir, package_relative_path))
-      raise Rdm::Errors::PackageDirExists, "package dir exists"
-    end
-
-    if rdm_source.package_paths.include?(package_relative_path)
-      raise Rdm::Errors::PackageExists, "package exists"
-    end
   end
 end
