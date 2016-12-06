@@ -34,22 +34,23 @@ class Rdm::PackageGenerator
     check_preconditions!
     package_subdir_name = Rdm.settings.send(:package_subdir_name)
 
+    Dir.chdir(current_dir) do
+      FileUtils.mkdir_p(File.join(package_relative_path, package_subdir_name, package_name))
+      FileUtils.touch(File.join(package_relative_path, package_subdir_name, "#{package_name}.rb"))
+      FileUtils.touch(File.join(package_relative_path, '.gitignore'))
 
-    FileUtils.mkdir_p(File.join(current_dir, package_relative_path, package_subdir_name, package_name))
-    FileUtils.touch(File.join(current_dir, package_relative_path, package_subdir_name, "#{package_name}.rb"))
-    FileUtils.touch(File.join(current_dir, package_relative_path, '.gitignore'))
+      if !skip_rspec
+        init_rspec
+      end
 
-    if !skip_rspec
-      init_rspec
+      File.write(File.join(package_relative_path, 'Package.rb'), package_rb_template)
     end
-
-    File.write(File.join(current_dir, package_relative_path, 'Package.rb'), package_rb_template)
     new_source_content = source_content + "\npackage '#{package_relative_path}'"
     File.write(source_path, new_source_content)
   end
 
   def init_rspec
-    FileUtils.cd(File.join(current_dir, package_relative_path)) do
+    FileUtils.cd(File.join(package_relative_path)) do
       system('rspec --init')
     end
   end
