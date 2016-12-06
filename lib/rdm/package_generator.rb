@@ -92,6 +92,7 @@ class Rdm::PackageGenerator
       copy_template(".rspec")
       copy_template(".gitignore")
       copy_template("spec/spec_helper.rb")
+      copy_template("bin/console_irb", "bin/console")
     end
   end
 
@@ -102,12 +103,13 @@ private
     File.write(filename, content)
   end
 
-  def copy_template(filepath)
-    from = filepath
-    to   = File.join(current_dir, package_relative_path, filepath)
+  def copy_template(filepath, target_name=nil)
+    from          = filepath
+    target_name ||= filepath
+    to            = File.join(current_dir, package_relative_path, target_name)
     FileUtils.mkdir_p(File.dirname(to))
     # copy_entry(src, dest, preserve = false, dereference_root = false, remove_destination = false)
-    FileUtils.copy_entry(from, to, false, false, true)
+    FileUtils.copy_entry(from, to, true, false, true)
   end
 
   def template_content(file, locals={})
