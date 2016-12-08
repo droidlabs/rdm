@@ -1,0 +1,244 @@
+#!/usr/bin/env ruby
+
+## # run own tests:
+## $ TEST_RUN=1 tests/run
+
+## # run application tests:
+## $ tests/run
+
+## # run package tests:
+## $ tests/run commands
+
+## # run spec in a package:
+## $ tests/run commands some_spec.rb
+
+ENV['RUBY_ENV'] = 'test'
+require 'rdm'
+
+module SpecRunner
+  class InputParams
+    attr_accessor :package_name, :spec_matcher, :run_all
+    def initialize(argv)
+      @package_name = argv[0].to_s if !argv[0].nil?
+      @spec_matcher = argv[1].to_s if !argv[1].nil?
+      @run_all      = !@package_name
+    end
+  end
+
+  class CommandParams
+    attr_accessor :package_name, :package_path, :spec_matcher, :spec_count, :command
+  end
+
+  class CommandGenerator
+    attr_accessor :package_name, :package_path, :spec_matcher
+    def initialize(package_name:, package_path:, spec_matcher:)
+      @package_name = package_name
+      @package_path = package_path
+      @spec_matcher = spec_matcher
+    end
+
+    def spec_count
+      Dir[File.join(package_path, 'spec/**/*_spec.rb')].size
+    end
+
+    def command
+      "print_message(
+          '**** Package: #{package_name}  *****') \\
+            && system('cd #{package_path} \\
+            && bundle exec rspec --color --tty #{spec_matcher}', out: $stdout, err: :out)"
+    end
+
+    def generate
+      CommandParams.new.tap do |cp|
+        cp.package_name = package_name
+        cp.package_path = package_path
+        cp.command      = command
+        cp.spec_count   = spec_count
+      end
+    end
+  end
+
+  class PackageFetcher
+    def packages
+      Rdm::SourceParser.read_and_init_source(rdm_packages_path).packages
+    end
+
+    def rdm_packages_path
+      File.join(app_path, 'Rdm.packages')
+    end
+
+    def app_path
+      File.join(File.dirname(__FILE__), '..')
+    end
+  end
+
+  class View
+    def packages_menu(prepared_command_params)
+      prepared_command_params
+      .sort_by{|x| x.package_path }
+      .map{|x| " - #{x.package_name} (#{x.spec_count} spec files)"}
+      .join("\n")
+    end
+
+    def package_not_found_message(package_name, prepared_command_params)
+      "Package #{package_name} not found! \nPossible packages:\n\n#{packages_menu(prepared_command_params)}"
+    end
+
+    def missing_specs_message(skipped_packages)
+      "NO SPECS FOUND FOR PACKAGES: \n#{skipped_packages.map{|x| " - #{x}"}.join("\n")}\n\n**** SPECS *****: "
+    end
+
+    def no_specs_for_package(package_name)
+      "Package #{package_name} has no specs to execute!"
+    end
+  end
+
+  class Runner
+    attr_accessor :input_params
+    attr_accessor :skipped_packages
+    attr_accessor :prepared_command_params
+    attr_accessor :command
+    def initialize(input_params)
+      @input_params     = input_params
+      @skipped_packages = []
+    end
+
+    def run
+      prepare!
+      check_input_params!
+      display_missing_specs
+      execute_command
+    end
+
+    def packages
+      @packages ||= PackageFetcher.new.packages
+    end
+
+    def view
+      @view ||= View.new
+    end
+
+    def print_message(msg)
+      puts msg
+      true
+    end
+
+    def exit_with_message(msg)
+      print_message(msg)
+      exit 1
+    end
+
+    def check_input_params!
+      if input_params.package_name
+        if not is_package_included?(input_params.package_name)
+          exit_with_message(
+            view.package_not_found_message(input_params.package_name, prepared_command_params)
+          )
+        end
+
+        if skipped_packages.include?(input_params.package_name)
+          exit_with_message(
+            view.no_specs_for_package(input_params.package_name)
+          )
+        end
+      end
+    end
+
+    def is_package_included?(package_name)
+      prepared_command_params.select{|x|
+        x.package_name == package_name
+      }.size > 0
+    end
+
+    def prepare!
+      prepared_command_params = []
+      skipped_packages        = []
+      command                 = nil
+      prepare_command_params
+      prepare_skipped_packages
+      prepare_command
+    end
+
+    def prepare_command_params
+      @prepared_command_params ||= begin
+        packages.map{|name, package|
+          CommandGenerator.new(
+            package_name: package.name, package_path: package.path, spec_matcher: spec_matcher
+          ).generate
+        }
+      end
+    end
+
+    def prepare_skipped_packages
+      prepared_command_params
+        .select{|cp| cp.spec_count == 0}
+        .map{|cp|  skipped_packages << cp.package_name}
+    end
+
+    def prepare_command
+      @command ||= begin
+        if input_params.package_name
+          prepare_single_package_command(input_params.package_name)
+        else
+          prepare_command_for_packages(prepared_command_params)
+        end
+      end
+    end
+
+    def prepare_single_package_command(package_name)
+      selected = prepared_command_params.select{|cmd_params|
+        cmd_params.package_name == package_name
+      }
+      prepare_command_for_packages(selected)
+    end
+
+    def prepare_command_for_packages(packages_command_params)
+      packages_command_params.select{|cmd_params|
+        cmd_params.spec_count > 0
+      }.sort_by{|cmd_params|
+        - cmd_params.spec_count
+      }.map{|cmd_params|
+        cmd_params.command
+      }.join(" && ")
+    end
+
+    def display_missing_specs
+      if !skipped_packages.empty?
+        print_message view.missing_specs_message(skipped_packages)
+      end
+    end
+
+    def execute_command
+      eval(command)
+      if !$?.success?
+        exit(1)
+      end
+    end
+
+    def spec_matcher
+      input_params.spec_matcher || ""
+    end
+  end
+
+  def self.run
+    input_params = InputParams.new(ARGV.clone)
+    Runner.new(input_params).run
+  end
+end
+
+unless ENV["TEST_RUN"]
+  SpecRunner.run
+else
+  require "minitest/autorun"
+  describe SpecRunner::Runner do
+    before do
+      @runner = SpecRunner::Runner.new({})
+    end
+
+    describe "works " do
+      it "assert true" do
+        assert 2 == 2
+      end
+    end
+  end
+end

@@ -5,5 +5,8 @@ module Rdm
 
     class PackageDirExists < StandardError
     end
+
+    class SourceFileDoesNotExist < StandardError
+    end
   end
 end

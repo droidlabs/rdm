@@ -49,6 +49,7 @@ class Rdm::PackageGenerator
 
     Dir.chdir(current_dir) do
       ensure_file([package_relative_path, '.gitignore'])
+      ensure_file([package_relative_path, package_subdir_name, package_name, '.gitignore'])
       ensure_file(
         [package_relative_path, package_subdir_name, "#{package_name}.rb"],
         template_content("main_module_file.rb.erb", {package_name_camelized: package_name.camelize})

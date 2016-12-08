@@ -8,6 +8,7 @@ class Rdm::PackageImporter
     # @param group [Optional<String>] Dependency group
     # @return [Rdm::Package] Current package
     def import_file(package_path, group: nil)
+      ensure_updated(package_path)
       if File.directory?(package_path)
         package_path = File.join(package_path, Rdm::PACKAGE_LOCK_FILENAME)
       end
@@ -23,6 +24,10 @@ class Rdm::PackageImporter
       import_package(package.name, source: source, group: group.to_s)
 
       package
+    end
+
+    def ensure_updated(package_path)
+      Rdm::AutoUpdater.update(package_path)
     end
 
     # Import package and initialize module
