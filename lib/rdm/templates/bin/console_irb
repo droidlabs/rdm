@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 require "bundler/setup"
 require "rdm"
+
+ENV["RUBY_ENV"] ||= "development"
 Rdm.init(File.expand_path('../../', __FILE__))
+
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
