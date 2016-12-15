@@ -16,6 +16,8 @@ module Rdm
   require "rdm/config_scope"
   require "rdm/config_manager"
   require "rdm/auto_updater"
+  require "rdm/cli/gen_package"
+  require "rdm/cli/init"
 
   class << self
     # Initialize current package using Package.rb
