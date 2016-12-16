@@ -4,6 +4,7 @@ module Rdm
   PACKAGE_LOCK_FILENAME = "#{PACKAGE_FILENAME}.lock"
 
   require "rdm/errors"
+  require "rdm/support/render"
   require "rdm/settings"
   require "rdm/source"
   require "rdm/source_parser"

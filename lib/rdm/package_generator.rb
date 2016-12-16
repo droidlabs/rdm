@@ -2,20 +2,6 @@ require 'fileutils'
 require 'pathname'
 require "active_support/inflector"
 
-
-# http://stackoverflow.com/questions/8954706/render-an-erb-template-with-values-from-a-hash
-require 'erb'
-require 'ostruct'
-class ErbalT < OpenStruct
-  def self.render(template, locals)
-    self.new(locals).render(template)
-  end
-  def render(template)
-    ERB.new(template).result(binding)
-  end
-end
-
-
 class Rdm::PackageGenerator
   class << self
     def generate_package(current_dir, package_name, package_relative_path, skip_rspec = false)
@@ -116,6 +102,6 @@ private
   def template_content(file, locals={})
     template_path    = Pathname.new(File.join(File.dirname(__FILE__), "templates")).join(file)
     template_content = File.read(template_path)
-    ErbalT.render(template_content, locals)
+    Rdm::Support::Render.render(template_content, locals)
   end
 end
