@@ -5,6 +5,7 @@ module Rdm
 
   require "rdm/errors"
   require "rdm/support/render"
+  require "rdm/support/template"
   require "rdm/settings"
   require "rdm/source"
   require "rdm/source_parser"
