@@ -8,12 +8,16 @@ describe Rdm::SourceParser do
       File.join(File.expand_path("../../", __FILE__), 'fixtures')
     }
 
+    let(:source_path) {
+      File.join(fixtures_path, "SampleSource.rb")
+    }
+
     let(:source_content) {
-      File.read(File.join(fixtures_path, "SampleSource.rb"))
+      File.read(source_path)
     }
 
     before :each do
-      @source = subject.parse(source_content)
+      @source = subject.read_and_init_source(source_path)
     end
 
     it "returns Source object" do
