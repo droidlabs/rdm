@@ -40,10 +40,15 @@ class RdmCliRunner
       c.syntax = 'rdm gen.package PACKAGE_NAME [options]'
       c.description = 'generates a package scaffold in specified folder'
       c.summary = '> ' + c.description
-      c.example 'generate commands package',           'rdm gen.package commands --path core/application/commands'
-      c.example 'generate pack/age package',           'rdm gen.package pack/age --path subsystems/package'
+      c.example 'generate commands package',
+                  'rdm gen.package commands --path core/application/commands'
+      c.example 'generate pack/age package',
+                  'rdm gen.package pack/age --path subsystems/package'
+      c.example 'generate events package within /some/other/path folder',
+                  'rdm gen.package events --path core/domain/events --current_dir /some/other/path'
       c.example 'generate auth package without tests', 'rdm gen.package auth --path subsystems/auth --skip-tests'
       c.option '--path [RELATIVE_PATH]', String, 'Path for the package'
+      c.option '--current_dir [ROOT_DIR]', String, 'Path for the root folder'
       c.option '--skip-test', '--skip-tests', 'Don\'t generate test files'
       c.action do |args, options|
         package_name = (args.first || "")
