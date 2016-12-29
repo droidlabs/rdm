@@ -9,6 +9,7 @@ module Rdm
   require "rdm/settings"
   require "rdm/source"
   require "rdm/source_parser"
+  require "rdm/source_locator"
   require "rdm/source_installer"
   require "rdm/package"
   require "rdm/package_parser"
