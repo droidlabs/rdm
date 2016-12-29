@@ -12,19 +12,18 @@ class Rdm::PackageImporter
     end
 
     # Import package and initialize module
-    def import_package(package_name, source:, imported_packages: [], imported_configs: [], group: nil)
-      instance.import_package(package_name,
-        source: source,
-        imported_packages: imported_packages,
-        imported_configs: imported_configs,
-        group: group)
+    def import_package(package_name, source:, group: nil)
+      instance.import_package(package_name, source: source, group: group)
     end
 
     def instance
       @instance ||= self.new
     end
-  end
 
+    def reset!
+      @instance = nil
+    end
+  end
 
   # Initialize current package using Package.rb
   # @param package_path [String] Package.rb file path
@@ -35,7 +34,7 @@ class Rdm::PackageImporter
     if File.directory?(package_path)
       package_path = File.join(package_path, Rdm::PACKAGE_LOCK_FILENAME)
     end
-    package_content = File.open(package_path).read
+    package_content = File.read(package_path)
     package         = package_parser.parse(package_content)
     source          = read_and_init_source(package.source)
 
@@ -52,9 +51,17 @@ class Rdm::PackageImporter
     Rdm::AutoUpdater.update(package_path)
   end
 
+  def imported_packages
+    @imported_packages ||= []
+  end
+
+  def imported_configs
+    @imported_configs ||= []
+  end
+
   # Import package and initialize module
-  def import_package(package_name, source:, imported_packages: [], imported_configs: [], group: nil)
-    return if imported_packages.include?(package_name.to_s)
+  def import_package(package_name, source:, group: nil)
+    return imported_packages if imported_packages.include?(package_name.to_s)
     package = source.packages[package_name.to_s]
 
     if package == nil
@@ -66,15 +73,12 @@ class Rdm::PackageImporter
 
     # also import local dependencies
     package.local_dependencies(group).each do |dependency|
-      import_package(dependency, source: source, imported_packages: imported_packages)
+      import_package(dependency, source: source)
     end
 
     # also import config dependencies
     package.config_dependencies(group).each do |dependency|
-      unless imported_configs.include?(dependency)
-        import_config(dependency, source: source)
-      end
-      imported_configs << dependency
+      import_config(dependency, source: source)
     end
 
     # only after importing dependencies - require package itself
@@ -87,7 +91,6 @@ class Rdm::PackageImporter
         raise e
       end
     end
-
     imported_packages
   end
 
@@ -123,11 +126,13 @@ class Rdm::PackageImporter
   end
 
   def import_config(config_name, source:)
+    return if imported_configs.include?(config_name)
     config = source.configs[config_name.to_s]
     if config == nil
       raise "Can't find config with name: #{config_name.to_s}"
     end
     Rdm.config.load_config(config, source: source)
+    imported_configs << config_name
   end
 
   def read_and_init_source(source_path)
