@@ -31,10 +31,10 @@ module Rdm
 
       def generate
         Rdm::Gen::Package.generate_package(
-          self.current_dir,
-          self.package_name,
-          self.package_relative_path,
-          self.skip_tests
+          current_dir: current_dir,
+          package_name: package_name,
+          package_relative_path: package_relative_path,
+          skip_tests: skip_tests
         )
       end
 

@@ -7,7 +7,7 @@ module Rdm
   module Gen
     class Package
       class << self
-        def generate_package(current_dir, package_name, package_relative_path, skip_rspec = false)
+        def generate_package(current_dir:, package_name:, package_relative_path:, skip_rspec: false)
           Rdm::Gen::Package.new(
             current_dir, package_name, package_relative_path, skip_rspec
           ).create
