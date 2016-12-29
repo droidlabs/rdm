@@ -30,7 +30,7 @@ module Rdm
       end
 
       def generate
-        Rdm::PackageGenerator.generate_package(
+        Rdm::Gen::Package.generate_package(
           self.current_dir,
           self.package_name,
           self.package_relative_path,

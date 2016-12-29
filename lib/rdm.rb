@@ -12,12 +12,12 @@ module Rdm
   require "rdm/source_installer"
   require "rdm/package"
   require "rdm/package_parser"
-  require "rdm/package_generator"
   require "rdm/package_importer"
   require "rdm/config"
   require "rdm/config_scope"
   require "rdm/config_manager"
   require "rdm/auto_updater"
+  require "rdm/gen/package"
   require "rdm/cli/gen_package"
   require "rdm/cli/init"
 
