@@ -49,4 +49,18 @@ describe Rdm::Gen::Package do
       end
     end
   end
+
+  context "prevents double execution" do
+    after :all do
+      clean_tmp
+    end
+
+    it "raises on second project generation" do
+      fresh_project
+      generate_project!
+      expect {
+        generate_project!
+      }.to raise_error(Rdm::Errors::PackageDirExists)
+    end
+  end
 end
