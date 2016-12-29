@@ -3,7 +3,7 @@ require "spec_helper"
 describe Rdm::Gen::Package do
   include SetupHelper
 
-  def generate_project!
+  def generate_package!
     Rdm::Gen::Package.generate_package(
       current_dir: project_dir,
       package_name: "some",
@@ -23,7 +23,7 @@ describe Rdm::Gen::Package do
   context "sample package" do
     before :all do
       fresh_project
-      generate_project!
+      generate_package!
     end
 
     after :all do
@@ -57,9 +57,9 @@ describe Rdm::Gen::Package do
 
     it "raises on second project generation" do
       fresh_project
-      generate_project!
+      generate_package!
       expect {
-        generate_project!
+        generate_package!
       }.to raise_error(Rdm::Errors::PackageDirExists)
     end
   end
