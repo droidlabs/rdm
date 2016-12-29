@@ -1,4 +1,5 @@
 require 'rdm'
+require "byebug"
 
 Rdm.setup do
   silence_missing_package_file(true)
