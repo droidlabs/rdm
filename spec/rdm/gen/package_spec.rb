@@ -55,12 +55,21 @@ describe Rdm::Gen::Package do
       clean_tmp
     end
 
-    it "raises on second project generation" do
+    it "raises on second package generation" do
       fresh_project
       generate_package!
       expect {
         generate_package!
       }.to raise_error(Rdm::Errors::PackageDirExists)
+    end
+
+    it "raises on second package generation, if Rdm.packages includes the package (and folder does not exist)" do
+      fresh_project
+      generate_package!
+      FileUtils.rm_rf(File.join(project_dir, "domain/some"))
+      expect {
+        generate_package!
+      }.to raise_error(Rdm::Errors::PackageExists)
     end
   end
 end
