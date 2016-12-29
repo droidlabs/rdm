@@ -23,11 +23,13 @@ module Rdm
       end
 
       def rdm_source
-        @rdm_source ||= Rdm::SourceParser.parse(source_content)
+        @rdm_source ||= Rdm::SourceParser.new(source_path).parse_source_content
       end
+
       def source_path
         File.join(current_dir, Rdm::SOURCE_FILENAME)
       end
+
       def source_content
         File.open(source_path).read
       end

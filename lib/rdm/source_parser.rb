@@ -14,12 +14,11 @@ class Rdm::SourceParser
     @source_path = source_path
   end
 
-
   # Read source file, parse and init it's packages and configs
   # @param source_path [String] Source file path
   # @return [Rdm::Source] Source
   def read_and_init_source
-    source = parse(source_content, root_path: root_path)
+    source = parse_source_content
 
     # Setup Rdm
     if block = source.setup_block
@@ -30,6 +29,14 @@ class Rdm::SourceParser
     init_and_set_packages(source)
     init_and_set_configs(source)
     source.init_with(packages: packages, configs: configs)
+    source
+  end
+
+  # Parse source file and return Source object
+  # @return [Rdm::Source] Source
+  def parse_source_content
+    source = Rdm::Source.new(root_path: root_path)
+    source.instance_eval(source_content)
     source
   end
 
@@ -62,23 +69,6 @@ class Rdm::SourceParser
     end
   end
 
-  # Parse source file and return Source object
-  # @param source_content [String] Source file content
-  # @return [Rdm::Source] Source
-  def parse(source_content, root_path: nil)
-    source = Rdm::Source.new(root_path: root_path)
-    source.instance_eval(source_content)
-    source
-  end
-
-  def root_path
-    File.dirname(source_path)
-  end
-
-  def source_content
-    File.read(source_path)
-  end
-
   # Make sure that all required settings are in place
   def validate_rdm_settings!
     if settings.read_setting(:role).nil?
@@ -91,6 +81,15 @@ class Rdm::SourceParser
         "Please add `config_path` setting in Rdm.packages. E.g. \r\n setup do\r\n  config_path :configs_dir/:config_name/default.yml'\r\n end"
       )
     end
+  end
+
+  def root_path
+    File.dirname(source_path)
+  end
+
+  # [String] Source file content
+  def source_content
+    @source_content ||= File.read(source_path)
   end
 
   def packages
