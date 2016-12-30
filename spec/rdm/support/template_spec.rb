@@ -10,11 +10,11 @@ describe "Rdm::Support::Template" do
 
   describe ":content" do
     it "renders template content without locals" do
-      expect(template.content(".rspec")).to eq("--color\n--require spec_helper\n")
+      expect(template.content("package/.rspec")).to eq("--color\n--require spec_helper\n")
     end
 
     it "renders template content without locals" do
-      expect(template.content("main_module_file.rb.erb", {package_name_camelized: "Some"})).to eq("module Some\n\nend\n")
+      expect(template.content("package/main_module_file.rb.erb", {package_name_camelized: "Some"})).to eq("module Some\n\nend\n")
     end
   end
 end

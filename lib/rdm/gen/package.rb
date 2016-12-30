@@ -111,7 +111,7 @@ module Rdm
       end
 
       def templates_path
-        Pathname.new(File.join(File.dirname(__FILE__), "..", "templates"))
+        Pathname.new(File.join(File.dirname(__FILE__), "..", "templates/package"))
       end
     end
   end
