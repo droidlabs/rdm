@@ -21,8 +21,17 @@ module SetupHelper
     FileUtils.cp_r(example_src, tmp_dir)
   end
 
+  def fresh_empty_project
+    clean_tmp
+    FileUtils.mkdir_p(empty_project_dir)
+  end
+
   def project_dir
     File.join(tmp_dir, "example")
+  end
+
+  def empty_project_dir
+    File.join(tmp_dir, "empty_project")
   end
 
   def tmp_dir

@@ -19,6 +19,7 @@ module Rdm
   require "rdm/config_manager"
   require "rdm/auto_updater"
   require "rdm/gen/package"
+  require "rdm/gen/init"
   require "rdm/cli/gen_package"
   require "rdm/cli/init"
 
