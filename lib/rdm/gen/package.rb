@@ -69,7 +69,7 @@ module Rdm
       end
 
       def append_package_to_rdm_packages
-        new_source_content = source_content + "\npackage '#{package_relative_path}'"
+        new_source_content = source_content.strip + "\npackage '#{package_relative_path}'"
         File.write(source_path, new_source_content)
       end
 
