@@ -7,14 +7,16 @@ module Rdm
   module Gen
     class Init
       class << self
-        def generate(current_dir:)
-          Rdm::Gen::Init.new(current_dir: current_dir).generate
+        def generate(current_dir:, test: "rspec", console: "irb")
+          Rdm::Gen::Init.new(current_dir: current_dir, test: test, console: console).generate
         end
       end
 
-      attr_accessor :current_dir
-      def initialize(current_dir:)
+      attr_accessor :current_dir, :test, :console
+      def initialize(current_dir:, test:, console:)
         @current_dir = File.expand_path(current_dir)
+        @test        = test
+        @console     = console
       end
 
       def generate
