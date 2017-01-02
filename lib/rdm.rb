@@ -4,18 +4,24 @@ module Rdm
   PACKAGE_LOCK_FILENAME = "#{PACKAGE_FILENAME}.lock"
 
   require "rdm/errors"
+  require "rdm/support/render"
+  require "rdm/support/template"
   require "rdm/settings"
   require "rdm/source"
   require "rdm/source_parser"
+  require "rdm/source_locator"
   require "rdm/source_installer"
   require "rdm/package"
   require "rdm/package_parser"
-  require "rdm/package_generator"
   require "rdm/package_importer"
   require "rdm/config"
   require "rdm/config_scope"
   require "rdm/config_manager"
   require "rdm/auto_updater"
+  require "rdm/gen/package"
+  require "rdm/gen/init"
+  require "rdm/cli/gen_package"
+  require "rdm/cli/init"
 
   class << self
     # Initialize current package using Package.rb

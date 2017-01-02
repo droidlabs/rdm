@@ -17,6 +17,10 @@ describe Rdm::PackageImporter do
     source
   end
 
+  before do
+    Rdm::PackageImporter.reset!
+  end
+
   describe "#import_package" do
     subject { Rdm::PackageImporter }
 

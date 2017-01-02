@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+# -*- encoding: utf-8 -*-
+
+require 'rubygems'
+require 'bundler/setup'
+require 'commander'
+require 'rdm'
+
+class RdmCliRunner
+  TESTFRAMEWORKS = %w[minitest rspec]
+  CONSOLES       = %w[irb pry]
+  include Commander::Methods
+
+  def run
+    program :name, 'RDM'
+    program :version, Rdm::VERSION
+    program :description, 'Ruby Dependencies Manager'
+
+    command :init do |c|
+      c.syntax = 'rdm init, [options]'
+      c.description = 'generates project scaffold in current folder'
+      c.summary = '> ' + c.description
+      c.example 'generate scaffold with minitest', 'rdm init --test=minitest'
+      c.example 'generate scaffold with rspec',    'rdm init --test=rspec'
+      c.example 'generate scaffold with irb',      'rdm init --console=irb'
+      c.example 'generate scaffold with pry',      'rdm init --console=pry'
+      c.option '--test FRAMEWORK', TESTFRAMEWORKS, "select test framework: #{TESTFRAMEWORKS.join(", ")}"
+      c.option '--console CONSOLE', CONSOLES, "select console: #{CONSOLES.join(", ")}"
+      c.action do |args, options|
+        defaults = {
+          test:    "rspec",
+          console: "irb"
+        }
+        options_with_defaults = defaults.merge!(options.__hash__)
+        Rdm::CLI::Init.run(options_with_defaults)
+      end
+    end
+
+    command :"gen.package" do |c|
+      c.syntax = 'rdm gen.package PACKAGE_NAME [options]'
+      c.description = 'generates a package scaffold in specified folder'
+      c.summary = '> ' + c.description
+      c.example 'generate commands package',
+                  'rdm gen.package commands --path core/application/commands'
+      c.example 'generate pack/age package',
+                  'rdm gen.package pack/age --path subsystems/package'
+      c.example 'generate events package within /some/other/path folder',
+                  'rdm gen.package events --path core/domain/events --current_dir /some/other/path'
+      c.example 'generate auth package without tests', 'rdm gen.package auth --path subsystems/auth --skip-tests'
+      c.option '--path [RELATIVE_PATH]', String, 'Path for the package'
+      c.option '--current_dir [ROOT_DIR]', String, 'Path for the root folder'
+      c.option '--skip-test', '--skip-tests', 'Don\'t generate test files'
+      c.action do |args, options|
+        package_name = (args.first || "")
+        defaults = {
+          skip_tests:   false,
+          current_dir:  `pwd`.chomp,
+          package_name: package_name,
+          path:         package_name.downcase.gsub(/\s+/, '_')
+        }
+        options_with_defaults = defaults.merge!(options.__hash__)
+        Rdm::CLI::GenPackage.run(options_with_defaults)
+      end
+    end
+
+    run!
+  end
+end
+
+RdmCliRunner.new.run if $0 == __FILE__
