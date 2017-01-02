@@ -2,8 +2,8 @@ class Rdm::SourceInstaller
   class << self
     # Install source by locking all it's specs
     def install(source_path)
-      source_content = File.open(source_path).read
-      source_parser.parse(source_content).package_paths.each do |package_path|
+      source = Rdm::SourceParser.new(source_path).parse_source_content
+      source.package_paths.each do |package_path|
         full_path = File.join(File.dirname(source_path), package_path, Rdm::PACKAGE_FILENAME)
         lock(full_path, source_path: source_path, package_path: package_path)
       end
@@ -26,10 +26,5 @@ class Rdm::SourceInstaller
     rescue Errno::ENOENT
       puts "Can't find package: #{package_path}"
     end
-
-    private
-      def source_parser
-        Rdm::SourceParser
-      end
   end
 end
