@@ -1,7 +1,7 @@
 ### RDM (Ruby Dependecy Manager)
 
 
-[![Build Status](https://travis-ci.org/ddd-ruby/rdm.svg?branch=feature/better_cli)](http://travis-ci.org/ddd-ruby/rdm)
+[![Build Status](https://travis-ci.org/ddd-ruby/rdm.svg?branch=master)](http://travis-ci.org/ddd-ruby/rdm)
 
 
 Ruby dependency manager, helps managing local package dependencies.
