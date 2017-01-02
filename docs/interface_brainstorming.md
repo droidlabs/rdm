@@ -13,3 +13,19 @@ rdm -v
 
 rdm --help
 rdm -h
+
+
+
+### RDM public API:
+
+
+Rdm.init("some/Package.rb")
+Rdm.init("some/Package.rb", :test)
+
+
+
+# Rdm::SourceParser.read_and_init_source(rdm_packages_path).packages
+
+Rdm.source
+# instance of Rdm::Source
+Rdm.packages

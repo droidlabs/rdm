@@ -8,7 +8,7 @@ class Rdm::PackageImporter
     # @param group [Optional<String>] Dependency group
     # @return [Rdm::Package] Current package
     def import_file(package_path, group: nil)
-      instance.import_file(package_path, group)
+      instance.import_file(package_path, group: group)
     end
 
     # Import package and initialize module
@@ -34,6 +34,7 @@ class Rdm::PackageImporter
     if File.directory?(package_path)
       package_path = File.join(package_path, Rdm::PACKAGE_LOCK_FILENAME)
     end
+
     package_content = File.read(package_path)
     package         = package_parser.parse(package_content)
     source          = read_and_init_source(package.source)
