@@ -20,4 +20,23 @@ describe Rdm do
       expect(package.name).to eq("web")
     end
   end
+
+  context "settings" do
+    it "returns settings" do
+      expect(Rdm.settings).to be_a(Rdm::Settings)
+    end
+  end
+
+  context "config" do
+    it "returns config" do
+      expect(Rdm.config).to be_a(Rdm::ConfigManager)
+    end
+  end
+
+  context "root=" do
+    it "sets root" do
+      Rdm.root = "/some/path"
+      expect(Rdm.root).to eq("/some/path")
+    end
+  end
 end
