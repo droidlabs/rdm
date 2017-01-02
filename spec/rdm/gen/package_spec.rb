@@ -8,7 +8,7 @@ describe Rdm::Gen::Package do
       current_dir: project_dir,
       package_name: "some",
       package_relative_path: "domain/some",
-      skip_rspec: true
+      skip_rspec: false
     )
   end
 

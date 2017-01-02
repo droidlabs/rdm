@@ -74,16 +74,15 @@ module Rdm
       end
 
       def init_rspec
-        FileUtils.cd(File.join(package_relative_path)) do
-          system('rspec --init')
+        Dir.chdir(templates_path) do
+          copy_template(".rspec")
+          copy_template("spec/spec_helper.rb")
         end
       end
 
       def move_templates
         Dir.chdir(templates_path) do
-          copy_template(".rspec")
           copy_template(".gitignore")
-          copy_template("spec/spec_helper.rb")
           copy_template("bin/console_irb", "bin/console")
         end
       end
