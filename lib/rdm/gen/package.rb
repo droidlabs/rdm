@@ -7,19 +7,19 @@ module Rdm
   module Gen
     class Package
       class << self
-        def generate_package(current_dir:, package_name:, package_relative_path:, skip_rspec: false)
+        def generate(current_dir:, package_name:, package_relative_path:, skip_tests: false)
           Rdm::Gen::Package.new(
-            current_dir, package_name, package_relative_path, skip_rspec
+            current_dir, package_name, package_relative_path, skip_tests
           ).create
         end
       end
 
-      attr_accessor :current_dir, :package_name, :package_relative_path, :skip_rspec
-      def initialize(current_dir, package_name, package_relative_path, skip_rspec = false)
+      attr_accessor :current_dir, :package_name, :package_relative_path, :skip_tests
+      def initialize(current_dir, package_name, package_relative_path, skip_tests = false)
         @current_dir           = File.expand_path(current_dir)
         @package_name          = package_name
         @package_relative_path = package_relative_path
-        @skip_rspec            = skip_rspec
+        @skip_tests            = skip_tests
       end
 
       def rdm_source
@@ -49,7 +49,7 @@ module Rdm
             [package_relative_path, 'Package.rb'],
             template_content("package.rb.erb", {package_name: package_name})
           )
-          if !skip_rspec
+          if !skip_tests
             init_rspec
           end
 

@@ -16,7 +16,6 @@ module Rdm
       end
 
       def run
-        puts "running... with #{self.inspect}"
         check_preconditions!
         begin
           generate
@@ -30,7 +29,7 @@ module Rdm
       end
 
       def generate
-        Rdm::Gen::Package.generate_package(
+        Rdm::Gen::Package.generate(
           current_dir: current_dir,
           package_name: package_name,
           package_relative_path: package_relative_path,

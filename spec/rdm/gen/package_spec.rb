@@ -4,11 +4,11 @@ describe Rdm::Gen::Package do
   include SetupHelper
 
   def generate_package!
-    Rdm::Gen::Package.generate_package(
+    Rdm::Gen::Package.generate(
       current_dir: project_dir,
       package_name: "some",
       package_relative_path: "domain/some",
-      skip_rspec: false
+      skip_tests: false
     )
   end
 
