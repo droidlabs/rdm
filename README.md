@@ -65,7 +65,10 @@ end
 
 ## Rough Idea
 
-`Rdm` positions itself somewhere between Ruby gems and Rails engines. It allows you to define clear boundaries in your application by splitting it up in application-level, framework-agnostic packages. Each package defines in its `Package.rb` file clear dependencies on other packages / gems for each environment. When you `boot` a package (eg. by loading it in IRB), only defined dependencies are available to you. This is done by letting `Rdm` manage the Ruby-`$LOAD_PATH` behind the scenes for you.
+`Rdm` positions itself somewhere between Ruby gems and Rails engines. It allows you to define clear boundaries in your application by splitting it up in application-level, framework-agnostic packages. Each package defines in its `Package.rb` file clear dependencies on other packages / gems for each environment.
+
+When you `boot` a package (eg. by loading it in IRB), only defined dependencies are available to you. This is done by letting `Rdm` manage the Ruby-`$LOAD_PATH` behind the scenes for you.
+
 All packages share the same Gemfile, but get access to only explicitly defined subset of gems / packages from the `Package.rb` file
 
 When needed you can ask `Rdm` to programmatically give you dependencies for a particular package and use it. At `DroidLabs` we use this to generate very lightweight Dockerimages with just the necessary dependencies for each application.
