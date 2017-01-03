@@ -76,14 +76,14 @@ When needed you can ask `Rdm` to programmatically give you dependencies for a pa
 
 ## Rules of RDM to structure big Ruby applications
 
-1. define all your gems in `Gemfile` to be lazily loaded, like
+- define all your gems in `Gemfile` to be lazily loaded, like
 
 ```ruby
 gem 'sequel',     '4.41.0',  require: false
 ```
-1. name your classes / modules after Rails-established conventions, so files are loaded only on demand, when encountering a new class / module constant (const_missing from ActiveSupport)
+- name your classes / modules after Rails-established conventions, so files are loaded only on demand, when encountering a new class / module constant (const_missing from ActiveSupport)
 
-1. use a Dependency Injection library with lazy-loading support, we recommend `smart_ioc`
+- use a Dependency Injection library with lazy-loading support, we recommend `smart_ioc`
 
 
 ## Loading `Rdm`
