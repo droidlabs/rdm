@@ -90,3 +90,8 @@ Setup RDM in boot.rb or spec_helper.rb or any other initializer. Rdm.init should
 require 'rdm'
 Rdm.init(File.expand_path("../../", __FILE__), :test)
 ```
+
+
+## Examples
+
+- [small dummy application](tree/master/example)
