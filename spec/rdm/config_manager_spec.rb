@@ -3,6 +3,42 @@ require 'spec_helper'
 describe Rdm::ConfigManager do
   subject { Rdm::ConfigManager.new }
 
+  let(:example_path) {
+    Pathname.new(
+      File.join(File.expand_path('../../../', __FILE__), 'example')
+    )
+  }
+  let(:config_manager) { Rdm::ConfigManager.new }
+  let(:source_file) { example_path.join('Rdm.packages').to_s }
+  let(:source) { Rdm::SourceParser.read_and_init_source(source_file)}
+
+  describe "#load_config" do
+    context "config.default_path" do
+      let(:config){ Rdm::Config.build(name: "name", default_path: "configs/app/default.yml", role_path: nil) }
+      it "works" do
+        config_manager.load_config(config, source: source)
+      end
+    end
+
+    context "config.role_path" do
+      let(:config){ Rdm::Config.build(name: "name", default_path: nil, role_path: "configs/app/production.yml") }
+      it "works" do
+        config_manager.load_config(config, source: source)
+      end
+    end
+  end
+
+  describe "#update_using_file" do
+    context "file missing and raise_if_missing=true" do
+      let(:config){ Rdm::Config.build(name: "name", default_path: "configs/app/not-there.yml", role_path: nil) }
+      it "raises" do
+        expect{
+          config_manager.load_config(config, source: source)
+        }.to raise_error(RuntimeError, Regexp.new("Config file is not found at path"))
+      end
+    end
+  end
+
   describe "#update_using_file" do
     let(:fixtures_path) {
       File.join(File.expand_path("../../", __FILE__), 'fixtures')
