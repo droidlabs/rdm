@@ -5,8 +5,8 @@ class Rdm::PackageParser
     end
     package_content = File.read(package_path)
     package         = parse(package_content)
+    package.path    = File.dirname(package_path)
     package.source(source_path(package_path))
-    package.path   = package_path
 
     package
   end
