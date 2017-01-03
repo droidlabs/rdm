@@ -30,14 +30,8 @@ class Rdm::PackageImporter
   # @param group [Optional<String>] Dependency group
   # @return [Rdm::Package] Current package
   def import_file(package_path, group: nil)
-    ensure_updated(package_path)
-    if File.directory?(package_path)
-      package_path = File.join(package_path, Rdm::PACKAGE_LOCK_FILENAME)
-    end
-
-    package_content = File.read(package_path)
-    package         = package_parser.parse(package_content)
-    source          = read_and_init_source(package.source)
+    package = Rdm::PackageParser.parse_file(package_path)
+    source  = read_and_init_source(package.source)
 
     # Init Rdm.root based on Rdm.packages directory
     Rdm.root = File.dirname(package.source)
@@ -46,10 +40,6 @@ class Rdm::PackageImporter
     import_package(package.name, source: source, group: group.to_s)
 
     package
-  end
-
-  def ensure_updated(package_path)
-    Rdm::AutoUpdater.update(package_path)
   end
 
   def imported_packages
@@ -99,10 +89,6 @@ class Rdm::PackageImporter
 
   def source_parser
     Rdm::SourceParser
-  end
-
-  def package_parser
-    Rdm::PackageParser
   end
 
   def package_subdir_name

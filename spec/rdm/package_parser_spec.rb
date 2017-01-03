@@ -1,31 +1,15 @@
 require 'spec_helper'
 
 describe Rdm::PackageParser do
-  describe "#parse" do
-    subject { Rdm::PackageParser }
-
-    let(:package_content) {
-      %Q{
-        package do
-          name "web"
-          version "1.0"
-        end
-
-        dependency do
-          import "core"
-          require "active_support"
-          require_file "lib/web.rb"
-        end
-
-        dependency :test do
-          import "test_factory"
-          require "rspec"
-          require_file "lib/spec.rb"
-        end
-      }
+  describe "#parse_file" do
+    let(:fixtures_path) {
+      File.join(File.expand_path("../../", __FILE__), 'fixtures')
     }
 
-    let(:package) { subject.parse(package_content) }
+    let(:package_path) {
+      File.join(fixtures_path, "sample_prj/infrastructure/web/Package.rb")
+    }
+    let(:package) { Rdm::PackageParser.parse_file(package_path) }
 
     it "parses package meta information" do
       expect(package.name).to eq("web")
