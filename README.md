@@ -36,11 +36,11 @@ package 'infrastructure/repository'
 
 ## Generating new packages
 
-  # see available options
-  $ rdm gen.package -h
+    # see available options
+    $ rdm gen.package -h
 
-  # generate commands package in a relative path to root directory
-  $ rdm gen.package commands --path core/application/commands
+    # generate commands package in a relative path to root directory
+    $ rdm gen.package commands --path core/application/commands
 
 
 ## Example Package.rb
