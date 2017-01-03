@@ -94,4 +94,4 @@ Rdm.init(File.expand_path("../../", __FILE__), :test)
 
 ## Examples
 
-- [small dummy application](tree/master/example)
+- [small dummy application](/example)
