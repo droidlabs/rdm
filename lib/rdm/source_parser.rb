@@ -47,9 +47,7 @@ class Rdm::SourceParser
       package_full_path = File.join(root_path, package_path)
       if File.exists?(package_full_path)
         package_rb_path        = File.join(package_full_path, Rdm::PACKAGE_FILENAME)
-        package_content        = File.read(package_rb_path)
-        package                = package_parser.parse(package_content)
-        package.path           = package_full_path
+        package                = Rdm::PackageParser.parse_file(package_rb_path)
         packages[package.name] = package
       elsif !settings.silence_missing_package
         raise "Missing package at folder: #{package_full_path}"
@@ -102,9 +100,5 @@ class Rdm::SourceParser
 
   def settings
     Rdm.settings
-  end
-
-  def package_parser
-    Rdm::PackageParser
   end
 end
