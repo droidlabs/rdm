@@ -17,7 +17,6 @@ module Rdm
       def run
         check_preconditions!
         begin
-          puts "running... with #{self.inspect}"
           generate
         rescue Errno::ENOENT => e
           puts "Error occurred. Possible reasons:\n #{current_dir} not found. Please run on empty directory \n#{e.inspect}"
