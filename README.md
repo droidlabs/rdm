@@ -1,7 +1,8 @@
-### RDM (Ruby Dependecy Manager)
-
-
-[![Build Status](https://api.travis-ci.org/ddd-ruby/rdm.svg?branch=master)](http://travis-ci.org/ddd-ruby/rdm) [![codecov](https://codecov.io/gh/ddd-ruby/rdm/branch/master/graph/badge.svg)](https://codecov.io/gh/ddd-ruby/rdm)
+# Rdm (Ruby Dependecy Manager)
+[![Build Status](https://travis-ci.org/ddd-ruby/rdm.png)](https://travis-ci.org/ddd-ruby/rdm)
+[![Code Climate](https://codeclimate.com/github/ddd-ruby/rdm/badges/gpa.svg)](https://codeclimate.com/github/ddd-ruby/rdm)
+[![codecov](https://codecov.io/gh/ddd-ruby/rdm/branch/master/graph/badge.svg)](https://codecov.io/gh/ddd-ruby/rdm)
+[![Dependency Status](https://gemnasium.com/ddd-ruby/rdm.png)](https://gemnasium.com/ddd-ruby/rdm)
 
 
 Ruby dependency manager, helps managing local package dependencies.
