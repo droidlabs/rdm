@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+if RUBY_VERSION.to_f > 2.1
+  puts "running rubocop..."
+  exec("bundle exec rubocop -a -D lib/")
+end
