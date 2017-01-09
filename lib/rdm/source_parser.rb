@@ -45,7 +45,7 @@ class Rdm::SourceParser
   def init_and_set_packages(source)
     source.package_paths.each do |package_path|
       package_full_path = File.join(root_path, package_path)
-      if File.exists?(package_full_path)
+      if File.exist?(package_full_path)
         package_rb_path        = File.join(package_full_path, Rdm::PACKAGE_FILENAME)
         package                = Rdm::PackageParser.parse_file(package_rb_path)
         packages[package.name] = package
@@ -57,8 +57,8 @@ class Rdm::SourceParser
 
   def init_and_set_configs(source)
     source.config_names.each do |config_name|
-      default_path         = settings.read_setting(:config_path, vars: {config_name: config_name})
-      role_path            = settings.read_setting(:role_config_path, vars: {config_name: config_name})
+      default_path         = settings.read_setting(:config_path, vars: { config_name: config_name })
+      role_path            = settings.read_setting(:role_config_path, vars: { config_name: config_name })
       config               = Rdm::Config.new
       config.default_path  = default_path
       config.role_path     = role_path
@@ -70,14 +70,10 @@ class Rdm::SourceParser
   # Make sure that all required settings are in place
   def validate_rdm_settings!
     if settings.read_setting(:role).nil?
-      raise SourceValidationError.new(
-        "Please add `role` setting in Rdm.packages. E.g. \r\n setup do\r\n  role { ENV['RAILS_ENV'] }\r\n end"
-      )
+      raise SourceValidationError, "Please add `role` setting in Rdm.packages. E.g. \r\n setup do\r\n  role { ENV['RAILS_ENV'] }\r\n end"
     end
     if settings.read_setting(:config_path).nil?
-      raise SourceValidationError.new(
-        "Please add `config_path` setting in Rdm.packages. E.g. \r\n setup do\r\n  config_path :configs_dir/:config_name/default.yml'\r\n end"
-      )
+      raise SourceValidationError, "Please add `config_path` setting in Rdm.packages. E.g. \r\n setup do\r\n  config_path :configs_dir/:config_name/default.yml'\r\n end"
     end
   end
 

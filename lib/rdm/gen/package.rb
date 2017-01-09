@@ -1,7 +1,6 @@
 require 'fileutils'
 require 'pathname'
-require "active_support/inflector"
-
+require 'active_support/inflector'
 
 module Rdm
   module Gen
@@ -43,15 +42,13 @@ module Rdm
           ensure_file([package_relative_path, package_subdir_name, package_name, '.gitignore'])
           ensure_file(
             [package_relative_path, package_subdir_name, "#{package_name}.rb"],
-            template_content("main_module_file.rb.erb", {package_name_camelized: package_name.camelize})
+            template_content('main_module_file.rb.erb', package_name_camelized: package_name.camelize)
           )
           ensure_file(
             [package_relative_path, 'Package.rb'],
-            template_content("package.rb.erb", {package_name: package_name})
+            template_content('package.rb.erb', package_name: package_name)
           )
-          if !skip_tests
-            init_rspec
-          end
+          init_rspec unless skip_tests
 
           move_templates
           append_package_to_rdm_packages
@@ -60,11 +57,11 @@ module Rdm
 
       def check_preconditions!
         if Dir.exist?(File.join(current_dir, package_relative_path))
-          raise Rdm::Errors::PackageDirExists, "package dir exists"
+          raise Rdm::Errors::PackageDirExists, 'package dir exists'
         end
 
         if rdm_source.package_paths.include?(package_relative_path)
-          raise Rdm::Errors::PackageExists, "package exists"
+          raise Rdm::Errors::PackageExists, 'package exists'
         end
       end
 
@@ -75,26 +72,27 @@ module Rdm
 
       def init_rspec
         Dir.chdir(templates_path) do
-          copy_template(".rspec")
-          copy_template("spec/spec_helper.rb")
+          copy_template('.rspec')
+          copy_template('spec/spec_helper.rb')
         end
       end
 
       def move_templates
         Dir.chdir(templates_path) do
-          copy_template(".gitignore")
-          copy_template("bin/console_irb", "bin/console")
+          copy_template('.gitignore')
+          copy_template('bin/console_irb', 'bin/console')
         end
       end
 
-    private
-      def ensure_file(path_array, content="")
+      private
+
+      def ensure_file(path_array, content = '')
         filename = File.join(*path_array)
         FileUtils.mkdir_p(File.dirname(filename))
         File.write(filename, content)
       end
 
-      def copy_template(filepath, target_name=nil)
+      def copy_template(filepath, target_name = nil)
         from          = filepath
         target_name ||= filepath
         to            = File.join(current_dir, package_relative_path, target_name)
@@ -103,14 +101,14 @@ module Rdm
         FileUtils.copy_entry(from, to, true, false, true)
       end
 
-      def template_content(file, locals={})
+      def template_content(file, locals = {})
         template_path    = templates_path.join(file)
         template_content = File.read(template_path)
         Rdm::Support::Render.render(template_content, locals)
       end
 
       def templates_path
-        Pathname.new(File.join(File.dirname(__FILE__), "..", "templates/package"))
+        Pathname.new(File.join(File.dirname(__FILE__), '..', 'templates/package'))
       end
     end
   end

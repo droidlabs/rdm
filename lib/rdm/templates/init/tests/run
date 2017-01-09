@@ -19,8 +19,8 @@ module SpecRunner
   class InputParams
     attr_accessor :package_name, :spec_matcher, :run_all
     def initialize(argv)
-      @package_name = argv[0].to_s if !argv[0].nil?
-      @spec_matcher = argv[1].to_s if !argv[1].nil?
+      @package_name = argv[0].to_s unless argv[0].nil?
+      @spec_matcher = argv[1].to_s unless argv[1].nil?
       @run_all      = !@package_name
     end
   end
@@ -75,9 +75,9 @@ module SpecRunner
   class View
     def packages_menu(prepared_command_params)
       prepared_command_params
-      .sort_by{|x| x.package_path }
-      .map{|x| " - #{x.package_name} (#{x.spec_count} spec files)"}
-      .join("\n")
+        .sort_by(&:package_path)
+        .map { |x| " - #{x.package_name} (#{x.spec_count} spec files)" }
+        .join("\n")
     end
 
     def package_not_found_message(package_name, prepared_command_params)
@@ -85,7 +85,7 @@ module SpecRunner
     end
 
     def missing_specs_message(skipped_packages)
-      "NO SPECS FOUND FOR PACKAGES: \n#{skipped_packages.map{|x| " - #{x}"}.join("\n")}\n\n**** SPECS *****: "
+      "NO SPECS FOUND FOR PACKAGES: \n#{skipped_packages.map { |x| " - #{x}" }.join("\n")}\n\n**** SPECS *****: "
     end
 
     def no_specs_for_package(package_name)
@@ -130,7 +130,7 @@ module SpecRunner
 
     def check_input_params!
       if input_params.package_name
-        if not is_package_included?(input_params.package_name)
+        unless is_package_included?(input_params.package_name)
           exit_with_message(
             view.package_not_found_message(input_params.package_name, prepared_command_params)
           )
@@ -145,9 +145,9 @@ module SpecRunner
     end
 
     def is_package_included?(package_name)
-      prepared_command_params.select{|x|
+      !prepared_command_params.select do |x|
         x.package_name == package_name
-      }.size > 0
+      end.empty?
     end
 
     def prepare!
@@ -161,18 +161,18 @@ module SpecRunner
 
     def prepare_command_params
       @prepared_command_params ||= begin
-        packages.map{|name, package|
+        packages.map do |_name, package|
           CommandGenerator.new(
             package_name: package.name, package_path: package.path, spec_matcher: spec_matcher
           ).generate
-        }
+        end
       end
     end
 
     def prepare_skipped_packages
       prepared_command_params
-        .select{|cp| cp.spec_count == 0}
-        .map{|cp|  skipped_packages << cp.package_name}
+        .select { |cp| cp.spec_count == 0 }
+        .map { |cp| skipped_packages << cp.package_name }
     end
 
     def prepare_command
@@ -186,37 +186,33 @@ module SpecRunner
     end
 
     def prepare_single_package_command(package_name)
-      selected = prepared_command_params.select{|cmd_params|
+      selected = prepared_command_params.select do |cmd_params|
         cmd_params.package_name == package_name
-      }
+      end
       prepare_command_for_packages(selected)
     end
 
     def prepare_command_for_packages(packages_command_params)
-      packages_command_params.select{|cmd_params|
+      packages_command_params.select do |cmd_params|
         cmd_params.spec_count > 0
-      }.sort_by{|cmd_params|
+      end.sort_by do |cmd_params|
         - cmd_params.spec_count
-      }.map{|cmd_params|
-        cmd_params.command
-      }.join(" && ")
+      end.map(&:command).join(' && ')
     end
 
     def display_missing_specs
-      if !skipped_packages.empty?
+      unless skipped_packages.empty?
         print_message view.missing_specs_message(skipped_packages)
       end
     end
 
     def execute_command
       eval(command)
-      if !$?.success?
-        exit(1)
-      end
+      exit(1) unless $CHILD_STATUS.success?
     end
 
     def spec_matcher
-      input_params.spec_matcher || ""
+      input_params.spec_matcher || ''
     end
   end
 
@@ -226,19 +222,19 @@ module SpecRunner
   end
 end
 
-unless ENV["TEST_RUN"]
-  SpecRunner.run
-else
-  require "minitest/autorun"
+if ENV['TEST_RUN']
+  require 'minitest/autorun'
   describe SpecRunner::Runner do
     before do
       @runner = SpecRunner::Runner.new({})
     end
 
-    describe "works " do
-      it "assert true" do
+    describe 'works ' do
+      it 'assert true' do
         assert 2 == 2
       end
     end
   end
+else
+  SpecRunner.run
 end

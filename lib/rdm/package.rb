@@ -1,5 +1,5 @@
 class Rdm::Package
-  DEFAULT_GROUP = "_default_"
+  DEFAULT_GROUP = '_default_'.freeze
 
   attr_accessor :metadata, :local_dependencies, :external_dependencies, :file_dependencies, :config_dependencies, :path
 
@@ -70,22 +70,23 @@ class Rdm::Package
   end
 
   private
-    def current_group
-      @current_group || DEFAULT_GROUP
-    end
 
-    def fetch_dependencies(groupes, group)
-      dependencies = groupes[DEFAULT_GROUP] || []
-      dependencies += (groupes[group.to_s] || []) if group
-      dependencies
-    end
+  def current_group
+    @current_group || DEFAULT_GROUP
+  end
 
-    def exec_metadata(key, value)
-      if value.nil?
-        @metadata[key]
-      else
-        @metadata ||= {}
-        @metadata[key] = value
-      end
+  def fetch_dependencies(groupes, group)
+    dependencies = groupes[DEFAULT_GROUP] || []
+    dependencies += (groupes[group.to_s] || []) if group
+    dependencies
+  end
+
+  def exec_metadata(key, value)
+    if value.nil?
+      @metadata[key]
+    else
+      @metadata ||= {}
+      @metadata[key] = value
     end
+  end
 end

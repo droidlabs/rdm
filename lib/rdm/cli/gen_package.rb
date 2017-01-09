@@ -2,7 +2,7 @@ module Rdm
   module CLI
     class GenPackage
       class << self
-        def run(opts={})
+        def run(opts = {})
           Rdm::CLI::GenPackage.new(opts).run
         end
       end
@@ -22,7 +22,7 @@ module Rdm
         rescue Errno::ENOENT => e
           puts "Error occurred. Possible reasons:\n #{Rdm::SOURCE_FILENAME} not found. Please run on directory containing #{Rdm::SOURCE_FILENAME} \n#{e.inspect}"
         rescue Rdm::Errors::PackageExists
-          puts "Error. Package already exist. Package was not generated"
+          puts 'Error. Package already exist. Package was not generated'
         rescue Rdm::Errors::PackageDirExists
           puts "Error. Directory #{package_relative_path} exists. Package was not generated"
         end

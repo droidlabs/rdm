@@ -6,8 +6,9 @@ module Rdm
   module Support
     class Render < OpenStruct
       def self.render(template, locals)
-        self.new(locals).render(template)
+        new(locals).render(template)
       end
+
       def render(template)
         ERB.new(template).result(binding)
       end

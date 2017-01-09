@@ -17,7 +17,7 @@ class Rdm::PackageImporter
     end
 
     def instance
-      @instance ||= self.new
+      @instance ||= new
     end
 
     def reset!
@@ -55,9 +55,7 @@ class Rdm::PackageImporter
     return imported_packages if imported_packages.include?(package_name.to_s)
     package = source.packages[package_name.to_s]
 
-    if package == nil
-      raise "Can't find package with name: #{package_name.to_s}"
-    end
+    raise "Can't find package with name: #{package_name}" if package.nil?
 
     init_package(package, group: group)
     imported_packages << package_name
@@ -107,7 +105,7 @@ class Rdm::PackageImporter
       require File.join(package.path, file_path)
     end
 
-    if !ActiveSupport::Dependencies.autoload_paths.include?(package_dir_name)
+    unless ActiveSupport::Dependencies.autoload_paths.include?(package_dir_name)
       ActiveSupport::Dependencies.autoload_paths << package_dir_name
     end
   end
@@ -115,9 +113,7 @@ class Rdm::PackageImporter
   def import_config(config_name, source:)
     return if imported_configs.include?(config_name)
     config = source.configs[config_name.to_s]
-    if config == nil
-      raise "Can't find config with name: #{config_name.to_s}"
-    end
+    raise "Can't find config with name: #{config_name}" if config.nil?
     Rdm.config.load_config(config, source: source)
     imported_configs << config_name
   end
