@@ -34,10 +34,9 @@ module Rdm
       end
 
       def check_preconditions!
-        if current_dir.empty?
-          puts 'Current directory was not specified!'
-          exit 1
-        end
+        return unless current_dir.empty?
+        puts 'Current directory was not specified!'
+        exit 1
       end
     end
   end

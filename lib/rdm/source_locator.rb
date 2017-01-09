@@ -16,14 +16,14 @@ module Rdm
     def find_source_path_in_hierarchy(some_path)
       some_path = File.expand_path(some_path)
       raise Rdm::Errors::SourceFileDoesNotExist, path if some_path == '/'
-      if is_present?(some_path)
+      if present?(some_path)
         return potential_file(some_path)
       else
         find_source_path_in_hierarchy(File.dirname(some_path))
       end
     end
 
-    def is_present?(some_path)
+    def present?(some_path)
       File.exist?(potential_file(some_path))
     end
 
