@@ -26,10 +26,12 @@ class RdmCliRunner
       c.example 'generate scaffold with pry',      'rdm init --console=pry'
       c.option '--test FRAMEWORK', TESTFRAMEWORKS, "select test framework: #{TESTFRAMEWORKS.join(", ")}"
       c.option '--console CONSOLE', CONSOLES, "select console: #{CONSOLES.join(", ")}"
+      c.option '--current_dir [ROOT_DIR]', String, 'Path for the root folder'
       c.action do |args, options|
         defaults = {
-          test:    "rspec",
-          console: "irb"
+          test:        "rspec",
+          console:     "irb",
+          current_dir: `pwd`.strip
         }
         options_with_defaults = defaults.merge!(options.__hash__)
         Rdm::CLI::Init.run(options_with_defaults)
