@@ -67,4 +67,4 @@ class RdmCliRunner
   end
 end
 
-RdmCliRunner.new.run if $0 == __FILE__
+RdmCliRunner.new.run
