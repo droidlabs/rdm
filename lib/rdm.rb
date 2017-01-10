@@ -22,6 +22,7 @@ module Rdm
   require 'rdm/source_locator'
 
   # Utils
+  require 'rdm/support/colorize'
   require 'rdm/support/render'
   require 'rdm/support/template'
   require 'rdm/version'
