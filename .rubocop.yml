@@ -1,3 +1,17 @@
 AllCops:
   Exclude:
     - 'lib/rdm/templates/**/**/*'
+
+Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/DocumentationMethod:
+  Enabled: false
+  RequireForNonPublicMethods: false
+
+
+Metrics/LineLength:
+   Max: 90
