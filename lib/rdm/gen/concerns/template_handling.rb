@@ -73,7 +73,7 @@ module Rdm
         end
 
         def relative_path(file)
-          file.gsub(current_dir + "/", "")
+          file.gsub(current_dir + '/', '')
         end
       end
     end

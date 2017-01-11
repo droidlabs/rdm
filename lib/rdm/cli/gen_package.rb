@@ -38,10 +38,10 @@ module Rdm
       end
 
       def check_preconditions!
-        if package_name.empty?
-          puts 'Package name was not specified!'
-          exit 1
-        end
+        return unless package_name.empty?
+
+        puts 'Package name was not specified!'
+        exit 1
       end
     end
   end

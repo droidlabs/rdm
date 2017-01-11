@@ -2,32 +2,98 @@ module Rdm
   module Support
     # http://stackoverflow.com/questions/1489183/colorized-ruby-output
     module Colorize
-       module ClassMethods
-        def black(msg);          "\e[30m#{msg}\e[0m"       end
-        def red(msg);            "\e[31m#{msg}\e[0m"       end
-        def green(msg);          "\e[32m#{msg}\e[0m"       end
-        def brown(msg);          "\e[33m#{msg}\e[0m"       end
-        def blue(msg);           "\e[34m#{msg}\e[0m"       end
-        def magenta(msg);        "\e[35m#{msg}\e[0m"       end
-        def cyan(msg);           "\e[36m#{msg}\e[0m"       end
-        def gray(msg);           "\e[37m#{msg}\e[0m"       end
+      module ClassMethods
+        def black(msg)
+          color_wrap(msg, 30)
+        end
 
-        def bg_black(msg);       "\e[40m#{msg}\e[0m"       end
-        def bg_red(msg);         "\e[41m#{msg}\e[0m"       end
-        def bg_green(msg);       "\e[42m#{msg}\e[0m"       end
-        def bg_brown(msg);       "\e[43m#{msg}\e[0m"       end
-        def bg_blue(msg);        "\e[44m#{msg}\e[0m"       end
-        def bg_magenta(msg);     "\e[45m#{msg}\e[0m"       end
-        def bg_cyan(msg);        "\e[46m#{msg}\e[0m"       end
-        def bg_gray(msg);        "\e[47m#{msg}\e[0m"       end
+        def red(msg)
+          color_wrap(msg, 31)
+        end
 
-        def bold(msg);           "\e[1m#{msg}\e[22m"       end
-        def italic(msg);         "\e[3m#{msg}\e[23m"       end
-        def underline(msg);      "\e[4m#{msg}\e[24m"       end
-        def blink(msg);          "\e[5m#{msg}\e[25m"       end
-        def reverse_color(msg);  "\e[7m#{msg}\e[27m"       end
+        def green(msg)
+          color_wrap(msg, 32)
+        end
 
-        def no_colors(msg);       msg.gsub(/\e\[\d+m/, "") end
+        def brown(msg)
+          color_wrap(msg, 33)
+        end
+
+        def blue(msg)
+          color_wrap(msg, 34)
+        end
+
+        def magenta(msg)
+          color_wrap(msg, 35)
+        end
+
+        def cyan(msg)
+          color_wrap(msg, 36)
+        end
+
+        def gray(msg)
+          color_wrap(msg, 37)
+        end
+
+        def bg_black(msg)
+          color_wrap(msg, 40)
+        end
+
+        def bg_red(msg)
+          color_wrap(msg, 41)
+        end
+
+        def bg_green(msg)
+          color_wrap(msg, 42)
+        end
+
+        def bg_brown(msg)
+          color_wrap(msg, 43)
+        end
+
+        def bg_blue(msg)
+          color_wrap(msg, 44)
+        end
+
+        def bg_magenta(msg)
+          color_wrap(msg, 45)
+        end
+
+        def bg_cyan(msg)
+          color_wrap(msg, 46)
+        end
+
+        def bg_gray(msg)
+          color_wrap(msg, 47)
+        end
+
+        def bold(msg)
+          color_wrap(msg, 1, 22)
+        end
+
+        def italic(msg)
+          color_wrap(msg, 3, 23)
+        end
+
+        def underline(msg)
+          color_wrap(msg, 4, 24)
+        end
+
+        def blink(msg)
+          color_wrap(msg, 5, 25)
+        end
+
+        def reverse_color(msg)
+          color_wrap(msg, 7, 27)
+        end
+
+        def color_wrap(msg, from, to = 0)
+          "\e[#{from}m#{msg}\e[#{to}m"
+        end
+
+        def no_colors(msg)
+          msg.gsub(/\e\[\d+m/, '')
+        end
       end
 
       extend ClassMethods

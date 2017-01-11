@@ -28,8 +28,6 @@ module Rdm
   require 'rdm/source_parser'
   require 'rdm/source_locator'
 
-
-
   class << self
     # Initialize current package using Package.rb
     def init(package_path, group = nil)
