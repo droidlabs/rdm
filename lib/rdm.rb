@@ -1,21 +1,32 @@
 module Rdm
-  SOURCE_FILENAME = "Rdm.packages"
-  PACKAGE_FILENAME = "Package.rb"
-  PACKAGE_LOCK_FILENAME = "#{PACKAGE_FILENAME}.lock"
+  SOURCE_FILENAME = 'Rdm.packages'.freeze
+  PACKAGE_FILENAME = 'Package.rb'.freeze
 
-  require "rdm/errors"
-  require "rdm/settings"
-  require "rdm/source"
-  require "rdm/source_parser"
-  require "rdm/source_installer"
-  require "rdm/package"
-  require "rdm/package_parser"
-  require "rdm/package_generator"
-  require "rdm/package_importer"
-  require "rdm/config"
-  require "rdm/config_scope"
-  require "rdm/config_manager"
-  require "rdm/auto_updater"
+  # Utils
+  require 'rdm/support/colorize'
+  require 'rdm/support/render'
+  require 'rdm/support/template'
+  require 'rdm/version'
+
+  # CLI part
+  require 'rdm/cli/gen_package'
+  require 'rdm/cli/init'
+  require 'rdm/gen/concerns/template_handling'
+  require 'rdm/gen/package'
+  require 'rdm/gen/init'
+
+  # Runtime part
+  require 'rdm/config'
+  require 'rdm/config_scope'
+  require 'rdm/config_manager'
+  require 'rdm/errors'
+  require 'rdm/package'
+  require 'rdm/package_parser'
+  require 'rdm/package_importer'
+  require 'rdm/settings'
+  require 'rdm/source'
+  require 'rdm/source_parser'
+  require 'rdm/source_locator'
 
   class << self
     # Initialize current package using Package.rb
@@ -45,8 +56,6 @@ module Rdm
       @root = value
     end
 
-    def root
-      @root
-    end
+    attr_reader :root
   end
 end

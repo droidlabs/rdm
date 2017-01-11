@@ -2,3 +2,5 @@
 Gemfile.lock
 Package.rb.lock
 pkg
+coverage/
+.byebug_history

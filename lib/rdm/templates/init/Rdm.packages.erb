@@ -1,0 +1,18 @@
+setup do
+  role do
+    ENV['RUBY_ENV'] || raise('please set RUBY_ENV environment variable')
+  end
+
+  configs_dir             'configs'
+  config_path             ':configs_dir/:config_name/default.yml'
+  role_config_path        ':configs_dir/:config_name/:role.yml'
+  package_subdir_name     'package'
+  silence_missing_package true
+end
+
+config :database
+config :logging
+
+
+# package 'core/application/commands'
+# package 'core/utils'

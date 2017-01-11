@@ -1,4 +1,4 @@
-Copyright (c) 2016 Droidlabs
+Copyright (c) 2016-2017 Droidlabs
 
 MIT License
 

@@ -2,7 +2,6 @@ require 'yaml'
 require 'erb'
 
 class Rdm::ConfigManager
-
   # Update configuration based on given config file
   # @param config [Rdm::Config] Config entity
   # @return root scope [Rdm::ConfigScope] Updated root scope
@@ -22,7 +21,7 @@ class Rdm::ConfigManager
   # @param config [Hash<String: AnyValue>] Hash with configuration
   # @return root scope [Rdm::ConfigScope] Updated root scope
   def update_using_file(path, raise_if_missing: true)
-    if File.exists?(path)
+    if File.exist?(path)
       compiled_file = ::ERB.new(File.read(path)).result
       hash = YAML.load(compiled_file)
       update_using_hash(hash)
@@ -62,7 +61,8 @@ class Rdm::ConfigManager
   end
 
   private
-    def root_scope
-      @root_scope ||= Rdm::ConfigScope.new
-    end
+
+  def root_scope
+    @root_scope ||= Rdm::ConfigScope.new
+  end
 end

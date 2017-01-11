@@ -2,15 +2,15 @@ class Rdm::Settings
   SETTING_KEYS = [
     :role, :package_subdir_name, :configs_dir, :config_path, :role_config_path,
     :silence_missing_package_file, :silence_missing_package
-  ]
+  ].freeze
 
-  SETTING_VARIABLES = [:role, :configs_dir, :config_path, :role_config_path]
+  SETTING_VARIABLES = [:role, :configs_dir, :config_path, :role_config_path].freeze
 
   # Default settings
   def initialize
     silence_missing_package(false)
     silence_missing_package_file(false)
-    package_subdir_name("package")
+    package_subdir_name('package')
     configs_dir('configs')
   end
 
@@ -40,24 +40,25 @@ class Rdm::Settings
   end
 
   private
-    def write_setting(key, value)
-      @settings ||= {}
-      @settings[key.to_s] = value
-    end
 
-    def replace_variables(value, except: nil, additional_vars: {})
-      variables_keys = SETTING_VARIABLES - [except.to_sym]
-      new_value = value
-      additional_vars.each do |key, variable|
-        if new_value.match(":#{key.to_s}")
-          new_value = new_value.gsub(":#{key.to_s}", variable)
-        end
+  def write_setting(key, value)
+    @settings ||= {}
+    @settings[key.to_s] = value
+  end
+
+  def replace_variables(value, except: nil, additional_vars: {})
+    variables_keys = SETTING_VARIABLES - [except.to_sym]
+    new_value = value
+    additional_vars.each do |key, variable|
+      if new_value.match(":#{key}")
+        new_value = new_value.gsub(":#{key}", variable)
       end
-      variables_keys.each do |key|
-        if new_value.match(":#{key}")
-          new_value = new_value.gsub(":#{key}", read_setting(key))
-        end
-      end
-      new_value
     end
+    variables_keys.each do |key|
+      if new_value.match(":#{key}")
+        new_value = new_value.gsub(":#{key}", read_setting(key))
+      end
+    end
+    new_value
+  end
 end
