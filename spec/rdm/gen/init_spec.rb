@@ -19,6 +19,7 @@ describe Rdm::Gen::Init do
 
   context "sample project" do
     before :all do
+      Rdm::Gen::Init.disable_logger!
       fresh_empty_project
       generate_project!
     end
@@ -34,6 +35,15 @@ describe Rdm::Gen::Init do
         ensure_exists("Readme.md")
         ensure_exists("tests/run")
       end
+    end
+
+    it "has logged useful output" do
+      Rdm::Gen::Init.enable_logger!
+      expect {
+        fresh_empty_project
+        generate_project!
+      }.to output(/Generated: Rdm.packages/).to_stdout
+      Rdm::Gen::Init.disable_logger!
     end
   end
 

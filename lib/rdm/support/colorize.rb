@@ -2,7 +2,7 @@ module Rdm
   module Support
     # http://stackoverflow.com/questions/1489183/colorized-ruby-output
     module Colorize
-      class << self
+       module ClassMethods
         def black(msg);          "\e[30m#{msg}\e[0m"       end
         def red(msg);            "\e[31m#{msg}\e[0m"       end
         def green(msg);          "\e[32m#{msg}\e[0m"       end
@@ -28,6 +28,12 @@ module Rdm
         def reverse_color(msg);  "\e[7m#{msg}\e[27m"       end
 
         def no_colors(msg);       msg.gsub(/\e\[\d+m/, "") end
+      end
+
+      extend ClassMethods
+
+      def self.included(base)
+        base.include(ClassMethods)
       end
     end
   end

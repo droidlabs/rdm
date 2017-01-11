@@ -13,6 +13,8 @@ module Rdm
         end
       end
 
+      include Rdm::Gen::Concerns::TemplateHandling
+
       attr_accessor :current_dir, :package_name, :package_relative_path, :skip_tests
       def initialize(current_dir, package_name, package_relative_path, skip_tests = false)
         @current_dir           = File.expand_path(current_dir)
@@ -85,35 +87,12 @@ module Rdm
 
       private
 
-      def warning(msg)
-        puts Rdm::Support::Colorize.brown(msg)
-      end
-
-      def ensure_file(path_array, content = '')
-        filename = File.join(*path_array)
-        FileUtils.mkdir_p(File.dirname(filename))
-        return warning("File #{filename} already exists, skipping...") if File.exist?(filename)
-        File.write(filename, content)
-      end
-
-      def copy_template(filepath, target_name = nil)
-        from          = filepath
-        target_name ||= filepath
-        to            = File.join(current_dir, package_relative_path, target_name)
-        return warning("File #{to} already exists, skipping...") if File.exist?(to)
-        FileUtils.mkdir_p(File.dirname(to))
-        # copy_entry(src, dest, preserve = false, dereference_root = false, remove_destination = false)
-        FileUtils.copy_entry(from, to, true, false, true)
-      end
-
-      def template_content(file, locals = {})
-        template_path    = templates_path.join(file)
-        template_content = File.read(template_path)
-        Rdm::Support::Render.render(template_content, locals)
-      end
-
       def templates_path
         Pathname.new(File.join(File.dirname(__FILE__), '..', 'templates/package'))
+      end
+
+      def target_path
+        File.join(current_dir, package_relative_path)
       end
     end
   end

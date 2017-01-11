@@ -3,6 +3,10 @@ require "spec_helper"
 describe Rdm::CLI::GenPackage do
   include SetupHelper
 
+  before :all do
+    Rdm::Gen::Package.disable_logger!
+  end
+
   def generate_project!
     Rdm::Gen::Init.generate(
       current_dir: empty_project_dir

@@ -2,9 +2,16 @@ module Rdm
   SOURCE_FILENAME = 'Rdm.packages'.freeze
   PACKAGE_FILENAME = 'Package.rb'.freeze
 
+  # Utils
+  require 'rdm/support/colorize'
+  require 'rdm/support/render'
+  require 'rdm/support/template'
+  require 'rdm/version'
+
   # CLI part
   require 'rdm/cli/gen_package'
   require 'rdm/cli/init'
+  require 'rdm/gen/concerns/template_handling'
   require 'rdm/gen/package'
   require 'rdm/gen/init'
 
@@ -21,11 +28,6 @@ module Rdm
   require 'rdm/source_parser'
   require 'rdm/source_locator'
 
-  # Utils
-  require 'rdm/support/colorize'
-  require 'rdm/support/render'
-  require 'rdm/support/template'
-  require 'rdm/version'
 
 
   class << self

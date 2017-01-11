@@ -3,6 +3,10 @@ require "spec_helper"
 describe Rdm::CLI::Init do
   include SetupHelper
 
+  before :all do
+    Rdm::Gen::Init.disable_logger!
+  end
+
   def ensure_exists(file)
     expect(File.exists?(file)).to be true
   end

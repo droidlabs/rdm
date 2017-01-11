@@ -1,6 +1,9 @@
 require "spec_helper"
 
 describe Rdm::Gen::Package do
+  before :all do
+    Rdm::Gen::Package.disable_logger!
+  end
   include SetupHelper
 
   def generate_package!
@@ -47,6 +50,15 @@ describe Rdm::Gen::Package do
       FileUtils.cd(project_dir) do
         ensure_content("Rdm.packages", "package 'domain/some'")
       end
+    end
+
+    it "has logged useful output" do
+      Rdm::Gen::Package.enable_logger!
+      expect {
+        fresh_project
+        generate_package!
+      }.to output(Regexp.new("Generated: domain/some/Package.rb")).to_stdout
+      Rdm::Gen::Package.disable_logger!
     end
   end
 
