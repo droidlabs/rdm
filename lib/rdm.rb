@@ -27,6 +27,7 @@ module Rdm
   require 'rdm/source'
   require 'rdm/source_parser'
   require 'rdm/source_locator'
+  require 'rdm/git_diff_manager'
 
   class << self
     # Initialize current package using Package.rb
