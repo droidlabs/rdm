@@ -1,8 +1,8 @@
 require "spec_helper"
 require "fileutils"
 
-describe Rdm::GitDiffManager do
-  subject { Rdm::GitDiffManager }
+describe Rdm::Git::DiffManager do
+  subject { described_class }
 
   describe "::get_diffs" do
     before :each do

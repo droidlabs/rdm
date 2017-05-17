@@ -13,5 +13,8 @@ module Rdm
     
     class GitRepositoryNotInitialized < StandardError
     end
+
+    class PackageFileDoesNotFound < StandardError
+    end
   end
 end
