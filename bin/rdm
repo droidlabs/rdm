@@ -64,6 +64,24 @@ class RdmCliRunner
         Rdm::CLI::GenPackage.run(options_with_defaults)
       end
     end
+    
+    command :"diff.package" do |c|
+      c.syntax = 'rdm diff.package GIT_POINT'
+      c.description = 'show modified packages from git branch or commit'
+      c.summary = '> ' + c.description
+      c.example 'show modifies packages from HEAD',
+                  'rdm diff.package HEAD'
+      c.example 'show modifies packages from master branch',
+                  'rdm diff.package master'
+      c.action do |args, options|
+        git_point = (args.first || "HEAD")
+        options = {
+          path:  `pwd`.chomp,
+          git_point:    git_point,
+        }
+        Rdm::CLI::DiffPackage.run(options)
+      end
+    end
 
     run!
   end

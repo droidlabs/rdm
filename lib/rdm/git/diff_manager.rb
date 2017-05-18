@@ -1,22 +1,22 @@
 module Rdm
   module Git
     class DiffManager
-      GIT_DIFF_REGEXP = /([\w.-]*)\s+\|\s.*/i
+      GIT_DIFF_REGEXP = /([\w\/.-]*)/i
       GIT_ERROR_MESSAGE = "fatal: Not a git repository (or any of the parent directories): .git"
 
       class << self
-        def run(path)
-          abs_path = File.expand_path(path)
+        def run(path:, git_point: 'HEAD')
+          abs_path = Rdm::Git::RepositoryLocator.locate(path)
 
           check_repository_initialized!(abs_path)
 
-          git_diff_result = %x( cd #{abs_path} && git add . && git diff HEAD --stat )
+          git_diff_result = %x( cd #{abs_path} && git diff #{git_point} --name-only )
 
           return git_diff_result
             .split("\n")
             .map { |string| GIT_DIFF_REGEXP.match(string).to_a.last }
             .reject(&:blank?)
-            .map { |filename| File.expand_path(File.join(path, filename)) }
+            .map { |filename| File.expand_path(File.join(abs_path, filename)) }
         end
 
         private

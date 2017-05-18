@@ -11,9 +11,7 @@ module Rdm
   # CLI part
   require 'rdm/cli/gen_package'
   require 'rdm/cli/init'
-  require 'rdm/gen/concerns/template_handling'
-  require 'rdm/gen/package'
-  require 'rdm/gen/init'
+  require 'rdm/cli/diff_package'
 
   # Runtime part
   require 'rdm/config'
@@ -28,7 +26,16 @@ module Rdm
   require 'rdm/source_parser'
   require 'rdm/source_locator'
   require 'rdm/git/diff_manager'
+  require 'rdm/git/repository_locator'
+
+  # Package part
   require 'rdm/package/locator'
+
+  # Handlers part
+  require 'rdm/gen/concerns/template_handling'
+  require 'rdm/gen/package'
+  require 'rdm/gen/init'
+  require 'rdm/handlers/diff_package_handler'
 
   class << self
     # Initialize current package using Package.rb
