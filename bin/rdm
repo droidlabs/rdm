@@ -66,18 +66,18 @@ class RdmCliRunner
     end
     
     command :"diff.package" do |c|
-      c.syntax = 'rdm diff.package GIT_POINT'
+      c.syntax      = 'rdm diff.package REVISION'
       c.description = 'show modified packages from git branch or commit'
-      c.summary = '> ' + c.description
+      c.summary     = '> ' + c.description
       c.example 'show modifies packages from HEAD',
-                  'rdm diff.package HEAD'
+                'rdm diff.package HEAD'
       c.example 'show modifies packages from master branch',
-                  'rdm diff.package master'
+                'rdm diff.package master'
       c.action do |args, options|
-        git_point = (args.first || "HEAD")
+        revision = (args.first || "HEAD")
         options = {
-          path:  `pwd`.chomp,
-          git_point:    git_point,
+          path:     `pwd`.chomp,
+          revision: revision,
         }
         Rdm::CLI::DiffPackage.run(options)
       end

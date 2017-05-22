@@ -16,5 +16,8 @@ module Rdm
 
     class PackageFileDoesNotFound < StandardError
     end
+
+    class GitCommandError < StandardError
+    end
   end
 end

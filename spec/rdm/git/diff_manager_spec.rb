@@ -1,6 +1,7 @@
 require "spec_helper"
 
 describe Rdm::Git::DiffManager do
+  include GitCommandsHelper
   subject { described_class }
 
   describe "::get_diffs" do
@@ -14,7 +15,8 @@ describe Rdm::Git::DiffManager do
 
     context "contains all modified files if present" do
       before do
-        %x( cd #{@git_example_path} && git init && git add . && git commit -am "Initial commit" )
+        git_initialize_repository(@git_example_path)
+        git_commit_changes(@git_example_path)
 
         @new_filename = File.join(@git_example_path, 'new_file.rb')
         File.open(@new_filename, 'w') { |f| f.write('I am new file') }
@@ -32,41 +34,42 @@ describe Rdm::Git::DiffManager do
       end
 
       it "shows new files" do
-        expect(subject.run(path: @git_example_path, git_point: 'HEAD')).to include(@new_filename)
+        expect(subject.run(path: @git_example_path, revision: 'HEAD')).to include(@new_filename)
       end
 
       it "shows edited files" do
-        expect(subject.run(path: @git_example_path, git_point: 'HEAD')).to include(@modified_filename)
+        expect(subject.run(path: @git_example_path, revision: 'HEAD')).to include(@modified_filename)
       end
 
       it "shows deleted files" do
-        expect(subject.run(path: @git_example_path, git_point: 'HEAD')).to include(@deleted_filename)
+        expect(subject.run(path: @git_example_path, revision: 'HEAD')).to include(@deleted_filename)
       end
 
       it "shows files with folder structure" do
-        expect(subject.run(path: @git_example_path, git_point: 'HEAD')).to include(@nested_file)
+        expect(subject.run(path: @git_example_path, revision: 'HEAD')).to include(@nested_file)
       end
 
       it "returns array" do
-        expect(subject.run(path: @git_example_path, git_point: 'HEAD')).to be_a(Array)
-        expect(subject.run(path: @git_example_path, git_point: 'HEAD').size).to eq(4)
+        expect(subject.run(path: @git_example_path, revision: 'HEAD')).to be_a(Array)
+        expect(subject.run(path: @git_example_path, revision: 'HEAD').size).to eq(4)
       end
     end
 
     context "does't contain any modified files if not present" do
       before do
-        %x( cd #{@git_example_path} && git init && git add . && git commit -am "Initial commit" )
+        git_initialize_repository(@git_example_path)
+        git_commit_changes(@git_example_path)
       end
 
       it "returns empty array of modified files" do
-        expect(subject.run(path: @git_example_path, git_point: 'HEAD')).to eq([])
+        expect(subject.run(path: @git_example_path, revision: 'HEAD')).to eq([])
       end
     end
 
     context "if git repository was not initialized" do
       it "raises Rdm::Errors::GitRepositoryNotInitialized" do
         expect{
-          subject.run(path: @git_example_path, git_point: 'HEAD')
+          subject.run(path: @git_example_path, revision: 'HEAD')
         }.to raise_error(Rdm::Errors::GitRepositoryNotInitialized)
       end
     end

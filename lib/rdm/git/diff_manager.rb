@@ -1,21 +1,19 @@
+require 'fileutils'
+
 module Rdm
   module Git
     class DiffManager
-      GIT_DIFF_REGEXP = /([\w\/.-]*)/i
       GIT_ERROR_MESSAGE = "fatal: Not a git repository (or any of the parent directories): .git"
+      DEFAULT_REVISION  = 'HEAD'
 
       class << self
-        def run(path:, git_point: 'HEAD')
+        def run(path:, revision: nil)
           abs_path = Rdm::Git::RepositoryLocator.locate(path)
 
           check_repository_initialized!(abs_path)
-
-          git_diff_result = %x( cd #{abs_path} && git diff #{git_point} --name-only )
-
-          return git_diff_result
-            .split("\n")
-            .map { |string| GIT_DIFF_REGEXP.match(string).to_a.last }
-            .reject(&:blank?)
+          
+          return Rdm::Git::DiffCommand
+            .get_only_diff_filenames(revision: revision, path: path)
             .map { |filename| File.expand_path(File.join(abs_path, filename)) }
         end
 

@@ -5,15 +5,15 @@ class Rdm::CLI::DiffPackage
     end
   end
 
-  attr_reader :path, :git_point
-  def initialize(path:, git_point:)
+  attr_reader :path, :revision
+  def initialize(path:, revision:)
     @path      = path
-    @git_point = git_point
+    @revision = revision
   end
 
   def run
     begin
-      puts Rdm::Handlers::DiffPackageHandler.handle(path: path, git_point: git_point)
+      puts Rdm::Handlers::DiffPackageHandler.handle(path: path, revision: revision)
     rescue Rdm::Errors::GitRepositoryNotInitialized
       puts "Git repository is not initialized. Use `git init .`"
     end      

@@ -1,7 +1,8 @@
 require "spec_helper"
 
 describe Rdm::Git::RepositoryLocator do
-  include SetupHelper
+  include GitCommandsHelper
+  include ExampleProjectHelper
 
   subject { described_class }
 

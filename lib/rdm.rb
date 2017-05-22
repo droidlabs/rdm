@@ -26,6 +26,7 @@ module Rdm
   require 'rdm/source_parser'
   require 'rdm/source_locator'
   require 'rdm/git/diff_manager'
+  require 'rdm/git/diff_command'
   require 'rdm/git/repository_locator'
 
   # Package part
