@@ -12,6 +12,8 @@ end
 require 'rdm'
 require "byebug"
 
+require_relative 'helpers/example_project_helper'
+
 Rdm.setup do
   silence_missing_package_file(true)
 end

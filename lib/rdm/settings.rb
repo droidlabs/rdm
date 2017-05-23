@@ -1,7 +1,7 @@
 class Rdm::Settings
   SETTING_KEYS = [
     :role, :package_subdir_name, :configs_dir, :config_path, :role_config_path,
-    :silence_missing_package_file, :silence_missing_package
+    :silence_missing_package_file, :silence_missing_package, :compile_path
   ].freeze
 
   SETTING_VARIABLES = [:role, :configs_dir, :config_path, :role_config_path].freeze
