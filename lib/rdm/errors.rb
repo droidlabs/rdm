@@ -13,5 +13,8 @@ module Rdm
 
     class InvalidParams < StandardError
     end
+
+    class PackageDoesNotExist < StandardError
+    end
   end
 end

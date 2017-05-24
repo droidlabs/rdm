@@ -30,6 +30,9 @@ module Rdm
   require 'rdm/source_locator'
 
   require 'rdm/packages/services/compiler'
+  require 'rdm/helpers/url_helper'
+
+  extend Rdm::Helpers::PathHelper
 
   class << self
     # Initialize current package using Package.rb

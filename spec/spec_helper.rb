@@ -10,7 +10,8 @@ if ENV['CI']=='true'
 end
 
 require 'rdm'
-require "byebug"
+require 'byebug'
+require 'fileutils'
 
 require_relative 'helpers/example_project_helper'
 
