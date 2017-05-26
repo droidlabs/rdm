@@ -45,10 +45,6 @@ module Rdm
       @settings ||= Rdm::Settings.new
     end
 
-    def reset_settings
-      @settings = Rdm::Settings.new
-    end
-
     # Rdm's managed configuration
     def config
       @config ||= Rdm::ConfigManager.new
@@ -56,7 +52,7 @@ module Rdm
 
     # Setup Rdm's internal settings
     def setup(&block)
-      reset_settings.instance_eval(&block) if block_given?
+      settings.instance_eval(&block) if block_given?
     end
 
     def root=(value)

@@ -67,10 +67,10 @@ class RdmCliRunner
 
     command :"compile.package" do |c|
       c.syntax = 'rdm compile.package PACKAGE_NAME [options]'
-      c.description = 'build selected package and its dependencies to specified folder'
+      c.description = 'copy specified package and its dependencies to some folder'
       c.summary = '> ' + c.description
-      c.example 'compile commands package',
-                  'rdm compile.package commands --path /tmp/commands'
+      c.example 'compilation of "commands" package to /tmp/commands dir',
+                'rdm compile.package commands --path /tmp/commands'
       c.option '--path [COMPILE_PATH]', String, 'Path for compiled package'
       c.action do |args, options|
         package_name = (args.first || "")

@@ -26,7 +26,7 @@ describe Rdm::CLI::CompilePackage do
           )
         }.to output(
           <<~EOF
-            The following packages were successfully compiled:
+            The following packages were copied:
             Core
           EOF
         ).to_stdout
@@ -43,7 +43,7 @@ describe Rdm::CLI::CompilePackage do
               package_name: 'core'
             )
           }.to output(
-            "Source file doesn't exist. Type 'rdm init' to create Rdm.packages\n"
+            "Rdm.packages was not found. Run 'rdm init' to create it\n"
           ).to_stdout
         end
       end
@@ -85,7 +85,7 @@ describe Rdm::CLI::CompilePackage do
               package_name: 'core'
             )
           }.to output(
-            "Compile path was not specified!\n"
+            "Destination path was not specified. Ex: rdm compile.package package_name --path FOLDER_PATH\n"
           ).to_stdout
         end 
       end
@@ -99,7 +99,7 @@ describe Rdm::CLI::CompilePackage do
               package_name: ''
             )
           }.to output(
-            "Package name was not specified!\n"
+            "Package name was not specified. Ex: rdm compile.package PACKAGE_NAME\n"
           ).to_stdout
         end
       end
@@ -121,8 +121,8 @@ describe Rdm::CLI::CompilePackage do
               )
             }.to output(
               <<~EOF
-                Compile directory exists. Overwrite it? (y/n)
-                The following packages were successfully compiled:
+                Destination directory exists. Overwrite it? (y/n)
+                The following packages were copied:
                 Core
               EOF
             ).to_stdout
