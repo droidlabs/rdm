@@ -19,6 +19,7 @@ module Rdm
 
       def compile
         Rdm::SourceParser.read_and_init_source(Rdm::SourceLocator.locate(project_path))
+
         compile_path ||= Rdm.settings.compile_path
 
         if package_name.blank?

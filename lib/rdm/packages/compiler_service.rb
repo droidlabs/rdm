@@ -18,13 +18,11 @@ module Rdm
         @compile_path = compile_path
         @project_path = project_path
         @package_name = package_name
-
-        @source = Rdm::SourceParser.read_and_init_source(
-          File.join(@project_path, Rdm::SOURCE_FILENAME)
-        )
       end
 
       def compile
+        @source = Rdm::SourceParser.read_and_init_source(File.join(@project_path, Rdm::SOURCE_FILENAME))
+
         reset_directory!(compile_path)
 
         dependent_package_names = recursive_find_dependencies([package_name])

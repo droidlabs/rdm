@@ -77,7 +77,7 @@ describe Rdm::CLI::CompilePackage do
               package "subsystems/api"
             EOF
           end
-          debugger
+
           expect {
             subject.compile(
               project_path: @project_path,
