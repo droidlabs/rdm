@@ -65,14 +65,12 @@ class RdmCliRunner
       end
     end
     
-    command :"diff.package" do |c|
-      c.syntax      = 'rdm diff.package REVISION'
-      c.description = 'show modified packages from git branch or commit'
+    command :"git.diff" do |c|
+      c.syntax      = 'rdm git.diff REVISION'
+      c.description = 'show list of modified packages from git revision'
       c.summary     = '> ' + c.description
-      c.example 'show modifies packages from HEAD',
-                'rdm diff.package HEAD'
-      c.example 'show modifies packages from master branch',
-                'rdm diff.package master'
+      c.example 'show list of modified packages from master',
+                'rdm git.diff master'
       c.action do |args, options|
         revision = (args.first || "HEAD")
         options = {
