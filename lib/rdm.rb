@@ -29,8 +29,8 @@ module Rdm
   require 'rdm/source_parser'
   require 'rdm/source_locator'
 
-  require 'rdm/packages/services/compiler'
-  require 'rdm/helpers/url_helper'
+  require 'rdm/packages/compiler_service'
+  require 'rdm/helpers/path_helper'
 
   extend Rdm::Helpers::PathHelper
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Rdm::Packages::Services::Compiler do
+describe Rdm::Packages::CompilerService do
   include ExampleProjectHelper
 
   subject { described_class }

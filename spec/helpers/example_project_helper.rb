@@ -40,6 +40,18 @@ module ExampleProjectHelper
           role_config_path    ":configs_dir/:config_name/:role.yml"
           package_subdir_name "package"
           compile_path        "/tmp/example_compile"
+          compile_ignore_files [
+            '.gitignore',
+            '.byebug_history',
+            '.irbrc',
+            '.rspec',
+            '*_spec.rb',
+            '*.log'
+          ]
+          compile_add_files [
+            'Gemfile',
+            'Gemfile.lock'
+          ]
         end
 
         package "application/web"

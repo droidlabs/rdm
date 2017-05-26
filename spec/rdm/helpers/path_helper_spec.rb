@@ -9,7 +9,7 @@ describe Rdm::Helpers::PathHelper do
     before do
       subject.extend(described_class)
 
-      @example_path    = initialize_example_project
+      @example_path = initialize_example_project
     end
 
     after do

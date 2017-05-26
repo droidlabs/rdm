@@ -46,9 +46,38 @@ describe Rdm::CLI::CompilePackage do
             "Source file doesn't exist. Type 'rdm init' to create Rdm.packages\n"
           ).to_stdout
         end
+      end
 
-        it "raises error if compile_path empty" do
-          
+      context "compile_path" do
+        it "raises error if empty" do
+          File.open(File.join(@project_path, Rdm::SOURCE_FILENAME), 'w') do |f| 
+            f.write <<~EOF
+              setup do
+                role                "production"
+                configs_dir         "configs"
+                config_path         ":configs_dir/:config_name/default.yml"
+                role_config_path    ":configs_dir/:config_name/:role.yml"
+                package_subdir_name "package"
+                compile_ignore_files [
+                  '.gitignore',
+                  '.byebug_history',
+                  '.irbrc',
+                  '.rspec',
+                  '*_spec.rb',
+                  '*.log'
+                ]
+                compile_add_files [
+                  'Gemfile',
+                  'Gemfile.lock'
+                ]
+              end
+
+              package "application/web"
+              package "domain/core"
+              package "subsystems/api"
+            EOF
+          end
+          debugger
           expect {
             subject.compile(
               project_path: @project_path,
@@ -58,9 +87,11 @@ describe Rdm::CLI::CompilePackage do
           }.to output(
             "Compile path was not specified!\n"
           ).to_stdout
-        end
+        end 
+      end
 
-        it "raises error if package_name empty" do
+      context "package name" do
+        it "raises error if empty" do
           expect {
             subject.compile(
               project_path: @project_path,

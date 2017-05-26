@@ -1,7 +1,8 @@
 class Rdm::Settings
   SETTING_KEYS = [
     :role, :package_subdir_name, :configs_dir, :config_path, :role_config_path,
-    :silence_missing_package_file, :silence_missing_package, :compile_path
+    :silence_missing_package_file, :silence_missing_package, :compile_path,
+    :compile_ignore_files, :compile_add_files
   ].freeze
 
   SETTING_VARIABLES = [:role, :configs_dir, :config_path, :role_config_path].freeze
@@ -12,6 +13,18 @@ class Rdm::Settings
     silence_missing_package_file(false)
     package_subdir_name('package')
     configs_dir('configs')
+    compile_ignore_files([
+      '.gitignore',
+      '.byebug_history',
+      '.irbrc',
+      '.rspec',
+      '*_spec.rb',
+      '*.log'
+    ])
+    compile_add_files([
+      'Gemfile',
+      'Gemfile.lock'
+    ])
   end
 
   SETTING_KEYS.each do |key|

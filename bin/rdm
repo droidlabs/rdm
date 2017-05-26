@@ -66,16 +66,16 @@ class RdmCliRunner
     end
 
     command :"compile.package" do |c|
-      c.syntax = 'rdm gen.package PACKAGE_NAME [options]'
-      c.description = 'find dependencies and build package to selected folder'
+      c.syntax = 'rdm compile.package PACKAGE_NAME [options]'
+      c.description = 'build selected package and its dependencies to specified folder'
       c.summary = '> ' + c.description
-      c.example 'generate commands package',
-                  'rdm gen.package commands --path /tmp/commands'
+      c.example 'compile commands package',
+                  'rdm compile.package commands --path /tmp/commands'
       c.option '--path [COMPILE_PATH]', String, 'Path for compiled package'
       c.action do |args, options|
         package_name = (args.first || "")
         opts = {
-          project_path:  `pwd`.chomp,
+          project_path: `pwd`.chomp,
           package_name: package_name,
           compile_path: options.path
         }
