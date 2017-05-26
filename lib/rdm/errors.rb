@@ -19,5 +19,8 @@ module Rdm
 
     class GitCommandError < StandardError
     end
+
+    class PackageDoesNotExist < StandardError
+    end
   end
 end

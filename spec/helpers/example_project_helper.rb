@@ -7,17 +7,56 @@ module ExampleProjectHelper
 
   def initialize_example_project(path: '/tmp/example')
     FileUtils.mkdir_p(path)
+    FileUtils.mkdir_p(File.join(path, 'configs'))
     FileUtils.mkdir_p(File.join(path, 'application/web/package/web'))
     FileUtils.mkdir_p(File.join(path, 'domain/core/package/core'))
+    FileUtils.mkdir_p(File.join(path, 'subsystems/mailing_system/package/mailing_system'))
+    FileUtils.mkdir_p(File.join(path, 'subsystems/api/package/api'))
+
+    File.open(File.join(path, 'Gemfile'), 'w') do |f| 
+      f.write <<~EOF
+        gem 'rdm'
+      EOF
+    end
+
+    File.open(File.join(path, 'Gemfile.lock'), 'w') do |f| 
+      f.write <<~EOF
+        gem 'rdm'
+      EOF
+    end
+
+    File.open(File.join(path, 'Gemfile.lock'), 'w') do |f| 
+      f.write <<~EOF
+        gem 'rdm'
+      EOF
+    end
 
     File.open(File.join(path, Rdm::SOURCE_FILENAME), 'w') do |f| 
       f.write <<~EOF
         setup do
+          role                "production"
+          configs_dir         "configs"
+          config_path         ":configs_dir/:config_name/default.yml"
+          role_config_path    ":configs_dir/:config_name/:role.yml"
           package_subdir_name "package"
+          compile_path        "/tmp/example_compile"
+          compile_ignore_files [
+            '.gitignore',
+            '.byebug_history',
+            '.irbrc',
+            '.rspec',
+            '*_spec.rb',
+            '*.log'
+          ]
+          compile_add_files [
+            'Gemfile',
+            'Gemfile.lock'
+          ]
         end
 
         package "application/web"
         package "domain/core"
+        package "subsystems/api"
       EOF
     end
 
@@ -42,6 +81,19 @@ module ExampleProjectHelper
         end
 
         dependency do
+        end
+      EOF
+    end
+
+    File.open(File.join(path, "subsystems/api", Rdm::PACKAGE_FILENAME), 'w') do |f|
+      f.write <<~EOF
+        package do
+          name "api"
+          version "1.0"
+        end
+
+        dependency do
+          import "web"
         end
       EOF
     end
@@ -92,6 +144,19 @@ module ExampleProjectHelper
         ActiveSupport::Dependencies.autoload_paths << Pathname.new(__FILE__).parent.to_s
 
         module Core
+        end
+      EOF
+    end
+
+    File.open(File.join(path, "subsystems/api/package", "api.rb"), 'w') do |f|
+      f.write <<~EOF
+        require 'active_support'
+        require 'active_support/dependencies'
+        require 'active_support/core_ext'
+
+        ActiveSupport::Dependencies.autoload_paths << Pathname.new(__FILE__).parent.to_s
+
+        module Api
         end
       EOF
     end

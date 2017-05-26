@@ -10,6 +10,7 @@ module Rdm
 
   # CLI part
   require 'rdm/cli/gen_package'
+  require 'rdm/cli/compile_package'
   require 'rdm/cli/init'
   require 'rdm/cli/diff_package'
 
@@ -37,6 +38,11 @@ module Rdm
   require 'rdm/gen/package'
   require 'rdm/gen/init'
   require 'rdm/handlers/diff_package_handler'
+
+  require 'rdm/packages/compiler_service'
+  require 'rdm/helpers/path_helper'
+
+  extend Rdm::Helpers::PathHelper
 
   class << self
     # Initialize current package using Package.rb

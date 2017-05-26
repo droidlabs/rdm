@@ -69,6 +69,12 @@ class Rdm::Package
     exec_metadata :version, value
   end
 
+  def ==(other_package)
+    return false if other_package.class != self.class
+
+    other_package.name == name
+  end
+
   private
 
   def current_group

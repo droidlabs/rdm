@@ -69,7 +69,7 @@ class Rdm::PackageImporter
     package.config_dependencies(group).each do |dependency|
       import_config(dependency, source: source)
     end
-
+    
     # only after importing dependencies - require package itself
     begin
       require package_name
