@@ -10,5 +10,8 @@ module Rdm
 
     class SourceFileDoesNotExist < StandardError
     end
+
+    class PackageDoesNotExist < StandardError
+    end
   end
 end

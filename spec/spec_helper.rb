@@ -10,16 +10,18 @@ if ENV['CI']=='true'
 end
 
 require 'rdm'
-require "byebug"
+require 'byebug'
+require 'fileutils'
+
+require_relative 'helpers/example_project_helper'
 
 Rdm.setup do
-  silence_missing_package_file(true)
+  silence_missing_package_file true
 end
 
 RSpec.configure do |config|
   config.color = true
 end
-
 
 module SetupHelper
   def clean_tmp

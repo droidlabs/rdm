@@ -10,6 +10,7 @@ module Rdm
 
   # CLI part
   require 'rdm/cli/gen_package'
+  require 'rdm/cli/compile_package'
   require 'rdm/cli/init'
   require 'rdm/gen/concerns/template_handling'
   require 'rdm/gen/package'
@@ -27,6 +28,11 @@ module Rdm
   require 'rdm/source'
   require 'rdm/source_parser'
   require 'rdm/source_locator'
+
+  require 'rdm/packages/compiler_service'
+  require 'rdm/helpers/path_helper'
+
+  extend Rdm::Helpers::PathHelper
 
   class << self
     # Initialize current package using Package.rb
