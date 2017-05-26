@@ -64,6 +64,22 @@ class RdmCliRunner
         Rdm::CLI::GenPackage.run(options_with_defaults)
       end
     end
+    
+    command :"git.diff" do |c|
+      c.syntax      = 'rdm git.diff REVISION'
+      c.description = 'show list of modified packages from git revision'
+      c.summary     = '> ' + c.description
+      c.example 'show list of modified packages from master',
+                'rdm git.diff master'
+      c.action do |args, options|
+        revision = (args.first || "HEAD")
+        options = {
+          path:     `pwd`.chomp,
+          revision: revision,
+        }
+        Rdm::CLI::DiffPackage.run(options)
+      end
+    end
 
     command :"compile.package" do |c|
       c.syntax = 'rdm compile.package PACKAGE_NAME [options]'

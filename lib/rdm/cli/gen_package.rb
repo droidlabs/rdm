@@ -7,7 +7,7 @@ module Rdm
         end
       end
 
-      attr_accessor :package_name, :current_dir,  :package_relative_path, :skip_tests
+      attr_accessor :package_name, :current_dir, :package_relative_path, :skip_tests
       def initialize(package_name:, current_dir:, path:, skip_tests:)
         @current_dir           = current_dir
         @package_name          = package_name
@@ -30,10 +30,10 @@ module Rdm
 
       def generate
         Rdm::Gen::Package.generate(
-          current_dir: current_dir,
-          package_name: package_name,
+          current_dir:           current_dir,
+          package_name:          package_name,
           package_relative_path: package_relative_path,
-          skip_tests: skip_tests
+          skip_tests:            skip_tests
         )
       end
 

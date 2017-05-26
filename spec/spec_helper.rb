@@ -23,6 +23,9 @@ RSpec.configure do |config|
   config.color = true
 end
 
+require_relative 'helpers/example_project_helper'
+require_relative 'helpers/git_commands_helper'
+
 module SetupHelper
   def clean_tmp
     FileUtils.rm_rf(tmp_dir)

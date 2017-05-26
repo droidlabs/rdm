@@ -10,6 +10,15 @@ module Rdm
 
     class SourceFileDoesNotExist < StandardError
     end
+    
+    class GitRepositoryNotInitialized < StandardError
+    end
+
+    class PackageFileDoesNotFound < StandardError
+    end
+
+    class GitCommandError < StandardError
+    end
 
     class PackageDoesNotExist < StandardError
     end
