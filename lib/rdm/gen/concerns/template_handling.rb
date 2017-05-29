@@ -2,7 +2,7 @@ module Rdm
   module Gen
     module Concerns
       module TemplateHandling
-        # depends on target_path, templates_path methods in the including class!
+        # depends on target_path, get_templates_directory methods in the including class!
 
         module ClassMethods
           def disable_logger!
@@ -67,7 +67,7 @@ module Rdm
         end
 
         def template_content(file, locals = {})
-          template_path    = templates_path.join(file)
+          template_path    = get_templates_directory(file).join(file)
           template_content = File.read(template_path)
           Rdm::Support::Render.render(template_content, locals)
         end

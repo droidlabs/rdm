@@ -73,22 +73,30 @@ module Rdm
       end
 
       def init_rspec
-        Dir.chdir(templates_path) do
-          copy_template('.rspec')
-          copy_template('spec/spec_helper.rb')
-        end
+        Dir.chdir(get_templates_directory('.rspec')) { copy_template('.rspec') }
+        Dir.chdir(get_templates_directory('spec/spec_helper.rb')) { copy_template('spec/spec_helper.rb') }
       end
 
       def move_templates
-        Dir.chdir(templates_path) do
-          copy_template('bin/console_irb', 'bin/console')
-        end
+        Dir.chdir(get_templates_directory('bin/console_irb')) { copy_template('bin/console_irb', 'bin/console') }
       end
 
       private
 
+      def get_templates_directory(file_name = nil)
+        return templates_path unless file_name
+
+        directory = [local_templates_path, templates_path].detect do |dir| 
+          File.exists?(File.join(dir, file_name))
+        end
+      end
+
       def templates_path
         Pathname.new(File.join(File.dirname(__FILE__), '..', 'templates/package'))
+      end
+
+      def local_templates_path
+        Pathname.new(File.join(current_dir, ".rdm/package_templates"))
       end
 
       def target_path

@@ -37,6 +37,17 @@ describe Rdm::Gen::Init do
       end
     end
 
+    it "has generated package templates" do
+      FileUtils.cd(empty_project_dir) do
+        ensure_exists(".rdm/package_templates/package.rb.erb")
+        ensure_exists(".rdm/package_templates/main_module_file.rb.erb")
+        ensure_exists(".rdm/package_templates/.rspec")
+        ensure_exists(".rdm/package_templates/.gitignore")
+        ensure_exists(".rdm/package_templates/spec/spec_helper.rb")
+        ensure_exists(".rdm/package_templates/bin/console_irb")
+      end
+    end
+
     it "has logged useful output" do
       Rdm::Gen::Init.enable_logger!
       expect {

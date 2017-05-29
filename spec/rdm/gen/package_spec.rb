@@ -8,10 +8,10 @@ describe Rdm::Gen::Package do
 
   def generate_package!
     Rdm::Gen::Package.generate(
-      current_dir: project_dir,
-      package_name: "some",
+      current_dir:           project_dir,
+      package_name:          "some",
       package_relative_path: "domain/some",
-      skip_tests: false
+      skip_tests:            false
     )
   end
 
@@ -42,6 +42,17 @@ describe Rdm::Gen::Package do
         ensure_exists("domain/some/spec/spec_helper.rb")
         ensure_exists("domain/some/.rspec")
         ensure_exists("domain/some/.gitignore")
+      end
+    end
+
+    it "takes template from '.rdm' directory primarily" do
+      FileUtils.cd(project_dir) do
+        ensure_content("domain/some/Package.rb", "# modified file for .rdm tempalates directory")
+      end
+    end
+
+    it "takes template from gem directory for other cases" do
+      FileUtils.cd(project_dir) do
         ensure_content("domain/some/package/some.rb", "module Some\n\nend\n")
       end
     end

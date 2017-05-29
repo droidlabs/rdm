@@ -39,6 +39,10 @@ module Rdm
             ['Readme.md'],
             template_content('Readme.md.erb')
           )
+
+          FileUtils.mkdir_p project_templates_path(current_dir)
+          FileUtils.copy_entry package_templates_path.to_s, project_templates_path(current_dir)
+          
           move_templates
         end
       end
@@ -56,9 +60,17 @@ module Rdm
       end
 
       private
-
-      def templates_path
+      def templates_path(filename = nil)
         Pathname.new(File.join(File.dirname(__FILE__), '..', 'templates/init'))
+      end
+      alias get_templates_directory templates_path
+
+      def package_templates_path
+        Pathname.new(File.join(File.dirname(__FILE__), '..', 'templates/package'))
+      end
+
+      def project_templates_path(project_path)
+        File.join(project_path, ".rdm", "package_templates")
       end
 
       def target_path

@@ -33,9 +33,9 @@ describe Rdm::CLI::GenPackage do
     it "generates package" do
       opts = {
         package_name: "database",
-        current_dir: project_dir,
-        path: "infrastructure/database" ,
-        skip_tests: false
+        current_dir:  project_dir,
+        path:         "infrastructure/database" ,
+        skip_tests:   false
       }
       Rdm::CLI::GenPackage.run(opts)
 
@@ -64,9 +64,9 @@ describe Rdm::CLI::GenPackage do
     it "fails when in wrong directory" do
       opts = {
         package_name: "database",
-        current_dir: project_dir,
-        path: "infrastructure/database" ,
-        skip_tests: false
+        current_dir:  project_dir,
+        path:         "infrastructure/database" ,
+        skip_tests:   false
       }
 
       expect{
