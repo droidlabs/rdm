@@ -21,7 +21,7 @@ describe Rdm::Handlers::DiffPackageHandler do
           git_initialize_repository(@example_path)
           git_commit_changes(@example_path)
 
-          File.open(File.join(@example_path, 'application/web/package/web/new_controller.rb'), 'w') do |f| 
+          File.open(File.join(@example_path, 'subsystems/api/package/api/new_controller.rb'), 'w') do |f| 
             f.write <<~EOF
               class Web::NewController
               end
@@ -32,7 +32,7 @@ describe Rdm::Handlers::DiffPackageHandler do
         end
 
         it "returns only modified packages" do
-          expect(subject.handle(path: @example_path, revision: 'HEAD')).to eq(["web"])
+          expect(subject.handle(path: @example_path, revision: 'HEAD')).to eq(["api"])
         end
       end
 
@@ -52,7 +52,7 @@ describe Rdm::Handlers::DiffPackageHandler do
         it "returns array of modified and dependend packages for indexed changes" do
           git_index_changes(@example_path)
           
-          expect(subject.handle(path: @example_path, revision: 'HEAD')).to match(['core', 'web'].sort)
+          expect(subject.handle(path: @example_path, revision: 'HEAD')).to match(['api', 'core', 'web'].sort)
         end
       end
 
