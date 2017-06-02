@@ -1,4 +1,4 @@
-class Rdm::Package::Locator
+class Rdm::Packages::Locator
   class << self
     def locate(path)
       raise Rdm::Errors::PackageFileDoesNotFound, path if source_present?(path)

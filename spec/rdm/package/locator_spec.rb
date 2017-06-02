@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Rdm::Package::Locator do
+describe Rdm::Packages::Locator do
   subject { described_class }
 
   let(:example_path) {

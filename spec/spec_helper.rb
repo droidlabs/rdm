@@ -26,6 +26,14 @@ end
 require_relative 'helpers/example_project_helper'
 require_relative 'helpers/git_commands_helper'
 
+def ensure_exists(file)
+  expect(File.exists?(file)).to be true
+end
+
+def ensure_content(file, content)
+  expect(File.read(file)).to match(content)
+end
+
 module SetupHelper
   def clean_tmp
     FileUtils.rm_rf(tmp_dir)

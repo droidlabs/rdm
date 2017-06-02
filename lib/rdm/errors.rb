@@ -22,5 +22,14 @@ module Rdm
 
     class PackageDoesNotExist < StandardError
     end
+
+    class TemplateVariableNotDefined < StandardError
+    end
+
+    class TemplateDoesNotExist < StandardError
+    end
+
+    class TemplateFileExists < StandardError
+    end
   end
 end

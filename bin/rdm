@@ -99,6 +99,26 @@ class RdmCliRunner
       end
     end
 
+    command :"gen.template" do |c|
+      c.syntax = 'rdm gen.template TEMPLATE_NAME [options]'
+      c.description = 'generates template from ROOT/.rdm/templates folder with specified variables'
+      c.summary = '> ' + c.description
+      c.example 'creating new repository, mapper and dao files',
+                'rdm gen.template repository --path infrastructure/storage'
+      c.option '--path [DESTINATION_PATH]', String, 'Location of generated folders'
+      c.option '--OPTION_NAME [OPTION_VALUE]', String, 'Local variables for template handler'
+      c.action do |args, options|
+        options_hash = options.__hash__
+
+        Rdm::CLI::TemplateGenerator.run(
+          template_name: (args.first || ""),
+          current_path:  `pwd`.chomp,
+          local_path:    options_hash.delete(:path),
+          locals:        options_hash
+        )
+      end
+    end
+
     run!
   end
 end

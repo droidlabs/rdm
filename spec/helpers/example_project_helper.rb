@@ -6,7 +6,16 @@ module ExampleProjectHelper
   end
 
   def initialize_example_project(path: '/tmp/example')
-    FileUtils.mkdir_p(path)
+    [
+      '.rdm/templates/repository/dao/<%=name%>_dao.rb',
+      '.rdm/templates/repository/mapper/<%=name%>_mapper.rb',
+      '.rdm/templates/repository/repository/<%=name%>_repository.rb',
+      '.rdm/templates/repository/views/<%=name%>.html.erb'
+    ].each do |template_file|
+      FileUtils.mkdir_p(File.join(path, Pathname.new(template_file).parent.to_s))
+      File.open(File.join(path, Pathname.new(template_file)), 'w') {|f| f.write "class <%=name%>\nend"}
+    end
+
     FileUtils.mkdir_p(File.join(path, 'configs'))
     FileUtils.mkdir_p(File.join(path, 'application/web/package/web'))
     FileUtils.mkdir_p(File.join(path, 'domain/core/package/core'))

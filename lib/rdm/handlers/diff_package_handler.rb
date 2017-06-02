@@ -19,7 +19,7 @@ module Rdm
       def handle
         modified_packages = Rdm::Git::DiffManager
           .run(path: path, revision: revision)
-          .map { |file| Rdm::Package::Locator.locate(file) rescue nil }
+          .map { |file| Rdm::Packages::Locator.locate(file) rescue nil }
           .map { |path_to_package| Rdm::PackageParser.parse_file(path_to_package).name rescue nil }
           .reject(&:blank?)
           .uniq

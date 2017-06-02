@@ -9,14 +9,6 @@ describe Rdm::Gen::Init do
     )
   end
 
-  def ensure_exists(file)
-    expect(File.exists?(file)).to be true
-  end
-
-  def ensure_content(file, content)
-    expect(File.read(file)).to match(content)
-  end
-
   context "sample project" do
     before :all do
       Rdm::Gen::Init.disable_logger!

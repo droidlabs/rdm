@@ -13,6 +13,7 @@ module Rdm
   require 'rdm/cli/compile_package'
   require 'rdm/cli/init'
   require 'rdm/cli/diff_package'
+  require 'rdm/cli/template_generator'
 
   # Runtime part
   require 'rdm/config'
@@ -31,16 +32,20 @@ module Rdm
   require 'rdm/git/repository_locator'
 
   # Package part
-  require 'rdm/package/locator'
+  require 'rdm/packages/compiler_service'
+  require 'rdm/packages/locator'
 
   # Handlers part
   require 'rdm/gen/concerns/template_handling'
   require 'rdm/gen/package'
   require 'rdm/gen/init'
   require 'rdm/handlers/diff_package_handler'
+  require 'rdm/handlers/template_handler'
 
-  require 'rdm/packages/compiler_service'
   require 'rdm/helpers/path_helper'
+
+  require 'rdm/templates/template_renderer'
+  require 'rdm/templates/template_detector'
 
   extend Rdm::Helpers::PathHelper
 
