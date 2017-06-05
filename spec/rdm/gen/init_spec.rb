@@ -1,27 +1,31 @@
 require "spec_helper"
 
 describe Rdm::Gen::Init do
-  include SetupHelper
+  include ExampleProjectHelper
 
-  def generate_project!
-    Rdm::Gen::Init.generate(
-      current_dir: empty_project_dir
-    )
+  subject { described_class }
+
+  before do
+    @project_path = initialize_example_project
+
+    FileUtils.rm_rf [
+      File.join(@project_path, 'Rdm.packages'),
+      File.join(@project_path, 'Gemfile'),
+      File.join(@project_path, 'Readme.md'),
+      File.join(@project_path, 'tests/run'),
+      File.join(@project_path, '.rdm/templates/package')
+    ]
+  end
+
+  after do
+    reset_example_project(path: @project_path)
   end
 
   context "sample project" do
-    before :all do
-      Rdm::Gen::Init.disable_logger!
-      fresh_empty_project
-      generate_project!
-    end
-
-    after :all do
-      clean_tmp
-    end
-
     it "has generated correct files" do
-      FileUtils.cd(empty_project_dir) do
+      subject.generate(current_path: @project_path)
+
+      FileUtils.cd(@project_path) do
         ensure_exists("Rdm.packages")
         ensure_exists("Gemfile")
         ensure_exists("Readme.md")
@@ -30,36 +34,25 @@ describe Rdm::Gen::Init do
     end
 
     it "has generated package templates" do
-      FileUtils.cd(empty_project_dir) do
-        ensure_exists(".rdm/package_templates/package.rb.erb")
-        ensure_exists(".rdm/package_templates/main_module_file.rb.erb")
-        ensure_exists(".rdm/package_templates/.rspec")
-        ensure_exists(".rdm/package_templates/.gitignore")
-        ensure_exists(".rdm/package_templates/spec/spec_helper.rb")
-        ensure_exists(".rdm/package_templates/bin/console_irb")
-      end
-    end
+      subject.generate(current_path: @project_path)
 
-    it "has logged useful output" do
-      Rdm::Gen::Init.enable_logger!
-      expect {
-        fresh_empty_project
-        generate_project!
-      }.to output(/Generated: Rdm.packages/).to_stdout
-      Rdm::Gen::Init.disable_logger!
+      FileUtils.cd(@project_path) do
+        ensure_exists(".rdm/templates/package/Package.rb")
+        ensure_exists(".rdm/templates/package/<%=package_subdir_name%>/<%=package_name%>.rb")
+        ensure_exists(".rdm/templates/package/.rspec")
+        ensure_exists(".rdm/templates/package/.gitignore")
+        ensure_exists(".rdm/templates/package/spec/spec_helper.rb")
+        ensure_exists(".rdm/templates/package/bin/console")
+      end
     end
   end
 
   context "prevents double execution" do
-    after :all do
-      clean_tmp
-    end
-
     it "raises on second project generation" do
-      fresh_empty_project
-      generate_project!
+      subject.generate(current_path: @project_path)
+
       expect {
-        generate_project!
+        subject.generate(current_path: @project_path)
       }.to raise_error(Rdm::Errors::ProjectAlreadyInitialized)
     end
   end

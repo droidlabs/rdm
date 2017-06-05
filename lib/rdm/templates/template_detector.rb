@@ -9,11 +9,13 @@ module Rdm
 
 
       def detect_template_folder(template_name)
-        template_folder = File.join(@all_templates_directory, template_name.to_s)
+        template_path = [@all_templates_directory, DEFAULT_TEMPLATES_DIRECTORY]
+          .map    {|dir| File.join(dir, template_name.to_s)}
+          .detect  {|dir| Dir.exist?(dir)}
 
-        raise Rdm::Errors::TemplateDoesNotExist unless Dir.exist?(template_folder)
+        raise Rdm::Errors::TemplateDoesNotExist if template_path.nil?
 
-        template_folder
+        template_path
       end
 
       def template_file_path(template_name, relative_path)

@@ -1,37 +1,30 @@
 require "spec_helper"
 
 describe Rdm::CLI::GenPackage do
-  include SetupHelper
+  include ExampleProjectHelper
 
-  before :all do
-    Rdm::Gen::Package.disable_logger!
+  subject { described_class }
+  let(:stdout) { SpecLogger.new }
+
+  before do
+    @project_path = initialize_example_project
+    stdout.clean
   end
 
-  def generate_project!
-    Rdm::Gen::Init.generate(
-      current_dir: empty_project_dir
-    )
+  after do
+    reset_example_project(path: @project_path)
   end
 
   context "run" do
-    before :all do
-      fresh_project
-    end
-
-    after :all do
-      clean_tmp
-    end
-
     it "generates package" do
-      opts = {
+      subject.run(
         package_name: "database",
-        current_dir:  project_dir,
-        path:         "infrastructure/database" ,
-        skip_tests:   false
-      }
-      Rdm::CLI::GenPackage.run(opts)
+        current_path: @project_path,
+        local_path:   "infrastructure/database",
+        stdout:       stdout
+      )
 
-      FileUtils.cd(project_dir) do
+      FileUtils.cd(@project_path) do
         ensure_exists("infrastructure/database/Package.rb")
         ensure_exists("infrastructure/database/package/database.rb")
         ensure_exists("infrastructure/database/package/database/")
@@ -42,79 +35,86 @@ describe Rdm::CLI::GenPackage do
         ensure_content("infrastructure/database/package/database.rb", "module Database\n\nend\n")
       end
     end
+
+    it "add package record to Rdm.packages file" do
+      subject.run(
+        package_name: "database",
+        current_path: @project_path,
+        local_path:   "infrastructure/database",
+        stdout:       stdout
+      )
+
+      expect(
+        Rdm::SourceParser.read_and_init_source(File.join(@project_path, Rdm::SOURCE_FILENAME)).packages.keys
+      ).to include('database')
+    end
+
+    it "has logged useful output" do
+      subject.run(
+        package_name: "database",
+        current_path: @project_path,
+        local_path:   "infrastructure/database",
+        stdout:       stdout
+      )
+
+      expect(stdout.output).to include("Generated: infrastructure/database/Package.rb")
+    end
   end
 
   context "run with errors" do
-    before :all do
-      clean_tmp
-    end
-
-    after :all do
-      clean_tmp
-    end
-
     it "fails when in wrong directory" do
-      opts = {
+      subject.run(
         package_name: "database",
-        current_dir:  project_dir,
-        path:         "infrastructure/database" ,
-        skip_tests:   false
-      }
+        current_path: File.dirname(@project_path),
+        local_path:   "infrastructure/database",
+        stdout:       stdout
+      )
 
-      expect{
-        Rdm::CLI::GenPackage.run(opts)
-      }.to output(/Rdm.packages\ not\ found/).to_stdout
+      expect(stdout.output).to include("Rdm.packages not found. Type 'rdm init .' to create it")
     end
 
     it "fails when package already created" do
-      fresh_project
-      opts = {
+      subject.run(
         package_name: "database",
-        current_dir: project_dir,
-        path: "infrastructure/database" ,
-        skip_tests: false
-      }
-      Rdm::CLI::GenPackage.run(opts)
-
-      expect{
-        Rdm::CLI::GenPackage.run(opts)
-      }.to output(Regexp.new("Error. Directory infrastructure/database exists. Package was not generated")).to_stdout
-      clean_tmp
+        current_path: @project_path,
+        local_path:   "infrastructure/database",
+        stdout:       stdout
+      )
+      
+      subject.run(
+        package_name: "database",
+        current_path: @project_path,
+        local_path:   "infrastructure/database",
+        stdout:       stdout
+      )
+      expect(stdout.output).to include("Error. Directory infrastructure/database exists. Package was not generated")
     end
 
     it "fails when package already created" do
-      fresh_project
-      opts = {
+      subject.run(
         package_name: "database",
-        current_dir: project_dir,
-        path: "infrastructure/database" ,
-        skip_tests: false
-      }
-      Rdm::CLI::GenPackage.run(opts)
+        current_path: @project_path,
+        local_path:   "infrastructure/database",
+        stdout:       stdout
+      )
 
-      FileUtils.rm_rf(File.join(project_dir, "infrastructure/database"))
-
-      expect{
-        Rdm::CLI::GenPackage.run(opts)
-      }.to output(Regexp.new("Error. Package already exist. Package was not generated")).to_stdout
-      clean_tmp
+      subject.run(
+        package_name: "database",
+        current_path: @project_path,
+        local_path:   "database",
+        stdout:       stdout
+      )
+      expect(stdout.output).to include("Error. Package already exist. Package was not generated")
     end
 
     it "fails when empty package given" do
-      fresh_project
-      opts = {
+      subject.run(
         package_name: "",
-        current_dir: project_dir,
-        path: "infrastructure/database" ,
-        skip_tests: false
-      }
-      begin
-        expect{
-          Rdm::CLI::GenPackage.run(opts)
-        }.to output(Regexp.new("Package name was not specified!")).to_stdout
-      rescue SystemExit
-        clean_tmp
-      end
+        current_path: @project_path,
+        local_path:   "infrastructure/database",
+        stdout:       stdout
+      )
+      expect(stdout.output).to include("Package name was not specified!")
     end
   end
 

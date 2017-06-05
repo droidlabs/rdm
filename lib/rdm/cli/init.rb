@@ -2,41 +2,34 @@ module Rdm
   module CLI
     class Init
       class << self
-        def run(opts = {})
-          Rdm::CLI::Init.new(opts).run
+        def run(current_path:, test:, console:, stdout: $stdout)
+          Rdm::CLI::Init.new(current_path, test, console, stdout).run
         end
       end
 
-      attr_accessor :current_dir, :test, :console
-      def initialize(current_dir:, test:, console:)
-        @current_dir = current_dir
-        @test        = test
-        @console     = console
+      def initialize(current_path, test, console, stdout)
+        @current_path = current_path
+        @test         = test
+        @console      = console
+        @stdout       = stdout
       end
 
       def run
-        check_preconditions!
-        begin
-          generate
-        rescue Errno::ENOENT => e
-          puts "Error occurred. Possible reasons:\n #{current_dir} not found. Please run on empty directory \n#{e.inspect}"
-        rescue Rdm::Errors::ProjectAlreadyInitialized
-          puts 'Error. Project was already initialized.'
-        end
-      end
-
-      def generate
-        Rdm::Gen::Init.generate(
-          current_dir: current_dir,
-          test:        test,
-          console:     console
+        generated_files_list = Rdm::Gen::Init.generate(
+          current_path: @current_path,
+          test:         @test,
+          console:      @console
         )
-      end
 
-      def check_preconditions!
-        return unless current_dir.empty?
-        puts 'Current directory was not specified!'
-        exit 1
+        generated_files_list.each { |file| @stdout.puts "Generated: #{file}" }
+      rescue Errno::ENOENT => e
+        @stdout.puts "Error occurred. Possible reasons:\n #{current_path} not found. Please run on empty directory \n#{e.inspect}"
+      rescue Rdm::Errors::ProjectAlreadyInitialized
+        @stdout.puts 'Error. Project was already initialized'
+      rescue Rdm::Errors::ProjectDirNotSpecified
+        @stdout.puts "Error. Project folder not specified. Type path to rdm project, ex: 'rdm init .'"
+      rescue Rdm::Errors::InvalidProjectDir => e
+        @stdout.puts "#{e.message} doesn't exist. Initialize new rdm project with existing directory"
       end
     end
   end

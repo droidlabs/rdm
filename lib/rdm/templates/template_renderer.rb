@@ -1,7 +1,7 @@
 module Rdm
   module Templates
     class TemplateRenderer
-      TEMPLATE_VARIABLE = /<%=([\w\d-]+)%>/i
+      TEMPLATE_VARIABLE = /<%=\s*([\w\d-]+)\s*%>/i
 
       class << self
         def handle(template, locals = {})
@@ -21,7 +21,7 @@ module Rdm
       def handle 
         raise Rdm::Errors::TemplateVariableNotDefined, get_undefined_variables.map(&:to_s).join(';') if get_undefined_variables.any?
 
-        Rdm::Support::Render.render(@template, @locals)
+        Rdm::Utils::RenderUtil.render(@template, @locals)
       end
 
       def get_undefined_variables

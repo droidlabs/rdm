@@ -31,5 +31,14 @@ module Rdm
 
     class TemplateFileExists < StandardError
     end
+
+    class PackageNameNotSpecified < StandardError
+    end
+
+    class ProjectDirNotSpecified < StandardError
+    end
+
+    class InvalidProjectDir < StandardError
+    end
   end
 end

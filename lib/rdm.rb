@@ -3,9 +3,8 @@ module Rdm
   PACKAGE_FILENAME = 'Package.rb'.freeze
 
   # Utils
-  require 'rdm/support/colorize'
-  require 'rdm/support/render'
-  require 'rdm/support/template'
+  require 'rdm/utils/render_util'
+  require 'rdm/utils/string_utils'
   require 'rdm/version'
 
   # CLI part
@@ -36,7 +35,6 @@ module Rdm
   require 'rdm/packages/locator'
 
   # Handlers part
-  require 'rdm/gen/concerns/template_handling'
   require 'rdm/gen/package'
   require 'rdm/gen/init'
   require 'rdm/handlers/diff_package_handler'
@@ -51,7 +49,9 @@ module Rdm
 
   class << self
     # Initialize current package using Package.rb
-    def init(package_path, group = nil)
+    def init(package_path, group = nil, stdout: $stdout)
+      @stdout = stdout
+      
       Rdm::PackageImporter.import_file(package_path, group: group)
     end
 
@@ -72,7 +72,7 @@ module Rdm
 
     def root=(value)
       if @root && @root != value
-        puts "Rdm has already been initialized and Rdm.root was set to #{@root}"
+        @stdout.puts "Rdm has already been initialized and Rdm.root was set to #{@root}"
       end
       @root = value
     end

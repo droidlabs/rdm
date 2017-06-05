@@ -5,7 +5,7 @@ module ExampleProjectHelper
     FileUtils.rm_rf(path)
   end
 
-  def initialize_example_project(path: '/tmp/example')
+  def initialize_example_project(path: '/tmp/example', package_template: false)
     [
       '.rdm/templates/repository/dao/<%=name%>_dao.rb',
       '.rdm/templates/repository/mapper/<%=name%>_mapper.rb',
@@ -21,6 +21,35 @@ module ExampleProjectHelper
     FileUtils.mkdir_p(File.join(path, 'domain/core/package/core'))
     FileUtils.mkdir_p(File.join(path, 'subsystems/mailing_system/package/mailing_system'))
     FileUtils.mkdir_p(File.join(path, 'subsystems/api/package/api'))
+    FileUtils.mkdir_p(File.join(path, 'tests'))
+    
+    if package_template
+      FileUtils.mkdir_p(File.join(path, '.rdm/templates/package'))
+      File.open(File.join(path, '.rdm/templates/package/Package.rb'), 'w') do |f|
+        f.write <<~EOF
+          package do
+            name '<%= package_name %>'
+            version "1.0"
+          end
+
+          dependency do
+            # import "core"
+          end
+        EOF
+      end
+    end
+
+    File.open(File.join(path, 'tests/run'), 'w') do |f| 
+      f.write <<~EOF
+        # how to start tests for your project with rdm
+      EOF
+    end
+
+    File.open(File.join(path, 'Readme.md'), 'w') do |f| 
+      f.write <<~EOF
+        Some content about your project
+      EOF
+    end
 
     File.open(File.join(path, 'Gemfile'), 'w') do |f| 
       f.write <<~EOF

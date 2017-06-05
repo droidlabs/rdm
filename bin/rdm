@@ -48,15 +48,13 @@ class RdmCliRunner
                   'rdm gen.package pack/age --path subsystems/package'
       c.example 'generate events package within /some/other/path folder',
                   'rdm gen.package events --path core/domain/events --current_dir /some/other/path'
-      c.example 'generate auth package without tests', 'rdm gen.package auth --path subsystems/auth --skip-tests'
+      c.example 'generate auth package without tests', 'rdm gen.package auth --path subsystems/auth'
       c.option '--path [RELATIVE_PATH]', String, 'Path for the package'
       c.option '--current_dir [ROOT_DIR]', String, 'Path for the root folder'
-      c.option '--skip-test', '--skip-tests', 'Don\'t generate test files'
       c.action do |args, options|
         package_name = (args.first || "")
         defaults = {
-          skip_tests:   false,
-          current_dir:  `pwd`.chomp,
+          current_path: `pwd`.chomp,
           package_name: package_name,
           path:         package_name.downcase.gsub(/\s+/, '_')
         }

@@ -1,32 +1,29 @@
 require "spec_helper"
 
 describe Rdm::Gen::Package do
-  before :all do
-    Rdm::Gen::Package.disable_logger!
-  end
-  include SetupHelper
+  include ExampleProjectHelper
 
-  def generate_package!
-    Rdm::Gen::Package.generate(
-      current_dir:           project_dir,
-      package_name:          "some",
-      package_relative_path: "domain/some",
-      skip_tests:            false
-    )
+  subject { described_class }
+  
+  before do
+    @project_path = initialize_example_project(package_template: true)
+  end
+
+  after do
+    reset_example_project(path: @project_path)
   end
 
   context "sample package" do
-    before :all do
-      fresh_project
-      generate_package!
-    end
-
-    after :all do
-      clean_tmp
-    end
-
     it "has generated correct files" do
-      FileUtils.cd(project_dir) do
+      FileUtils.rm_rf(File.join(@project_path, '.rdm'))
+
+      subject.generate(
+        current_path: @project_path,
+        package_name: "some",
+        local_path:   "domain/some",
+      )
+
+      FileUtils.cd(@project_path) do
         ensure_exists("domain/some/Package.rb")
         ensure_exists("domain/some/package/some.rb")
         ensure_exists("domain/some/package/some/")
@@ -38,52 +35,64 @@ describe Rdm::Gen::Package do
     end
 
     it "takes template from '.rdm' directory primarily" do
-      FileUtils.cd(project_dir) do
-        ensure_content("domain/some/Package.rb", "# modified file for .rdm tempalates directory")
+      File.open(File.join(@project_path, '.rdm/templates/package/Package.rb'), 'w') do |f|
+        f.write('# modified file for .rdm tempalates directory')
       end
-    end
 
-    it "takes template from gem directory for other cases" do
-      FileUtils.cd(project_dir) do
-        ensure_content("domain/some/package/some.rb", "module Some\n\nend\n")
+      subject.generate(
+        current_path: @project_path,
+        package_name: "some",
+        local_path:   "domain/some",
+      )
+
+      FileUtils.cd(@project_path) do
+        ensure_content("domain/some/Package.rb", "# modified file for .rdm tempalates directory")
+        expect(Dir['domain/some/'].size).to eq(1)
       end
     end
 
     it "has added new entry to Rdm.packages" do
-      FileUtils.cd(project_dir) do
+      subject.generate(
+        current_path: @project_path,
+        package_name: "some",
+        local_path:   "domain/some",
+      )
+
+      FileUtils.cd(@project_path) do
         ensure_content("Rdm.packages", "package 'domain/some'")
       end
-    end
-
-    it "has logged useful output" do
-      Rdm::Gen::Package.enable_logger!
-      expect {
-        fresh_project
-        generate_package!
-      }.to output(Regexp.new("Generated: domain/some/Package.rb")).to_stdout
-      Rdm::Gen::Package.disable_logger!
     end
   end
 
   context "prevents double execution" do
-    after :all do
-      clean_tmp
-    end
-
     it "raises on second package generation" do
-      fresh_project
-      generate_package!
+      subject.generate(
+        current_path: @project_path,
+        package_name: "some",
+        local_path:   "domain/some",
+      )
+
       expect {
-        generate_package!
+        subject.generate(
+          current_path: @project_path,
+          package_name: "some",
+          local_path:   "domain/some",
+        )
       }.to raise_error(Rdm::Errors::PackageDirExists)
     end
 
     it "raises on second package generation, if Rdm.packages includes the package (and folder does not exist)" do
-      fresh_project
-      generate_package!
-      FileUtils.rm_rf(File.join(project_dir, "domain/some"))
+      subject.generate(
+        current_path: @project_path,
+        package_name: "some",
+        local_path:   "domain/some",
+      )
       expect {
-        generate_package!
+        subject.generate(
+          current_path: @project_path,
+          package_name: "some",
+          local_path:   "some",
+        )
       }.to raise_error(Rdm::Errors::PackageExists)
     end
   end
