@@ -30,8 +30,8 @@ module Rdm
         @stdout.puts 'Error. Package already exist. Package was not generated'
       rescue Rdm::Errors::PackageNameNotSpecified
         @stdout.puts "Package name was not specified!"
-      rescue Rdm::Errors::SourceFileDoesNotExist
-        @stdout.puts "Rdm.packages not found. Type 'rdm init .' to create it"
+      rescue Rdm::Errors::SourceFileDoesNotExist => e
+        @stdout.puts "Rdm.packages was not found. Run 'rdm init' to create it"
       rescue Rdm::Errors::PackageDirExists => e
         @stdout.puts "Error. Directory #{e.message} exists. Package was not generated"
       end

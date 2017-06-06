@@ -22,7 +22,9 @@ module Rdm
       end
 
       def generate
-        raise Rdm::Errors::ProjectDirNotSpecified if @current_path.nil? || @current_path.empty?
+        if @current_path.nil? || @current_path.empty?
+          raise Rdm::Errors::InvalidParams, "Error. Project folder not specified. Type path to rdm project, ex: 'rdm init .'" 
+        end
         raise Rdm::Errors::InvalidProjectDir, @current_path unless Dir.exist?(@current_path)
 
         if File.exist?(File.join(@current_path, Rdm::SOURCE_FILENAME))

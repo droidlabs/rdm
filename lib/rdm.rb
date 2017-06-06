@@ -13,6 +13,7 @@ module Rdm
   require 'rdm/cli/init'
   require 'rdm/cli/diff_package'
   require 'rdm/cli/template_generator'
+  require 'rdm/cli/dependencies_controller'
 
   # Runtime part
   require 'rdm/config'
@@ -39,6 +40,7 @@ module Rdm
   require 'rdm/gen/init'
   require 'rdm/handlers/diff_package_handler'
   require 'rdm/handlers/template_handler'
+  require 'rdm/handlers/dependencies_handler'
 
   require 'rdm/helpers/path_helper'
 

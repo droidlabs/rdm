@@ -20,14 +20,12 @@ module Rdm
       end
 
       def compile
-        @source = Rdm::SourceParser.read_and_init_source(File.join(@project_path, Rdm::SOURCE_FILENAME))
-
         reset_directory!(@compile_path)
 
-        dependent_package_names = recursive_find_dependencies([@package_name])
-        dependent_packages      = @source.packages.values.select do |p| 
-          dependent_package_names.include?(p.name)
-        end
+        dependent_packages = Rdm::Handlers::DependenciesHandler.show_packages(
+          package_name: @package_name, 
+          project_path: @project_path
+        )
 
         dependent_packages.each do |pkg|
           rel_path = Pathname.new(pkg.path).relative_path_from(Pathname.new(@project_path))
@@ -69,7 +67,7 @@ module Rdm
           FileUtils.cp(File.join(@project_path, file), File.join(@compile_path, file))
         end
 
-        return dependent_package_names
+        return dependent_packages.map(&:name)
       end
 
       private
@@ -78,22 +76,6 @@ module Rdm
           FileUtils.mkdir_p(dir)
 
           nil
-        end
-
-        def recursive_find_dependencies(package_names)
-          all_packages = @source.packages.values
-
-          deps_package_names = all_packages
-            .select {|pkg| package_names.include?(pkg.name)}
-            .map(&:local_dependencies)
-            .flatten
-            .uniq
-
-          extended_package_names = deps_package_names | package_names
-          
-          return package_names if package_names == extended_package_names
-          
-          recursive_find_dependencies(extended_package_names)
         end
     end
   end

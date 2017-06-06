@@ -70,7 +70,7 @@ describe Rdm::CLI::GenPackage do
         stdout:       stdout
       )
 
-      expect(stdout.output).to include("Rdm.packages not found. Type 'rdm init .' to create it")
+      expect(stdout.output).to include("Rdm.packages was not found. Run 'rdm init' to create it")
     end
 
     it "fails when package already created" do

@@ -9,6 +9,10 @@ module Rdm
     end
 
     class SourceFileDoesNotExist < StandardError
+      attr_reader :message
+      def initialize(message = nil)
+        @message = message || "Rdm.packages was not found. Run 'rdm init' to create it"
+      end
     end
     
     class GitRepositoryNotInitialized < StandardError
@@ -35,7 +39,7 @@ module Rdm
     class PackageNameNotSpecified < StandardError
     end
 
-    class ProjectDirNotSpecified < StandardError
+    class InvalidParams < StandardError
     end
 
     class InvalidProjectDir < StandardError

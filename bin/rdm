@@ -117,6 +117,22 @@ class RdmCliRunner
       end
     end
 
+    command :"gen.deps" do |c|
+      c.syntax = 'rdm gen.deps PACKAGE_NAME'
+      c.description = 'puts list of recursive dependencies for specified package'
+      c.summary = '> ' + c.description
+      c.example 'show dependencies for `commands` package', 'rdm gen.deps commands'
+
+      c.action do |args, options|
+        package_name = args.first || ""
+
+        Rdm::CLI::DependenciesController.run(
+          package_name: package_name,
+          project_path: `pwd`.chomp
+        )
+      end
+    end
+
     run!
   end
 end

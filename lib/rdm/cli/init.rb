@@ -26,8 +26,8 @@ module Rdm
         @stdout.puts "Error occurred. Possible reasons:\n #{current_path} not found. Please run on empty directory \n#{e.inspect}"
       rescue Rdm::Errors::ProjectAlreadyInitialized
         @stdout.puts 'Error. Project was already initialized'
-      rescue Rdm::Errors::ProjectDirNotSpecified
-        @stdout.puts "Error. Project folder not specified. Type path to rdm project, ex: 'rdm init .'"
+      rescue Rdm::Errors::InvalidParams => e
+        @stdout.puts e.message
       rescue Rdm::Errors::InvalidProjectDir => e
         @stdout.puts "#{e.message} doesn't exist. Initialize new rdm project with existing directory"
       end

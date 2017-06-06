@@ -28,8 +28,8 @@ module Rdm
         )
       rescue Rdm::Errors::TemplateDoesNotExist
         puts "Template '#{@template_name}' does not exist. Create new at #{File.join(@current_path, '.rdm/templates/', @template_name)} folder"
-      rescue Rdm::Errors::SourceFileDoesNotExist
-        puts "Rdm is not initialized. Type 'rdm init .'"
+      rescue Rdm::Errors::SourceFileDoesNotExist => e
+        puts e.message
       rescue Rdm::Errors::TemplateFileExists => e
         puts "File #{e.message} already exists. Try to user another variable name"
       end
