@@ -44,5 +44,8 @@ module Rdm
 
     class InvalidProjectDir < StandardError
     end
+
+    class PackageHasNoDependencies < StandardError
+    end
   end
 end

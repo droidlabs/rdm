@@ -17,8 +17,12 @@ describe Rdm::CLI::DependenciesController do
         stdout:       stdout
       )
       
-      expect(stdout.output).to include("Package `web` dependent on this packages:")
-      expect(stdout.output).to include(["  1. core"])
+      expect(stdout.output).to include(
+        [
+          "web", 
+          "└── core"
+        ]
+      )
     end
 
     it "returns no dependencies message" do
