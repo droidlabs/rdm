@@ -24,7 +24,7 @@ module Rdm
           .reject(&:blank?)
           .uniq
         
-        return get_dependencies(modified_packages)
+        return get_dependencies(modified_packages) || []
           
       rescue Rdm::Errors::GitCommandError => e
         puts e.message
@@ -42,7 +42,7 @@ module Rdm
           
           return extended_dependencies if extended_dependencies == base_packages
 
-          get_dependencies(extended_dependencies)
+          get_dependencies(extended_dependencies) || []
         end
     end
   end

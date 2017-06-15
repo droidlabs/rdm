@@ -26,12 +26,12 @@ class RdmCliRunner
       c.example 'generate scaffold with pry',      'rdm init --console=pry'
       c.option '--test FRAMEWORK', TESTFRAMEWORKS, "select test framework: #{TESTFRAMEWORKS.join(", ")}"
       c.option '--console CONSOLE', CONSOLES, "select console: #{CONSOLES.join(", ")}"
-      c.option '--current_dir [ROOT_DIR]', String, 'Path for the root folder'
+      c.option '--current_path [ROOT_DIR]', String, 'Path for the root folder'
       c.action do |args, options|
         defaults = {
-          test:        "rspec",
-          console:     "irb",
-          current_dir: `pwd`.strip
+          test:         "rspec",
+          console:      "irb",
+          current_path: `pwd`.strip
         }
         options_with_defaults = defaults.merge!(options.__hash__)
         Rdm::CLI::Init.run(options_with_defaults)
@@ -47,10 +47,10 @@ class RdmCliRunner
       c.example 'generate pack/age package',
                   'rdm gen.package pack/age --path subsystems/package'
       c.example 'generate events package within /some/other/path folder',
-                  'rdm gen.package events --path core/domain/events --current_dir /some/other/path'
+                  'rdm gen.package events --path core/domain/events --current_path /some/other/path'
       c.example 'generate auth package without tests', 'rdm gen.package auth --path subsystems/auth'
       c.option '--path [RELATIVE_PATH]', String, 'Path for the package'
-      c.option '--current_dir [ROOT_DIR]', String, 'Path for the root folder'
+      c.option '--current_path [ROOT_DIR]', String, 'Path for the root folder'
       c.action do |args, options|
         package_name = (args.first || "")
         defaults = {
