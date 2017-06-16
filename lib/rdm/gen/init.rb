@@ -31,11 +31,11 @@ module Rdm
           raise Rdm::Errors::ProjectAlreadyInitialized, "#{@current_path} has already #{Rdm::SOURCE_FILENAME}"
         end
 
+        FileUtils.mkdir_p(local_templates_path)
         FileUtils.cp_r(
           @template_detector.detect_template_folder('package'),
           local_templates_path
         )
-
         Rdm::Handlers::TemplateHandler.generate(
           template_name:      TEMPLATE_NAME,
           current_path:       @current_path,

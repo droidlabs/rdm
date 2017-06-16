@@ -4,27 +4,22 @@ describe Rdm::CLI::GenPackage do
   include ExampleProjectHelper
 
   subject { described_class }
-  let(:stdout) { SpecLogger.new }
 
-  before do
-    @project_path = initialize_example_project
-    stdout.clean
-  end
+  let(:stdout)          { SpecLogger.new }
 
-  after do
-    reset_example_project(path: @project_path)
-  end
+  before { initialize_example_project }
+  after  { reset_example_project }
 
   context "run" do
     it "generates package" do
       subject.run(
         package_name: "database",
-        current_path: @project_path,
+        current_path: example_project_path,
         local_path:   "infrastructure/database",
         stdout:       stdout
       )
 
-      FileUtils.cd(@project_path) do
+      FileUtils.cd(example_project_path) do
         ensure_exists("infrastructure/database/Package.rb")
         ensure_exists("infrastructure/database/package/database.rb")
         ensure_exists("infrastructure/database/package/database/")
@@ -36,23 +31,10 @@ describe Rdm::CLI::GenPackage do
       end
     end
 
-    it "add package record to Rdm.packages file" do
-      subject.run(
-        package_name: "database",
-        current_path: @project_path,
-        local_path:   "infrastructure/database",
-        stdout:       stdout
-      )
-
-      expect(
-        Rdm::SourceParser.read_and_init_source(File.join(@project_path, Rdm::SOURCE_FILENAME)).packages.keys
-      ).to include('database')
-    end
-
     it "has logged useful output" do
       subject.run(
         package_name: "database",
-        current_path: @project_path,
+        current_path: example_project_path,
         local_path:   "infrastructure/database",
         stdout:       stdout
       )
@@ -65,7 +47,7 @@ describe Rdm::CLI::GenPackage do
     it "fails when in wrong directory" do
       subject.run(
         package_name: "database",
-        current_path: File.dirname(@project_path),
+        current_path: File.dirname(example_project_path),
         local_path:   "infrastructure/database",
         stdout:       stdout
       )
@@ -76,14 +58,14 @@ describe Rdm::CLI::GenPackage do
     it "fails when package already created" do
       subject.run(
         package_name: "database",
-        current_path: @project_path,
+        current_path: example_project_path,
         local_path:   "infrastructure/database",
         stdout:       stdout
       )
       
       subject.run(
         package_name: "database",
-        current_path: @project_path,
+        current_path: example_project_path,
         local_path:   "infrastructure/database",
         stdout:       stdout
       )
@@ -93,14 +75,14 @@ describe Rdm::CLI::GenPackage do
     it "fails when package already created" do
       subject.run(
         package_name: "database",
-        current_path: @project_path,
+        current_path: example_project_path,
         local_path:   "infrastructure/database",
         stdout:       stdout
       )
 
       subject.run(
         package_name: "database",
-        current_path: @project_path,
+        current_path: example_project_path,
         local_path:   "database",
         stdout:       stdout
       )
@@ -110,7 +92,7 @@ describe Rdm::CLI::GenPackage do
     it "fails when empty package given" do
       subject.run(
         package_name: "",
-        current_path: @project_path,
+        current_path: example_project_path,
         local_path:   "infrastructure/database",
         stdout:       stdout
       )

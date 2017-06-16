@@ -34,16 +34,26 @@ end
 
 class SpecLogger
   attr_reader :output
-  def initialize
+
+  def initialize(stdin: nil)
+    @stdin  = stdin
     @output = []
   end
 
   def puts(message)
     @output.push(message)
   end
+  
+  def print(message)
+    @output.push(message)
+  end
 
   def clean
     @output = []
+  end
+
+  def gets
+    @stdin
   end
 end
 

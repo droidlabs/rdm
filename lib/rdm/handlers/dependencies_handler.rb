@@ -42,10 +42,10 @@ module Rdm
         end
       end
 
-      
       def draw(pkg_name = @package_name, uniq_packages = [], self_predicate = '', child_predicate = '')
+        raise Rdm::Errors::InvalidParams, "Type package name, ex: rdm gen.deps repository" if pkg_name.to_s.empty?
         raise Rdm::Errors::PackageHasNoDependencies, @package_name if source.packages[@package_name].local_dependencies.empty?
-        
+
         node = [format(pkg_name, self_predicate)]
         
         return node if pkg_name == ALREADY_MENTIONED_DEPS

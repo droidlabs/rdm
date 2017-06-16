@@ -3,46 +3,34 @@ require "spec_helper"
 describe Rdm::CLI::Init do
   include ExampleProjectHelper
 
-  subject { described_class }
-  let(:stdout) { SpecLogger.new }
+  subject       { described_class }
+  let(:stdout)  { SpecLogger.new }
 
-  before do
-    @project_path = initialize_example_project
 
-    FileUtils.rm [
-      File.join(@project_path, 'Rdm.packages'),
-      File.join(@project_path, 'Gemfile'),
-      File.join(@project_path, 'Readme.md'),
-      File.join(@project_path, 'tests/run')
-    ]
-
-    stdout.clean
-  end
-
-  after do
-    reset_example_project(path: @project_path)
-  end
+  before { initialize_example_project(skip_rdm_init: true) }
+  after  { reset_example_project }
 
   context "run" do
     it "generates package" do
       subject.run(
-        current_path: @project_path,
+        current_path: example_project_path,
         console:     "irb",
         test:        "rspec",
         stdout:      stdout
       )
 
-      FileUtils.cd(@project_path) do
+      FileUtils.cd(example_project_path) do
         ensure_exists("Rdm.packages")
         ensure_exists("Gemfile")
         ensure_exists("Readme.md")
         ensure_exists("tests/run")
+        ensure_exists("tests/diff_run")
       end
     end
 
     it "output list of generated files" do
       subject.run(
-        current_path: @project_path,
+        current_path: example_project_path,
         console:     "irb",
         test:        "rspec",
         stdout:      stdout
@@ -54,7 +42,7 @@ describe Rdm::CLI::Init do
   context "run with errors" do
     it "fails when in wrong directory" do
       subject.run(
-        current_path: @project_path + "/not-there",
+        current_path: example_project_path + "/not-there",
         console:      "irb",
         test:         "rspec",
         stdout:       stdout
@@ -64,14 +52,14 @@ describe Rdm::CLI::Init do
 
     it "fails when project already initialized" do
       subject.run(        
-        current_path: @project_path,
+        current_path: example_project_path,
         console:     "irb",
         test:        "rspec",
         stdout:      stdout
       )
 
       subject.run(
-        current_path: @project_path,
+        current_path: example_project_path,
         console:     "irb",
         test:        "rspec",
         stdout:      stdout

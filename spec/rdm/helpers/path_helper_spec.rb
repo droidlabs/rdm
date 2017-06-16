@@ -8,17 +8,14 @@ describe Rdm::Helpers::PathHelper do
 
     before do
       subject.extend(described_class)
-
-      @example_path = initialize_example_project
+      initialize_example_project
     end
 
-    after do
-      reset_example_project(path: @example_path)
-    end
+    after { reset_example_project }
 
     context "if rdm is not initialized" do
       before do
-        @file_without_rdm = File.join(File.dirname(@example_path), 'path_helper_example.rb')
+        @file_without_rdm = File.join(File.dirname(example_project_path), 'path_helper_example.rb')
       end
 
       it "raises Rdm::Errors::SourceFileDoesNotExist error" do
@@ -30,7 +27,7 @@ describe Rdm::Helpers::PathHelper do
 
     context "with invalid package name" do
       before do
-        @file_with_invalid_package_name = File.join(@example_path, 'path_helper_example.rb')
+        @file_with_invalid_package_name = File.join(example_project_path, 'path_helper_example.rb')
       end
 
       it "raises Rdm::Errors::PackageDoesNotExist error" do
@@ -42,13 +39,13 @@ describe Rdm::Helpers::PathHelper do
 
     context "with valid package name" do
       before do
-        @example_file = File.join(@example_path, 'path_helper_example.rb')
+        @example_file = File.join(example_project_path, 'path_helper_example.rb')
       end
 
       it "returns path to file" do
         expect(
           subject.package_path(:core, current_file: @example_file)
-        ).to eq(File.join(@example_path, "domain/core"))
+        ).to eq(File.join(example_project_path, "domain/core"))
       end
     end
   end

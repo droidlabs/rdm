@@ -5,17 +5,17 @@ describe Rdm::Handlers::DependenciesHandler do
 
   subject { described_class }
 
-  before { @project_path = initialize_example_project }
-  after  { reset_example_project(path: @project_path) }
+  before { initialize_example_project }
+  after  { reset_example_project }
 
   context ":show_names" do
     it "returns array of dependencies names" do
       expect(
         subject.show_names(
           package_name: 'web',
-          project_path: @project_path
+          project_path: example_project_path
         )
-      ).to match(["core", "web"])
+      ).to match(["core", "repository", "web"])
     end
   end
 
@@ -23,11 +23,11 @@ describe Rdm::Handlers::DependenciesHandler do
     let(:result) {
       subject.show_packages(
         package_name: 'web',
-        project_path: @project_path
+        project_path: example_project_path
       )
     }
     it "returns array with proper size" do
-      expect(result.count).to eq(2)
+      expect(result.count).to eq(3)
     end
 
     it "returns array with proper size" do
@@ -40,14 +40,15 @@ describe Rdm::Handlers::DependenciesHandler do
       let(:result) {
         subject.draw(
           package_name: 'web',
-          project_path: @project_path
+          project_path: example_project_path
         )
       }
       it "returns hash structure of dependencies" do
         expect(result).to match(
           [
             "web", 
-            "└── core"
+            "└── core",
+            "    └── repository"
           ]
         )
       end
@@ -55,24 +56,16 @@ describe Rdm::Handlers::DependenciesHandler do
 
     context "for cycle dependencies" do
       before do
-        File.open(File.join(@project_path, "domain/core", Rdm::PACKAGE_FILENAME), 'w') do |f|
-          f.write <<~EOF
-            package do
-              name "core"
-              version "1.0"
-            end
-
-            dependency do
-              import "web"
-              import "api"
-            end
-          EOF
+        core_package_file = File.join(example_project_path, "domain/core", Rdm::PACKAGE_FILENAME)
+        Rdm::Utils::FileUtils.change_file(core_package_file) do |line|
+          line.include?('import "repository"') ? '  import "web"' : line
         end
       end
+
       let(:result) {
         subject.draw(
           package_name: 'web',
-          project_path: @project_path
+          project_path: example_project_path
         )
       }
 
@@ -81,11 +74,8 @@ describe Rdm::Handlers::DependenciesHandler do
           [
             "web", 
             "└── core", 
-            "    ├── api", 
-            "    |   └── web", 
-            "    |       └── ...", 
             "    └── web", 
-            "        └── ..."
+            "        └── ..." 
           ]
         )
       end

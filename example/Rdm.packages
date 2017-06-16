@@ -4,6 +4,7 @@ setup do
   config_path ":configs_dir/:config_name/default.yml"
   role_config_path ":configs_dir/:config_name/:role.yml"
   package_subdir_name "package"
+  compile_path "/tmp/rdm_compiled"
 end
 
 config :database

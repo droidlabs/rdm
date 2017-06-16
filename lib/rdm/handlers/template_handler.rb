@@ -5,23 +5,31 @@ module Rdm
   module Handlers
     class TemplateHandler
       class << self
-        def generate(template_name:, local_path:, current_path:, locals: {}, ignore_source_file: false)
+        def generate(template_name:, local_path:, current_path:, locals: {}, 
+                     ignore_source_file: false, stdout: STDOUT, stdin: STDIN)
+
           Rdm::Handlers::TemplateHandler.new(
             template_name:      template_name.to_s, 
             local_path:         local_path, 
             current_path:       current_path, 
             ignore_source_file: ignore_source_file,
-            locals:             locals
+            locals:             locals,
+            stdout:             stdout,
+            stdin:              stdin
           ).generate
         end
       end
 
-      def initialize(template_name:, local_path:, current_path:, locals:, ignore_source_file:)
+      def initialize(template_name:, local_path:, current_path:,  
+                     locals:, ignore_source_file:, stdout:, stdin:)
+
         @template_name      = template_name
         @local_path         = local_path
         @current_path       = current_path
         @ignore_source_file = ignore_source_file
         @missing_variables  = []
+        @stdout             = stdout
+        @stdin              = stdin
         
         @locals            = default_locals.merge(locals)
       end
@@ -62,13 +70,12 @@ module Rdm
 
         @missing_variables.uniq!
         if @missing_variables.any?
-          puts "Undefined variables were found:"
-          @missing_variables.size.times {|t| puts "  #{t+1}. #{@missing_variables[t]}"}
-          puts
+          @stdout.puts "Undefined variables were found:"
+          @missing_variables.size.times {|t| @stdout.puts "  #{t+1}. #{@missing_variables[t]}"}
 
           @missing_variables.each do |var|
-            print "Type value for '#{var}': "
-            @locals[var] = STDIN.gets.chomp
+            @stdout.print "Type value for '#{var}': "
+            @locals[var] = @stdin.gets.chomp
           end
         end
 

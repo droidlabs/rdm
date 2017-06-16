@@ -3,22 +3,25 @@ require 'spec_helper'
 describe Rdm::Packages::CompilerService do
   include ExampleProjectHelper
 
-  subject { described_class }
+  subject             { described_class }
   let(:source_parser) { Rdm::SourceParser }
-  let(:source_path) { File.join(@compile_path, Rdm::SOURCE_FILENAME) } 
+  let(:source_path)   { File.join(compile_path, Rdm::SOURCE_FILENAME) } 
+  let(:compile_path)  { "/tmp/example_compile" }
 
   describe "::compile" do
-    before do
-      @project_path = initialize_example_project(path: '/tmp/example')
-      @compile_path = "/tmp/example_compile"
+    before { initialize_example_project }
+    
+    after do
+      reset_example_project
+      FileUtils.rm_rf compile_path
     end
 
     context "to existing directory" do
       before do
         subject.compile(
           package_name: 'web',
-          compile_path: @compile_path,
-          project_path: @project_path
+          compile_path: compile_path,
+          project_path: example_project_path
         )
       end
 
@@ -26,14 +29,14 @@ describe Rdm::Packages::CompilerService do
         before do
           subject.compile(
             package_name: 'core', 
-            compile_path: @compile_path,
-            project_path: @project_path
+            compile_path: compile_path,
+            project_path: example_project_path
           ) 
         end
 
         it "deletes old unused package from file structure" do
           expect(
-            File.exists?(File.join(@compile_path, 'application/web/package/web.rb'))
+            File.exists?(File.join(compile_path, 'application/web/package/web.rb'))
           ).to be false
         end
 
@@ -53,14 +56,14 @@ describe Rdm::Packages::CompilerService do
     context "package without dependencies" do
       before do
         subject.compile(
-          package_name: 'core', 
-          compile_path: @compile_path,
-          project_path: @project_path
+          package_name: 'repository', 
+          compile_path: compile_path,
+          project_path: example_project_path
         ) 
       end
       
       it "creates folder" do
-        expect(Dir.exists?(@compile_path)).to be true
+        expect(Dir.exists?(compile_path)).to be true
       end
 
       it "creates Rdm.packges" do
@@ -69,7 +72,7 @@ describe Rdm::Packages::CompilerService do
 
       it "copies files structure from original package" do
         expect(
-          File.exists?(File.join(@compile_path, 'domain/core/package/core.rb'))
+          File.exists?(File.join(compile_path, 'infrastructure/repository/package/repository.rb'))
         ).to be true
       end
 
@@ -80,7 +83,7 @@ describe Rdm::Packages::CompilerService do
           .values
           .map(&:name)
 
-        expect(package_names).to include("core")
+        expect(package_names).to include("repository")
         expect(package_names.size).to eq(1)
       end
     end
@@ -89,18 +92,18 @@ describe Rdm::Packages::CompilerService do
       before do
         subject.compile(
           package_name: 'web',
-          compile_path: @compile_path,
-          project_path: @project_path
+          compile_path: compile_path,
+          project_path: example_project_path
         )
       end
 
       it "copies files structure for each dependent package" do
         expect(
-          File.exists?(File.join(@compile_path, 'domain/core/package/core.rb'))
+          File.exists?(File.join(compile_path, 'domain/core/package/core.rb'))
         ).to be true
 
         expect(
-          File.exists?(File.join(@compile_path, 'application/web/package/web.rb'))
+          File.exists?(File.join(compile_path, 'application/web/package/web.rb'))
         ).to be true
       end
 
@@ -113,13 +116,9 @@ describe Rdm::Packages::CompilerService do
 
         expect(package_names).to include("web")
         expect(package_names).to include("core")
-        expect(package_names.size).to eq(2)
+        expect(package_names).to include("repository")
+        expect(package_names.size).to eq(3)
       end
-    end
-
-    after do
-      reset_example_project(path: @project_path)
-      reset_example_project(path: @compile_path)
     end
   end
 end

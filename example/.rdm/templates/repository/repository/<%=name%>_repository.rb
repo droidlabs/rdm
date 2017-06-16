@@ -1,1 +1,2 @@
-
+class <%= camelize(name) %>
+end

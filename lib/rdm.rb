@@ -5,6 +5,7 @@ module Rdm
   # Utils
   require 'rdm/utils/render_util'
   require 'rdm/utils/string_utils'
+  require 'rdm/utils/file_utils'
   require 'rdm/version'
 
   # CLI part

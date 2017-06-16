@@ -5,34 +5,46 @@ describe Rdm::CLI::DependenciesController do
 
   subject { described_class }
 
-  before { @project_path = initialize_example_project }
-  after  { reset_example_project(path: @project_path) }
+  before { initialize_example_project }
+  after  { reset_example_project }
+
   let(:stdout) { SpecLogger.new }
 
   context ":run" do
     it "returns array of dependencies names" do
       subject.run(
         package_name: 'web',
-        project_path: @project_path,
+        project_path: example_project_path,
         stdout:       stdout
       )
       
       expect(stdout.output).to include(
         [
           "web", 
-          "└── core"
+          "└── core",
+          "    └── repository"
         ]
       )
     end
 
     it "returns no dependencies message" do
       subject.run(
-        package_name: 'core',
-        project_path: @project_path,
+        package_name: 'repository',
+        project_path: example_project_path,
         stdout:       stdout
       )
       
-      expect(stdout.output).to include("Package `core` has no dependencies")
+      expect(stdout.output).to include("Package `repository` has no dependencies")
+    end
+
+    it "show error message if package_name not specified" do
+      subject.run(
+        package_name: '',
+        project_path: example_project_path,
+        stdout:       stdout
+      )
+
+      expect(stdout.output).to include("Type package name, ex: rdm gen.deps repository")
     end
   end
 end
