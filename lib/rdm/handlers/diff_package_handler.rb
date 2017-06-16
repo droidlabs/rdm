@@ -12,11 +12,13 @@ module Rdm
         @path     = path
         @revision = revision
 
-        source_path = Rdm::SourceLocator.locate(path)
+        source_path   = Rdm::SourceLocator.locate(path)
         @all_packages = Rdm::SourceParser.read_and_init_source(source_path).packages.values
       end
 
       def handle
+        @revision = 'HEAD' if @revision.nil? || @revision.empty?
+
         modified_packages = Rdm::Git::DiffManager
           .run(path: path, revision: revision)
           .map { |file| Rdm::Packages::Locator.locate(file) rescue nil }
@@ -25,9 +27,6 @@ module Rdm
           .uniq
         
         return get_dependencies(modified_packages) || []
-          
-      rescue Rdm::Errors::GitCommandError => e
-        puts e.message
       end
 
       private

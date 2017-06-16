@@ -3,8 +3,6 @@ require 'spec_helper'
 describe Rdm::SpecRunner::Runner do
   include ExampleProjectHelper
 
-  let(:input_params) { Rdm::SpecRunner::InputParams.new('') }
-
   before do
     @project_path = initialize_example_project
   end
@@ -15,7 +13,7 @@ describe Rdm::SpecRunner::Runner do
 
   it 'run some test' do
     expect(
-      described_class.new(input_params, path: @project_path).run
+      described_class.new(path: @project_path).run
     ).to eq(1)
   end
 end

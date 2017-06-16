@@ -29,5 +29,9 @@ if ENV['TEST_RUN']
     end
   end
 else
-  Rdm::SpecRunner.run
+  Rdm::SpecRunner.run(
+    package:      ARGV.clone.first,
+    spec_matcher: ARGV.clone.last,
+    path:         File.expand_path(__FILE__)
+  )
 end

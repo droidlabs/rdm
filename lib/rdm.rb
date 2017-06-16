@@ -51,7 +51,6 @@ module Rdm
   require 'rdm/spec_runner'
   require 'rdm/spec_runner/command_generator'
   require 'rdm/spec_runner/command_params'
-  require 'rdm/spec_runner/input_params'
   require 'rdm/spec_runner/package_fetcher'
   require 'rdm/spec_runner/runner'
   require 'rdm/spec_runner/view'

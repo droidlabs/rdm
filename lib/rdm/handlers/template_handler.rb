@@ -36,12 +36,15 @@ module Rdm
         template_files_list = Dir[ 
           File.join(@template_directory, '**', '.?*'), 
           File.join(@template_directory, '**', '*') 
-        ].select { |p| File.file? p }
+        ]
+        .select { |p| File.file?(p) }
+        .reject { |p| File.basename(p) == '.DS_Store' }
+
         template_dir_list   = Dir[ File.join(@template_directory, '**', '*') ].select { |p| File.directory? p }
 
         template_files_list.each do |file|
           missings = Rdm::Templates::TemplateRenderer.get_undefined_variables(get_destination_path(file), @locals)
-
+          
           if File.extname(file) != '.erb'
             missings.push(
               *Rdm::Templates::TemplateRenderer.get_undefined_variables(File.read(file), @locals)

@@ -1,12 +1,13 @@
 class Rdm::SpecRunner::Runner
-  attr_accessor :input_params
   attr_accessor :skipped_packages
   attr_accessor :prepared_command_params
   attr_accessor :command
-  def initialize(input_params, path: nil)
-    @input_params     = input_params
+  def initialize(package: nil, spec_matcher: nil, path: nil)
+    @package          = package,
+    @spec_matcher     = spec_matcher.to_s
     @skipped_packages = []
     @path             = path
+    @run_all          = @package.nil?
   end
 
   def run
@@ -35,16 +36,16 @@ class Rdm::SpecRunner::Runner
   end
 
   def check_input_params!
-    if input_params.package_name
-      unless is_package_included?(input_params.package_name)
+    if @package_name
+      unless is_package_included?(@package_name)
         exit_with_message(
-          view.package_not_found_message(input_params.package_name, prepared_command_params)
+          view.package_not_found_message(@package_name, prepared_command_params)
         )
       end
 
-      if skipped_packages.include?(input_params.package_name)
+      if skipped_packages.include?(@package_name)
         exit_with_message(
-          view.no_specs_for_package(input_params.package_name)
+          view.no_specs_for_package(@package_name)
         )
       end
     end
@@ -69,7 +70,7 @@ class Rdm::SpecRunner::Runner
     @prepared_command_params ||= begin
       packages.map do |_name, package|
         Rdm::SpecRunner::CommandGenerator.new(
-          package_name: package.name, package_path: package.path, spec_matcher: spec_matcher
+          package_name: package.name, package_path: package.path, spec_matcher: @spec_matcher
         ).generate
       end
     end
@@ -83,8 +84,8 @@ class Rdm::SpecRunner::Runner
 
   def prepare_command
     @command ||= begin
-      if input_params.package_name
-        prepare_single_package_command(input_params.package_name)
+      if @package_name
+        prepare_single_package_command(@package_name)
       else
         prepare_command_for_packages(prepared_command_params)
       end
@@ -113,14 +114,9 @@ class Rdm::SpecRunner::Runner
   end
 
   def execute_command
-    debugger
     eval(command)
     if !$?.success?
       exit(1)
     end
-  end
-
-  def spec_matcher
-    input_params.spec_matcher || ''
   end
 end

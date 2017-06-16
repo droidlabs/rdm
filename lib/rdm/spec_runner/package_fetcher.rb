@@ -1,6 +1,6 @@
 class Rdm::SpecRunner::PackageFetcher
-  def initialize(path = nil)
-    @app_path = path || caller[0].split(':').first
+  def initialize(path)
+    @app_path = path
   end
 
   def packages

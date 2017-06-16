@@ -1,11 +1,16 @@
 require "fileutils"
 
 module ExampleProjectHelper
-  def reset_example_project(path:)
-    FileUtils.rm_rf(path)
+  EXAMPLE_PROJECT_PATH = File.expand_path(File.join(__dir__, '../../example'))
+
+  def reset_example_project
+    FileUtils.rm_rf(@example_project_path)
   end
 
-  def initialize_example_project(path: '/tmp/example', package_template: false)
+  def initialize_example_project(path: '/tmp/example')
+    @example_project_path = path
+
+
     [
       '.rdm/templates/repository/dao/<%=name%>_dao.rb',
       '.rdm/templates/repository/mapper/<%=name%>_mapper.rb',
