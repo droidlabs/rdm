@@ -4,6 +4,9 @@ require 'fileutils'
 module Rdm
   module Handlers
     class TemplateHandler
+      REJECTED_TEMPLATE_FILES   = %W(.DS_Store)
+      NOT_HANDLED_TEMPLATES_EXT = %W(.erb)
+
       class << self
         def generate(template_name:, local_path:, current_path:, locals: {}, 
                      ignore_source_file: false, stdout: STDOUT, stdin: STDIN)
@@ -30,7 +33,8 @@ module Rdm
         @missing_variables  = []
         @stdout             = stdout
         @stdin              = stdin
-        
+
+        default_locals     = { package_subdir_name: Rdm.settings.send(:package_subdir_name) }
         @locals            = default_locals.merge(locals)
       end
 
@@ -38,38 +42,31 @@ module Rdm
         project_path      = @ignore_source_file ? @current_path : File.dirname(Rdm::SourceLocator.locate(@current_path))
         template_detector = Rdm::Templates::TemplateDetector.new(project_path)
 
+        render_helper_path = "#{project_path}/.rdm/helpers/render_helper.rb"
+        require_relative render_helper_path if File.exist?(render_helper_path)
+
         @template_directory    = template_detector.detect_template_folder(@template_name)
         @destination_directory = File.join(project_path, @local_path)
 
-        template_files_list = Dir[ 
-          File.join(@template_directory, '**', '.?*'), 
-          File.join(@template_directory, '**', '*') 
-        ]
-        .select { |p| File.file?(p) }
-        .reject { |p| File.basename(p) == '.DS_Store' }
+        template_files_list = Dir
+          .glob(File.join(@template_directory, '**', '*'), File::FNM_DOTMATCH)
+          .reject { |path| REJECTED_TEMPLATE_FILES.include? File.basename(path)  }
 
-        template_dir_list   = Dir[ File.join(@template_directory, '**', '*') ].select { |p| File.directory? p }
+        template_files_list.each do |path|
+          @missing_variables.concat(
+            Rdm::Templates::TemplateRenderer.get_undefined_variables(get_destination_path(path), @locals)
+          ) 
 
-        template_files_list.each do |file|
-          missings = Rdm::Templates::TemplateRenderer.get_undefined_variables(get_destination_path(file), @locals)
-          
-          if File.extname(file) != '.erb'
-            missings.push(
-              *Rdm::Templates::TemplateRenderer.get_undefined_variables(File.read(file), @locals)
+          if handle_file_content?(path)
+            @missing_variables.concat(
+              Rdm::Templates::TemplateRenderer.get_undefined_variables(File.read(path), @locals)
             ) 
           end
-          
-          @missing_variables.push(*missings)
         end
 
-        template_dir_list.each do |dir|
-          @missing_variables.push(
-            *Rdm::Templates::TemplateRenderer.get_undefined_variables(get_destination_path(dir), @locals)
-          )
-        end
-
-        @missing_variables.uniq!
         if @missing_variables.any?
+          @missing_variables.uniq!
+
           @stdout.puts "Undefined variables were found:"
           @missing_variables.size.times {|t| @stdout.puts "  #{t+1}. #{@missing_variables[t]}"}
 
@@ -79,27 +76,29 @@ module Rdm
           end
         end
 
-        template_dir_list.each do |dir|
-          rendered_abs_path = Rdm::Templates::TemplateRenderer.handle(get_destination_path(dir), @locals)
-          FileUtils.mkdir_p rendered_abs_path
-        end
-
-        template_files_list.map do |file|
-          rendered_abs_path = Rdm::Templates::TemplateRenderer.handle(get_destination_path(file), @locals)
+        template_files_list.map do |path|
+          rendered_abs_path = Rdm::Templates::TemplateRenderer.handle(get_destination_path(path), @locals)
+          rendered_rel_path = Pathname.new(rendered_abs_path).relative_path_from Pathname.new(project_path)
           
-          if File.exists?(rendered_abs_path)
-            @stdout.puts "Warning! #{file} already exists. Skipping file creation..."
+          if File.file?(rendered_abs_path) && File.exists?(rendered_abs_path)
+            @stdout.puts "Warning! #{rendered_rel_path} already exists. Skipping file creation..."
+            next
+          end
+
+          if File.directory?(path)
+            FileUtils.mkdir_p rendered_abs_path
             next
           end
           
-          rendered_file_content = File.extname(file) == '.erb' ?
-            File.read(file) :
-            Rdm::Templates::TemplateRenderer.handle(File.read(file), @locals)
+          rendered_file_content = handle_file_content?(path) ?
+            Rdm::Templates::TemplateRenderer.handle(File.read(path), @locals) :
+            File.read(path)
+            
             
           FileUtils.mkdir_p(File.dirname(rendered_abs_path))
           File.open(rendered_abs_path, 'w') { |f| f.write rendered_file_content }
 
-          Pathname.new(rendered_abs_path).relative_path_from Pathname.new(project_path)
+          rendered_rel_path
         end
       end
 
@@ -112,10 +111,8 @@ module Rdm
         File.join(@destination_directory, template_rel_path)
       end   
 
-      def default_locals
-        {
-          package_subdir_name: Rdm.settings.send(:package_subdir_name)
-        }
+      def handle_file_content?(path)
+        File.file?(path) && !NOT_HANDLED_TEMPLATES_EXT.include?(File.extname(path))
       end
     end
   end

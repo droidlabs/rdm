@@ -20,9 +20,6 @@ module Rdm
       end
 
       def compile
-        render_helper_path = "#{@project_path}/.rdm/helpers/render_helper.rb"
-        require_relative render_helper_path if File.exist?(render_helper_path)
-
         FileUtils.rm_rf(@compile_path) if Dir.exists?(@compile_path)
         FileUtils.mkdir_p(@compile_path)
 
