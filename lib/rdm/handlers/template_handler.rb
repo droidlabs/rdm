@@ -88,7 +88,7 @@ module Rdm
           rendered_abs_path = Rdm::Templates::TemplateRenderer.handle(get_destination_path(file), @locals)
           
           if File.exists?(rendered_abs_path)
-            stdout.puts "Warning! #{file} already exists. Skipping file creation..."
+            @stdout.puts "Warning! #{file} already exists. Skipping file creation..."
             next
           end
           
