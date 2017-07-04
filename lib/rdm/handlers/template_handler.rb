@@ -86,8 +86,12 @@ module Rdm
 
         template_files_list.map do |file|
           rendered_abs_path = Rdm::Templates::TemplateRenderer.handle(get_destination_path(file), @locals)
-          raise Rdm::Errors::TemplateFileExists.new(rendered_abs_path) if File.exists?(rendered_abs_path)
-
+          
+          if File.exists?(rendered_abs_path)
+            stdout.puts "Warning! #{file} already exists. Skipping file creation..."
+            next
+          end
+          
           rendered_file_content = File.extname(file) == '.erb' ?
             File.read(file) :
             Rdm::Templates::TemplateRenderer.handle(File.read(file), @locals)

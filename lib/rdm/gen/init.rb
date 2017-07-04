@@ -33,8 +33,8 @@ module Rdm
 
         FileUtils.mkdir_p(local_templates_path)
         FileUtils.cp_r(
-          @template_detector.detect_template_folder('package'),
-          local_templates_path
+          @template_detector.gem_template_folder('package'),
+          @template_detector.project_template_folder('package')
         )
         Rdm::Handlers::TemplateHandler.generate(
           template_name:      TEMPLATE_NAME,

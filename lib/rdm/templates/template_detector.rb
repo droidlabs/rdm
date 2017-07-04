@@ -18,6 +18,14 @@ module Rdm
         template_path
       end
 
+      def gem_template_folder(template_name)
+        File.join(DEFAULT_TEMPLATES_DIRECTORY, template_name.to_s)
+      end
+
+      def project_template_folder(template_name)
+        File.join(@all_templates_directory, template_name.to_s)
+      end
+
       def template_file_path(template_name, relative_path)
         file_path = [detect_template_folder(template_name), DEFAULT_TEMPLATES_DIRECTORY]
           .map {|folder| File.join(folder, relative_path)}
