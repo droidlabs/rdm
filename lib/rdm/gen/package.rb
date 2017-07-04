@@ -24,7 +24,7 @@ module Rdm
         raise Rdm::Errors::PackageNameNotSpecified           if @package_name.nil? || @package_name.empty?
         raise Rdm::Errors::PackageExists                     if source.packages.keys.include?(@package_name)
 
-        File.open(File.join(source.root_path, Rdm::SOURCE_FILENAME), 'a+') {|f| f.write("package '#{@local_path}'")}
+        File.open(File.join(source.root_path, Rdm::SOURCE_FILENAME), 'a+') {|f| f.write("\npackage '#{@local_path}'")}
 
         Rdm::Handlers::TemplateHandler.generate(
           template_name: TEMPLATE_NAME,

@@ -21,7 +21,7 @@ module Rdm
           console:      @console
         )
 
-        generated_files_list.each { |file| @stdout.puts "Generated: #{file}" }
+        generated_files_list.compact.each { |file| @stdout.puts "Generated: #{file}" }
       rescue Errno::ENOENT => e
         @stdout.puts "Error occurred. Possible reasons:\n #{@current_path} not found. Please run on empty directory \n#{e.inspect}"
       rescue Rdm::Errors::ProjectAlreadyInitialized

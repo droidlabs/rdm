@@ -2,14 +2,14 @@ module Rdm
   module CLI
     class GenPackage
       class << self
-        def run(package_name:, current_path:, local_path:, locals: {}, stdout: $stdout)
-          Rdm::CLI::GenPackage.new(package_name, current_path, local_path, locals, stdout).run
+        def run(package_name:, current_path:, path:, locals: {}, stdout: $stdout)
+          Rdm::CLI::GenPackage.new(package_name, current_path, path, locals, stdout).run
         end
       end
 
-      def initialize(package_name, current_path, local_path, locals, stdout)
+      def initialize(package_name, current_path, path, locals, stdout)
         @current_path = current_path
-        @local_path   = local_path
+        @path         = path
         @package_name = package_name
         @locals       = locals
         @stdout       = stdout
@@ -18,12 +18,12 @@ module Rdm
       def run
         generated_files_list = Rdm::Gen::Package.generate(
           current_path: @current_path,
-          local_path:   @local_path,
+          local_path:   @path,
           package_name: @package_name,
           locals:       @locals
         )
 
-        generated_files_list.each { |file| @stdout.puts "Generated: #{file}" }
+        generated_files_list.compact.each { |file| @stdout.puts "Generated: #{file}" }
       rescue Errno::ENOENT => e
         @stdout.puts "Error occurred. Possible reasons:\n #{Rdm::SOURCE_FILENAME} not found. Please run on directory containing #{Rdm::SOURCE_FILENAME} \n#{e.inspect}"
       rescue Rdm::Errors::PackageExists
