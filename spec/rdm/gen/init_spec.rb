@@ -1,35 +1,18 @@
 require "spec_helper"
 
 describe Rdm::Gen::Init do
-  include SetupHelper
+  include ExampleProjectHelper
 
-  def generate_project!
-    Rdm::Gen::Init.generate(
-      current_dir: empty_project_dir
-    )
-  end
+  subject { described_class }
 
-  def ensure_exists(file)
-    expect(File.exists?(file)).to be true
-  end
-
-  def ensure_content(file, content)
-    expect(File.read(file)).to match(content)
-  end
+  before { initialize_example_project(skip_rdm_init: true) }
+  after  { reset_example_project }
 
   context "sample project" do
-    before :all do
-      Rdm::Gen::Init.disable_logger!
-      fresh_empty_project
-      generate_project!
-    end
-
-    after :all do
-      clean_tmp
-    end
-
     it "has generated correct files" do
-      FileUtils.cd(empty_project_dir) do
+      subject.generate(current_path: example_project_path)
+
+      FileUtils.cd(example_project_path) do
         ensure_exists("Rdm.packages")
         ensure_exists("Gemfile")
         ensure_exists("Readme.md")
@@ -37,26 +20,26 @@ describe Rdm::Gen::Init do
       end
     end
 
-    it "has logged useful output" do
-      Rdm::Gen::Init.enable_logger!
-      expect {
-        fresh_empty_project
-        generate_project!
-      }.to output(/Generated: Rdm.packages/).to_stdout
-      Rdm::Gen::Init.disable_logger!
+    it "has generated package templates" do
+      subject.generate(current_path: example_project_path)
+
+      FileUtils.cd(example_project_path) do
+        ensure_exists(".rdm/templates/package/Package.rb")
+        ensure_exists(".rdm/templates/package/<%=package_subdir_name%>/<%=package_name%>.rb")
+        ensure_exists(".rdm/templates/package/.rspec")
+        ensure_exists(".rdm/templates/package/.gitignore")
+        ensure_exists(".rdm/templates/package/spec/spec_helper.rb")
+        ensure_exists(".rdm/templates/package/bin/console")
+      end
     end
   end
 
   context "prevents double execution" do
-    after :all do
-      clean_tmp
-    end
-
     it "raises on second project generation" do
-      fresh_empty_project
-      generate_project!
+      subject.generate(current_path: example_project_path)
+
       expect {
-        generate_project!
+        subject.generate(current_path: example_project_path)
       }.to raise_error(Rdm::Errors::ProjectAlreadyInitialized)
     end
   end

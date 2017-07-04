@@ -1,97 +1,80 @@
 require "spec_helper"
 
 describe Rdm::CLI::Init do
-  include SetupHelper
+  include ExampleProjectHelper
 
-  before :all do
-    Rdm::Gen::Init.disable_logger!
-  end
+  subject       { described_class }
+  let(:stdout)  { SpecLogger.new }
 
-  def ensure_exists(file)
-    expect(File.exists?(file)).to be true
-  end
 
-  def ensure_content(file, content)
-    expect(File.read(file)).to match(content)
-  end
+  before { initialize_example_project(skip_rdm_init: true) }
+  after  { reset_example_project }
 
   context "run" do
-    before :all do
-      fresh_empty_project
-    end
-
-    after :all do
-      clean_tmp
-    end
-
     it "generates package" do
-      opts = {
-        current_dir: empty_project_dir,
-        console: "irb",
-        test: "rspec"
-      }
-      Rdm::CLI::Init.run(opts)
+      subject.run(
+        current_path: example_project_path,
+        console:     "irb",
+        test:        "rspec",
+        stdout:      stdout
+      )
 
-      FileUtils.cd(empty_project_dir) do
+      FileUtils.cd(example_project_path) do
         ensure_exists("Rdm.packages")
         ensure_exists("Gemfile")
         ensure_exists("Readme.md")
         ensure_exists("tests/run")
+        ensure_exists("tests/diff_run")
       end
+    end
+
+    it "output list of generated files" do
+      subject.run(
+        current_path: example_project_path,
+        console:     "irb",
+        test:        "rspec",
+        stdout:      stdout
+      )
+      expect(stdout.output).to include('Generated: Rdm.packages')
     end
   end
 
   context "run with errors" do
-    before :all do
-      clean_tmp
-    end
-
-    after :all do
-      clean_tmp
-    end
-
     it "fails when in wrong directory" do
-      opts = {
-        current_dir: empty_project_dir + "/not-there",
-        console: "irb",
-        test: "rspec"
-      }
-
-      expect{
-        Rdm::CLI::Init.run(opts)
-      }.to output(Regexp.new("Please run on empty directory")).to_stdout
+      subject.run(
+        current_path: example_project_path + "/not-there",
+        console:      "irb",
+        test:         "rspec",
+        stdout:       stdout
+      )
+      expect(stdout.output).to include("/tmp/example/not-there doesn't exist. Initialize new rdm project with existing directory")
     end
 
     it "fails when project already initialized" do
-      fresh_empty_project
-      opts = {
-        current_dir: empty_project_dir,
-        console: "irb",
-        test: "rspec"
-      }
-      Rdm::CLI::Init.run(opts)
+      subject.run(        
+        current_path: example_project_path,
+        console:     "irb",
+        test:        "rspec",
+        stdout:      stdout
+      )
 
-      expect{
-        Rdm::CLI::Init.run(opts)
-      }.to output(Regexp.new("Error. Project was already initialized")).to_stdout
-      clean_tmp
+      subject.run(
+        current_path: example_project_path,
+        console:     "irb",
+        test:        "rspec",
+        stdout:      stdout
+      )
+      expect(stdout.output).to include("Error. Project was already initialized")
     end
 
-    it "fails with wrong current_dir and exits" do
-      opts = {
-        current_dir: "",
-        console: "irb",
-        test: "rspec"
-      }
-
-      a = 0
-      begin
-        a = 1
-        Rdm::CLI::Init.run(opts)
-        a = 2
-      rescue SystemExit
-        expect(a).to eq(1)
-      end
+    it "fails with wrong current_path and exits" do
+      subject.run(
+        current_path: "",
+        console:     "irb",
+        test:        "rspec",
+        stdout:      stdout
+      )
+      expect(stdout.output).to include("Error. Project folder not specified. Type path to rdm project, ex: 'rdm init .'")
     end
   end
 end

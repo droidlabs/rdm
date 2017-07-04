@@ -2,46 +2,38 @@ module Rdm
   module CLI
     class GenPackage
       class << self
-        def run(opts = {})
-          Rdm::CLI::GenPackage.new(opts).run
+        def run(package_name:, current_path:, local_path:, locals: {}, stdout: $stdout)
+          Rdm::CLI::GenPackage.new(package_name, current_path, local_path, locals, stdout).run
         end
       end
 
-      attr_accessor :package_name, :current_dir, :package_relative_path, :skip_tests
-      def initialize(package_name:, current_dir:, path:, skip_tests:)
-        @current_dir           = current_dir
-        @package_name          = package_name
-        @package_relative_path = path
-        @skip_tests            = skip_tests
+      def initialize(package_name, current_path, local_path, locals, stdout)
+        @current_path = current_path
+        @local_path   = local_path
+        @package_name = package_name
+        @locals       = locals
+        @stdout       = stdout
       end
 
       def run
-        check_preconditions!
-        begin
-          generate
-        rescue Errno::ENOENT => e
-          puts "Error occurred. Possible reasons:\n #{Rdm::SOURCE_FILENAME} not found. Please run on directory containing #{Rdm::SOURCE_FILENAME} \n#{e.inspect}"
-        rescue Rdm::Errors::PackageExists
-          puts 'Error. Package already exist. Package was not generated'
-        rescue Rdm::Errors::PackageDirExists
-          puts "Error. Directory #{package_relative_path} exists. Package was not generated"
-        end
-      end
-
-      def generate
-        Rdm::Gen::Package.generate(
-          current_dir:           current_dir,
-          package_name:          package_name,
-          package_relative_path: package_relative_path,
-          skip_tests:            skip_tests
+        generated_files_list = Rdm::Gen::Package.generate(
+          current_path: @current_path,
+          local_path:   @local_path,
+          package_name: @package_name,
+          locals:       @locals
         )
-      end
 
-      def check_preconditions!
-        return unless package_name.empty?
-
-        puts 'Package name was not specified!'
-        exit 1
+        generated_files_list.each { |file| @stdout.puts "Generated: #{file}" }
+      rescue Errno::ENOENT => e
+        @stdout.puts "Error occurred. Possible reasons:\n #{Rdm::SOURCE_FILENAME} not found. Please run on directory containing #{Rdm::SOURCE_FILENAME} \n#{e.inspect}"
+      rescue Rdm::Errors::PackageExists
+        @stdout.puts 'Error. Package already exist. Package was not generated'
+      rescue Rdm::Errors::PackageNameNotSpecified
+        @stdout.puts "Package name was not specified!"
+      rescue Rdm::Errors::SourceFileDoesNotExist => e
+        @stdout.puts "Rdm.packages was not found. Run 'rdm init' to create it"
+      rescue Rdm::Errors::PackageDirExists => e
+        @stdout.puts "Error. Directory #{e.message} exists. Package was not generated"
       end
     end
   end

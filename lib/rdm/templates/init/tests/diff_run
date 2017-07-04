@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+ENV['RUBY_ENV'] = 'test'
+require 'rdm'
+
+REVISION = ARGV.clone.first
+PATH     = File.expand_path(__FILE__)
+
+begin
+  changed_packages = Rdm::Handlers::DiffPackageHandler.handle(
+    path:     PATH, 
+    revision: REVISION
+  )
+
+  puts "No changed packages found!" if changed_packages.count == 0
+
+  changed_packages.each do |package| 
+    Rdm::SpecRunner.run(
+      package:      package,
+      path:         PATH
+    )
+  end
+
+rescue Rdm::Errors::GitRepositoryNotInitialized
+  puts "Git repository is not initialized. Use `git init .`"
+  exit(1)
+end
+
+

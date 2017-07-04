@@ -26,12 +26,12 @@ class RdmCliRunner
       c.example 'generate scaffold with pry',      'rdm init --console=pry'
       c.option '--test FRAMEWORK', TESTFRAMEWORKS, "select test framework: #{TESTFRAMEWORKS.join(", ")}"
       c.option '--console CONSOLE', CONSOLES, "select console: #{CONSOLES.join(", ")}"
-      c.option '--current_dir [ROOT_DIR]', String, 'Path for the root folder'
+      c.option '--current_path [ROOT_DIR]', String, 'Path for the root folder'
       c.action do |args, options|
         defaults = {
-          test:        "rspec",
-          console:     "irb",
-          current_dir: `pwd`.strip
+          test:         "rspec",
+          console:      "irb",
+          current_path: `pwd`.strip
         }
         options_with_defaults = defaults.merge!(options.__hash__)
         Rdm::CLI::Init.run(options_with_defaults)
@@ -47,16 +47,14 @@ class RdmCliRunner
       c.example 'generate pack/age package',
                   'rdm gen.package pack/age --path subsystems/package'
       c.example 'generate events package within /some/other/path folder',
-                  'rdm gen.package events --path core/domain/events --current_dir /some/other/path'
-      c.example 'generate auth package without tests', 'rdm gen.package auth --path subsystems/auth --skip-tests'
+                  'rdm gen.package events --path core/domain/events --current_path /some/other/path'
+      c.example 'generate auth package without tests', 'rdm gen.package auth --path subsystems/auth'
       c.option '--path [RELATIVE_PATH]', String, 'Path for the package'
-      c.option '--current_dir [ROOT_DIR]', String, 'Path for the root folder'
-      c.option '--skip-test', '--skip-tests', 'Don\'t generate test files'
+      c.option '--current_path [ROOT_DIR]', String, 'Path for the root folder'
       c.action do |args, options|
         package_name = (args.first || "")
         defaults = {
-          skip_tests:   false,
-          current_dir:  `pwd`.chomp,
+          current_path: `pwd`.chomp,
           package_name: package_name,
           path:         package_name.downcase.gsub(/\s+/, '_')
         }
@@ -96,6 +94,42 @@ class RdmCliRunner
           compile_path: options.path
         }
         Rdm::CLI::CompilePackage.compile(opts)
+      end
+    end
+
+    command :"gen.template" do |c|
+      c.syntax = 'rdm gen.template TEMPLATE_NAME [options]'
+      c.description = 'generates template from ROOT/.rdm/templates folder with specified variables'
+      c.summary = '> ' + c.description
+      c.example 'creating new repository, mapper and dao files',
+                'rdm gen.template repository --path infrastructure/storage'
+      c.option '--path [DESTINATION_PATH]', String, 'Location of generated folders'
+      c.option '--OPTION_NAME [OPTION_VALUE]', String, 'Local variables for template handler'
+      c.action do |args, options|
+        options_hash = options.__hash__
+
+        Rdm::CLI::TemplateGenerator.run(
+          template_name: (args.first || ""),
+          current_path:  `pwd`.chomp,
+          local_path:    options_hash.delete(:path),
+          locals:        options_hash
+        )
+      end
+    end
+
+    command :"gen.deps" do |c|
+      c.syntax = 'rdm gen.deps PACKAGE_NAME'
+      c.description = 'puts list of recursive dependencies for specified package'
+      c.summary = '> ' + c.description
+      c.example 'show dependencies for `commands` package', 'rdm gen.deps commands'
+
+      c.action do |args, options|
+        package_name = args.first || ""
+
+        Rdm::CLI::DependenciesController.run(
+          package_name: package_name,
+          project_path: `pwd`.chomp
+        )
       end
     end
 

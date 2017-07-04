@@ -20,14 +20,16 @@ module Rdm
       end
 
       def compile
-        @source = Rdm::SourceParser.read_and_init_source(File.join(@project_path, Rdm::SOURCE_FILENAME))
+        render_helper_path = "#{@project_path}/.rdm/helpers/render_helper.rb"
+        require_relative render_helper_path if File.exist?(render_helper_path)
 
-        reset_directory!(@compile_path)
+        FileUtils.rm_rf(@compile_path) if Dir.exists?(@compile_path)
+        FileUtils.mkdir_p(@compile_path)
 
-        dependent_package_names = recursive_find_dependencies([@package_name])
-        dependent_packages      = @source.packages.values.select do |p| 
-          dependent_package_names.include?(p.name)
-        end
+        dependent_packages = Rdm::Handlers::DependenciesHandler.show_packages(
+          package_name: @package_name, 
+          project_path: @project_path
+        )
 
         dependent_packages.each do |pkg|
           rel_path = Pathname.new(pkg.path).relative_path_from(Pathname.new(@project_path))
@@ -69,32 +71,8 @@ module Rdm
           FileUtils.cp(File.join(@project_path, file), File.join(@compile_path, file))
         end
 
-        return dependent_package_names
+        return dependent_packages.map(&:name)
       end
-
-      private
-        def reset_directory!(dir)
-          FileUtils.rm_rf(dir) if Dir.exists?(dir)
-          FileUtils.mkdir_p(dir)
-
-          nil
-        end
-
-        def recursive_find_dependencies(package_names)
-          all_packages = @source.packages.values
-
-          deps_package_names = all_packages
-            .select {|pkg| package_names.include?(pkg.name)}
-            .map(&:local_dependencies)
-            .flatten
-            .uniq
-
-          extended_package_names = deps_package_names | package_names
-          
-          return package_names if package_names == extended_package_names
-          
-          recursive_find_dependencies(extended_package_names)
-        end
     end
   end
 end

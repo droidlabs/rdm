@@ -12,10 +12,10 @@ class Rdm::CLI::DiffPackage
   end
 
   def run
-    begin
-      puts Rdm::Handlers::DiffPackageHandler.handle(path: path, revision: revision)
-    rescue Rdm::Errors::GitRepositoryNotInitialized
-      puts "Git repository is not initialized. Use `git init .`"
-    end      
+    puts Rdm::Handlers::DiffPackageHandler.handle(path: path, revision: revision)
+  rescue Rdm::Errors::GitRepositoryNotInitialized
+    puts "Git repository is not initialized. Use `git init .`"
+  rescue Rdm::Errors::GitCommandError => e
+    puts e.message
   end
 end

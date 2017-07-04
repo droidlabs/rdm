@@ -7,41 +7,31 @@ describe Rdm::Handlers::DiffPackageHandler do
   subject { described_class }
 
   context "::handle" do    
-    before do
-      @example_path = initialize_example_project
-    end
-    
-    after do
-      reset_example_project(path: @example_path)
-    end
+    before { initialize_example_project }
+    after  { reset_example_project }
 
     context "when git changes present" do
       context "for package without dependencies" do
         before do
-          git_initialize_repository(@example_path)
-          git_commit_changes(@example_path)
+          git_initialize_repository(example_project_path)
+          git_commit_changes(example_project_path)
 
-          File.open(File.join(@example_path, 'subsystems/api/package/api/new_controller.rb'), 'w') do |f| 
-            f.write <<~EOF
-              class Web::NewController
-              end
-            EOF
-          end
+          File.open(File.join(example_project_path, 'server/package/new_server.rb'), 'w') { |f| f.write '' }
 
-          git_index_changes(@example_path)
+          git_index_changes(example_project_path)
         end
 
         it "returns only modified packages" do
-          expect(subject.handle(path: @example_path, revision: 'HEAD')).to eq(["api"])
+          expect(subject.handle(path: example_project_path, revision: 'HEAD')).to match(["server"])
         end
       end
 
       context "for package with dependencies" do
         before do
-          git_initialize_repository(@example_path)
-          git_commit_changes(@example_path)
+          git_initialize_repository(example_project_path)
+          git_commit_changes(example_project_path)
 
-          File.open(File.join(@example_path, 'domain/core/package/core/new_service.rb'), 'w') do |f| 
+          File.open(File.join(example_project_path, 'domain/core/package/core/new_service.rb'), 'w') do |f| 
             f.write <<~EOF
               class Core::NewService
               end
@@ -50,18 +40,18 @@ describe Rdm::Handlers::DiffPackageHandler do
         end
 
         it "returns array of modified and dependend packages for indexed changes" do
-          git_index_changes(@example_path)
+          git_index_changes(example_project_path)
           
-          expect(subject.handle(path: @example_path, revision: 'HEAD')).to match(['api', 'core', 'web'].sort)
+          expect(subject.handle(path: example_project_path, revision: 'HEAD')).to match(["core", "server", "web"].sort)
         end
       end
 
       context "for file without package" do
         before do
-          git_initialize_repository(@example_path)
-          git_commit_changes(@example_path)
+          git_initialize_repository(example_project_path)
+          git_commit_changes(example_project_path)
 
-          File.open(File.join(@example_path, 'domain/missing_package_class.rb'), 'w') do |f|
+          File.open(File.join(example_project_path, 'domain/missing_package_class.rb'), 'w') do |f|
             f.write <<~EOF
               class MissingPackageClass
               end
@@ -70,9 +60,9 @@ describe Rdm::Handlers::DiffPackageHandler do
         end
 
         it "returns empty array" do
-          git_index_changes(@example_path)
+          git_index_changes(example_project_path)
 
-          expect(subject.handle(path: @example_path, revision: 'HEAD')).to eq([])
+          expect(subject.handle(path: example_project_path, revision: 'HEAD')).to eq([])
         end
       end
     end
@@ -80,7 +70,7 @@ describe Rdm::Handlers::DiffPackageHandler do
     context "when git repository is not initialized" do
       it "raises Rdm::Errors::GitRepositoryNotInitialized error" do
         expect{
-          subject.handle(path: @example_path, revision: 'HEAD')
+          subject.handle(path: example_project_path, revision: 'HEAD')
         }.to raise_error(Rdm::Errors::GitRepositoryNotInitialized)
       end
     end

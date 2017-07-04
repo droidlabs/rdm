@@ -3,24 +3,26 @@ require 'spec_helper'
 describe Rdm::CLI::CompilePackage do
   include ExampleProjectHelper
 
-  subject { described_class }
+  subject                     { described_class }
+  let(:default_compile_path)  { '/tmp/rdm_compiled' }
+  let(:new_compile_path)      { '/tmp/new_rdm_compiled' }
 
   describe "::compile" do
-    before do
-      @project_path = initialize_example_project
-      @compile_path = '/tmp/example_compile'
+    before :each do
+      initialize_example_project
     end
 
-    after do
-      reset_example_project(path: @project_path)
-      reset_example_project(path: @compile_path)
+    after :each do
+      reset_example_project
+      FileUtils.rm_rf(default_compile_path)
+      FileUtils.rm_rf(new_compile_path)
     end
 
     context "setup compile_path at Rdm.packages" do
       it "use default value for compile_path" do
         expect {
           subject.compile(
-            project_path:        @project_path,
+            project_path:        example_project_path,
             package_name:        'core',
             overwrite_directory: ->() { true }
           )
@@ -28,6 +30,7 @@ describe Rdm::CLI::CompilePackage do
           <<~EOF
             The following packages were copied:
             Core
+            Repository
           EOF
         ).to_stdout
       end
@@ -38,8 +41,8 @@ describe Rdm::CLI::CompilePackage do
         it "raises error if rdm is not initialized" do
           expect {
             subject.compile(
-              project_path: File.dirname(@project_path),
-              compile_path: @compile_path,
+              project_path: File.dirname(example_project_path),
+              compile_path: new_compile_path,
               package_name: 'core'
             )
           }.to output(
@@ -50,38 +53,14 @@ describe Rdm::CLI::CompilePackage do
 
       context "compile_path" do
         it "raises error if empty" do
-          File.open(File.join(@project_path, Rdm::SOURCE_FILENAME), 'w') do |f| 
-            f.write <<~EOF
-              setup do
-                role                "production"
-                configs_dir         "configs"
-                config_path         ":configs_dir/:config_name/default.yml"
-                role_config_path    ":configs_dir/:config_name/:role.yml"
-                package_subdir_name "package"
-                compile_ignore_files [
-                  '.gitignore',
-                  '.byebug_history',
-                  '.irbrc',
-                  '.rspec',
-                  '*_spec.rb',
-                  '*.log'
-                ]
-                compile_add_files [
-                  'Gemfile',
-                  'Gemfile.lock'
-                ]
-              end
-
-              package "application/web"
-              package "domain/core"
-              package "subsystems/api"
-            EOF
+          Rdm::Utils::FileUtils.change_file(rdm_source_file) do |line|
+            next if line.include?('compile_path')
           end
 
           expect {
             subject.compile(
-              project_path: @project_path,
-              compile_path: "",
+              project_path: example_project_path,
+              compile_path: '',
               package_name: 'core'
             )
           }.to output(
@@ -94,8 +73,8 @@ describe Rdm::CLI::CompilePackage do
         it "raises error if empty" do
           expect {
             subject.compile(
-              project_path: @project_path,
-              compile_path: @compile_path,
+              project_path: example_project_path,
+              compile_path: new_compile_path,
               package_name: ''
             )
           }.to output(
@@ -107,15 +86,15 @@ describe Rdm::CLI::CompilePackage do
       context "with valid params" do
         context "if directory exists" do
           before do
-            FileUtils.mkdir_p(@compile_path)
-            File.open(File.join(@compile_path, 'old_file.txt'), 'w') {|f| f.write("Old File")}
+            FileUtils.mkdir_p(new_compile_path)
+            File.open(File.join(new_compile_path, 'old_file.txt'), 'w') {|f| f.write("Old File")}
           end
 
           it "ask to overwriting the directory" do
             expect {
               subject.compile(
-                project_path:        @project_path,
-                compile_path:        @compile_path,
+                project_path:        example_project_path,
+                compile_path:        new_compile_path,
                 package_name:        'core',
                 overwrite_directory: ->() { true }
               )
@@ -124,13 +103,10 @@ describe Rdm::CLI::CompilePackage do
                 Destination directory exists. Overwrite it? (y/n)
                 The following packages were copied:
                 Core
+                Repository
               EOF
             ).to_stdout
           end
-        end
-
-        it "compile packages to selected directory" do
-
         end
       end
     end

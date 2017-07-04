@@ -1,98 +1,44 @@
 require 'fileutils'
 require 'pathname'
-require 'active_support/inflector'
 
 module Rdm
   module Gen
     class Package
+      TEMPLATE_NAME = 'package'
+
       class << self
-        def generate(current_dir:, package_name:, package_relative_path:, skip_tests: false)
-          Rdm::Gen::Package.new(
-            current_dir, package_name, package_relative_path, skip_tests
-          ).create
+        def generate(package_name:, current_path:, local_path:, locals: {})
+          Rdm::Gen::Package.new(package_name, current_path, local_path, locals).create
         end
       end
 
-      include Rdm::Gen::Concerns::TemplateHandling
-
-      attr_accessor :current_dir, :package_name, :package_relative_path, :skip_tests
-      def initialize(current_dir, package_name, package_relative_path, skip_tests = false)
-        @current_dir           = File.expand_path(current_dir)
-        @package_name          = package_name
-        @package_relative_path = package_relative_path
-        @skip_tests            = skip_tests
-      end
-
-      def rdm_source
-        @rdm_source ||= Rdm::SourceParser.new(source_path).parse_source_content
-      end
-
-      def source_path
-        File.join(current_dir, Rdm::SOURCE_FILENAME)
-      end
-
-      def source_content
-        File.open(source_path).read
+      def initialize(package_name, current_path, local_path, locals = {})
+        @current_path = current_path
+        @package_name = package_name
+        @local_path   = local_path
+        @locals       = locals
       end
 
       def create
-        check_preconditions!
-        package_subdir_name = Rdm.settings.send(:package_subdir_name)
+        raise Rdm::Errors::PackageDirExists.new(@local_path) if Dir.exist?(File.join(source.root_path, @local_path))
+        raise Rdm::Errors::PackageNameNotSpecified           if @package_name.nil? || @package_name.empty?
+        raise Rdm::Errors::PackageExists                     if source.packages.keys.include?(@package_name)
 
-        Dir.chdir(current_dir) do
-          ensure_file([package_relative_path, '.gitignore'])
-          ensure_file([package_relative_path, package_subdir_name, package_name, '.gitignore'])
-          ensure_file(
-            [package_relative_path, package_subdir_name, "#{package_name}.rb"],
-            template_content('main_module_file.rb.erb', package_name_camelized: package_name.camelize)
-          )
-          ensure_file(
-            [package_relative_path, 'Package.rb'],
-            template_content('package.rb.erb', package_name: package_name)
-          )
-          init_rspec unless skip_tests
+        File.open(File.join(source.root_path, Rdm::SOURCE_FILENAME), 'a+') {|f| f.write("package '#{@local_path}'")}
 
-          move_templates
-          append_package_to_rdm_packages
-        end
+        Rdm::Handlers::TemplateHandler.generate(
+          template_name: TEMPLATE_NAME,
+          current_path:  @current_path,
+          local_path:    @local_path,
+          locals: {
+            package_name:           @package_name,
+            package_name_camelized: Rdm::Utils::StringUtils.camelize(@package_name)
+          }.merge(@locals)
+        )
       end
 
-      def check_preconditions!
-        if Dir.exist?(File.join(current_dir, package_relative_path))
-          raise Rdm::Errors::PackageDirExists, 'package dir exists'
-        end
-
-        if rdm_source.package_paths.include?(package_relative_path)
-          raise Rdm::Errors::PackageExists, 'package exists'
-        end
-      end
-
-      def append_package_to_rdm_packages
-        new_source_content = source_content.strip + "\npackage '#{package_relative_path}'"
-        File.write(source_path, new_source_content)
-      end
-
-      def init_rspec
-        Dir.chdir(templates_path) do
-          copy_template('.rspec')
-          copy_template('spec/spec_helper.rb')
-        end
-      end
-
-      def move_templates
-        Dir.chdir(templates_path) do
-          copy_template('bin/console_irb', 'bin/console')
-        end
-      end
-
-      private
-
-      def templates_path
-        Pathname.new(File.join(File.dirname(__FILE__), '..', 'templates/package'))
-      end
-
-      def target_path
-        File.join(current_dir, package_relative_path)
+      def source
+        @source ||= Rdm::SourceParser.read_and_init_source(Rdm::SourceLocator.locate(@current_path))
       end
     end
   end

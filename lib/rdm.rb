@@ -3,9 +3,9 @@ module Rdm
   PACKAGE_FILENAME = 'Package.rb'.freeze
 
   # Utils
-  require 'rdm/support/colorize'
-  require 'rdm/support/render'
-  require 'rdm/support/template'
+  require 'rdm/utils/render_util'
+  require 'rdm/utils/string_utils'
+  require 'rdm/utils/file_utils'
   require 'rdm/version'
 
   # CLI part
@@ -13,6 +13,8 @@ module Rdm
   require 'rdm/cli/compile_package'
   require 'rdm/cli/init'
   require 'rdm/cli/diff_package'
+  require 'rdm/cli/template_generator'
+  require 'rdm/cli/dependencies_controller'
 
   # Runtime part
   require 'rdm/config'
@@ -31,22 +33,36 @@ module Rdm
   require 'rdm/git/repository_locator'
 
   # Package part
-  require 'rdm/package/locator'
+  require 'rdm/packages/compiler_service'
+  require 'rdm/packages/locator'
 
   # Handlers part
-  require 'rdm/gen/concerns/template_handling'
   require 'rdm/gen/package'
   require 'rdm/gen/init'
   require 'rdm/handlers/diff_package_handler'
+  require 'rdm/handlers/template_handler'
+  require 'rdm/handlers/dependencies_handler'
 
-  require 'rdm/packages/compiler_service'
   require 'rdm/helpers/path_helper'
+
+  require 'rdm/templates/template_renderer'
+  require 'rdm/templates/template_detector'
+
+  # Spec runner
+  require 'rdm/spec_runner'
+  require 'rdm/spec_runner/command_generator'
+  require 'rdm/spec_runner/command_params'
+  require 'rdm/spec_runner/package_fetcher'
+  require 'rdm/spec_runner/runner'
+  require 'rdm/spec_runner/view'
 
   extend Rdm::Helpers::PathHelper
 
   class << self
     # Initialize current package using Package.rb
-    def init(package_path, group = nil)
+    def init(package_path, group = nil, stdout: $stdout)
+      @stdout = stdout
+      
       Rdm::PackageImporter.import_file(package_path, group: group)
     end
 
@@ -67,7 +83,7 @@ module Rdm
 
     def root=(value)
       if @root && @root != value
-        puts "Rdm has already been initialized and Rdm.root was set to #{@root}"
+        @stdout.puts "Rdm has already been initialized and Rdm.root was set to #{@root}"
       end
       @root = value
     end

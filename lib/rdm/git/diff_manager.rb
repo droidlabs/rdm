@@ -11,7 +11,7 @@ module Rdm
           abs_path = Rdm::Git::RepositoryLocator.locate(path)
 
           check_repository_initialized!(abs_path)
-          
+
           return Rdm::Git::DiffCommand
             .get_only_diff_filenames(revision: revision, path: path)
             .map { |filename| File.expand_path(File.join(abs_path, filename)) }

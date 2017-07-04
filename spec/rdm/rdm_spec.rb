@@ -9,14 +9,14 @@ describe Rdm do
   let(:source_file) {
     example_path.join('Rdm.packages').to_s
   }
-
   let(:package_path) {
     example_path.join("application/web").to_s
   }
+  let(:stdout) { SpecLogger.new }
 
   context "init" do
     it "will initialize RDM based on path to a package.rb file" do
-      package = Rdm.init(package_path)
+      package = Rdm.init(package_path, stdout: stdout)
       expect(package.name).to eq("web")
     end
   end

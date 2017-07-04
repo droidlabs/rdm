@@ -1,68 +1,53 @@
 require 'fileutils'
 require 'pathname'
-require 'active_support/inflector'
 
 module Rdm
   module Gen
     class Init
+      TEMPLATE_NAME        = 'init'
+      INIT_PATH            = './'
+      LOCAL_TEMPLATES_PATH = '.rdm/templates'
+
       class << self
-        def generate(current_dir:, test: 'rspec', console: 'irb')
-          Rdm::Gen::Init.new(current_dir: current_dir, test: test, console: console).generate
+        def generate(current_path:, test: 'rspec', console: 'irb')
+          Rdm::Gen::Init.new(current_path, test, console).generate
         end
       end
 
-      include Rdm::Gen::Concerns::TemplateHandling
-
-      attr_accessor :current_dir, :test, :console
-      def initialize(current_dir:, test:, console:)
-        @current_dir = File.expand_path(current_dir)
-        @test        = test
-        @console     = console
+      def initialize(current_path, test, console)
+        @current_path      = current_path
+        @test              = test
+        @console           = console
+        @template_detector = Rdm::Templates::TemplateDetector.new(current_path)
       end
 
       def generate
-        check_preconditions!
-
-        Dir.chdir(current_dir) do
-          ensure_file(['.gitignore'])
-          ensure_file(
-            ['Rdm.packages'],
-            template_content('Rdm.packages.erb')
-          )
-
-          ensure_file(
-            ['Gemfile'],
-            template_content('Gemfile.erb')
-          )
-
-          ensure_file(
-            ['Readme.md'],
-            template_content('Readme.md.erb')
-          )
-          move_templates
+        if @current_path.nil? || @current_path.empty?
+          raise Rdm::Errors::InvalidParams, "Error. Project folder not specified. Type path to rdm project, ex: 'rdm init .'" 
         end
-      end
+        raise Rdm::Errors::InvalidProjectDir, @current_path unless Dir.exist?(@current_path)
 
-      def check_preconditions!
-        if File.exist?(File.join(current_dir, Rdm::SOURCE_FILENAME))
-          raise Rdm::Errors::ProjectAlreadyInitialized, "#{current_dir} has already #{Rdm::SOURCE_FILENAME}"
+        if File.exist?(File.join(@current_path, Rdm::SOURCE_FILENAME))
+          raise Rdm::Errors::ProjectAlreadyInitialized, "#{@current_path} has already #{Rdm::SOURCE_FILENAME}"
         end
-      end
 
-      def move_templates
-        Dir.chdir(templates_path) do
-          copy_template('tests/run')
-        end
+        FileUtils.mkdir_p(local_templates_path)
+        FileUtils.cp_r(
+          @template_detector.detect_template_folder('package'),
+          local_templates_path
+        )
+        Rdm::Handlers::TemplateHandler.generate(
+          template_name:      TEMPLATE_NAME,
+          current_path:       @current_path,
+          local_path:         INIT_PATH,
+          ignore_source_file: true
+        )
       end
 
       private
 
-      def templates_path
-        Pathname.new(File.join(File.dirname(__FILE__), '..', 'templates/init'))
-      end
-
-      def target_path
-        current_dir
+      def local_templates_path
+        File.join(@current_path, LOCAL_TEMPLATES_PATH)
       end
     end
   end
