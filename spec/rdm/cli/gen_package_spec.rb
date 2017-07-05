@@ -3,9 +3,8 @@ require "spec_helper"
 describe Rdm::CLI::GenPackage do
   include ExampleProjectHelper
 
-  subject { described_class }
-
-  let(:stdout)          { SpecLogger.new }
+  subject      { described_class }
+  let(:stdout) { SpecLogger.new }
 
   before { initialize_example_project }
   after  { reset_example_project }
@@ -15,7 +14,7 @@ describe Rdm::CLI::GenPackage do
       subject.run(
         package_name: "database",
         current_path: example_project_path,
-        local_path:   "infrastructure/database",
+        path:         "infrastructure/database",
         stdout:       stdout
       )
 
@@ -35,7 +34,7 @@ describe Rdm::CLI::GenPackage do
       subject.run(
         package_name: "database",
         current_path: example_project_path,
-        local_path:   "infrastructure/database",
+        path:         "infrastructure/database",
         stdout:       stdout
       )
 
@@ -48,7 +47,7 @@ describe Rdm::CLI::GenPackage do
       subject.run(
         package_name: "database",
         current_path: File.dirname(example_project_path),
-        local_path:   "infrastructure/database",
+        path:         "infrastructure/database",
         stdout:       stdout
       )
 
@@ -59,14 +58,14 @@ describe Rdm::CLI::GenPackage do
       subject.run(
         package_name: "database",
         current_path: example_project_path,
-        local_path:   "infrastructure/database",
+        path:         "infrastructure/database",
         stdout:       stdout
       )
       
       subject.run(
         package_name: "database",
         current_path: example_project_path,
-        local_path:   "infrastructure/database",
+        path:         "infrastructure/database",
         stdout:       stdout
       )
       expect(stdout.output).to include("Error. Directory infrastructure/database exists. Package was not generated")
@@ -76,14 +75,14 @@ describe Rdm::CLI::GenPackage do
       subject.run(
         package_name: "database",
         current_path: example_project_path,
-        local_path:   "infrastructure/database",
+        path:         "infrastructure/database",
         stdout:       stdout
       )
 
       subject.run(
         package_name: "database",
         current_path: example_project_path,
-        local_path:   "database",
+        path:         "database",
         stdout:       stdout
       )
       expect(stdout.output).to include("Error. Package already exist. Package was not generated")
@@ -93,7 +92,7 @@ describe Rdm::CLI::GenPackage do
       subject.run(
         package_name: "",
         current_path: example_project_path,
-        local_path:   "infrastructure/database",
+        path:         "infrastructure/database",
         stdout:       stdout
       )
       expect(stdout.output).to include("Package name was not specified!")

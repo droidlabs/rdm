@@ -36,6 +36,7 @@ module Rdm
           @template_detector.gem_template_folder('package'),
           @template_detector.project_template_folder('package')
         )
+        
         Rdm::Handlers::TemplateHandler.generate(
           template_name:      TEMPLATE_NAME,
           current_path:       @current_path,

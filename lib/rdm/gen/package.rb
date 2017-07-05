@@ -30,10 +30,7 @@ module Rdm
           template_name: TEMPLATE_NAME,
           current_path:  @current_path,
           local_path:    @local_path,
-          locals: {
-            package_name:           @package_name,
-            package_name_camelized: Rdm::Utils::StringUtils.camelize(@package_name)
-          }.merge(@locals)
+          locals:        { package_name: @package_name }.merge(@locals)
         )
       end
 

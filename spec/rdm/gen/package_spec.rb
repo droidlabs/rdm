@@ -9,13 +9,13 @@ describe Rdm::Gen::Package do
   after  { reset_example_project }
 
   context "sample package" do
-    it "has generated correct files" do
-      FileUtils.rm_rf(File.join(example_project_path, '.rdm'))
+    it "generates correct files" do
+      FileUtils.rm_rf(File.join(example_project_path, '.rdm', 'templates'))
 
       subject.generate(
         current_path: example_project_path,
         package_name: "some",
-        local_path:   "domain/some",
+        local_path:   "domain/some"
       )
 
       FileUtils.cd(example_project_path) do

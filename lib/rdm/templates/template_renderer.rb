@@ -30,6 +30,8 @@ module Rdm
 
         @undefined_variables
       rescue NameError => e
+        raise NoMethodError, "Undefined method for template. Please, add :#{e.name} method to .rdm/helpers/render_helper.rb file!" if @undefined_variables.include?(e.name)
+
         @locals[e.name] = e.name.to_s
         @undefined_variables.push(e.name)
 

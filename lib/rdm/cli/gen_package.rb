@@ -34,6 +34,8 @@ module Rdm
         @stdout.puts "Rdm.packages was not found. Run 'rdm init' to create it"
       rescue Rdm::Errors::PackageDirExists => e
         @stdout.puts "Error. Directory #{e.message} exists. Package was not generated"
+      rescue NoMethodError => e
+        @stdout.puts e.message
       end
     end
   end

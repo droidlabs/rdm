@@ -76,7 +76,7 @@ module Rdm
           end
         end
 
-        template_files_list.map do |path|
+        template_files_list.map! do |path|
           rendered_abs_path = Rdm::Templates::TemplateRenderer.handle(get_destination_path(path), @locals)
           rendered_rel_path = Pathname.new(rendered_abs_path).relative_path_from Pathname.new(project_path)
           
@@ -100,6 +100,8 @@ module Rdm
 
           rendered_rel_path
         end
+
+        template_files_list.compact
       end
 
       private
