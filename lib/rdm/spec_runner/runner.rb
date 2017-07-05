@@ -2,6 +2,7 @@ class Rdm::SpecRunner::Runner
   attr_accessor :skipped_packages
   attr_accessor :prepared_command_params
   attr_accessor :command
+  
   def initialize(package: nil, spec_matcher: nil, path: nil)
     @package          = package,
     @spec_matcher     = spec_matcher.to_s
