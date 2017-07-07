@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    rdm (0.2.0)
+    rdm (0.3.4)
       activesupport
       commander (~> 4.4)
 

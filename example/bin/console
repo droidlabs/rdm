@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+require 'bundler/setup'
+require 'rdm'
+
+ENV['RUBY_ENV'] ||= 'development'
+
+source_file      = Rdm::SourceLocator.locate(__dir__)
+source           = Rdm::SourceParser.read_and_init_source(source_file)
+package_consoles = source.packages.inject([]) do |res, (name,data)|
+  package_console_file = File.join(data.path, 'bin/console')
+  File.exists?(package_console_file) ? 
+    res.push(name: name, path: package_console_file) : 
+    res
+end
+
+if package_consoles.empty?
+  puts "Console files were not found"
+  exit(0)
+end
+
+puts "Select package:"
+package_consoles.each_with_index do |package, idx|
+  puts "#{idx+1}. #{package[:name]}"
+end
+
+print "Type number for selected package: "
+
+select_result = gets.chomp
+if select_result == "exit" || select_result.to_i == 0
+  exit(0)
+end
+
+path_to_selected_console = package_consoles[select_result.to_i - 1][:path]
+exit(0) if path_to_selected_console.nil?
+system(path_to_selected_console)
+
+
