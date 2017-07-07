@@ -14,7 +14,7 @@ module Rdm
       end
 
       def initialize(compile_path:, project_path:, package_name:)
-        @compile_path = compile_path
+        @compile_path = compile_path.gsub(/:package_name/, package_name)
         @project_path = project_path
         @package_name = package_name
       end

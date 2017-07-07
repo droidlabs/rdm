@@ -4,8 +4,8 @@ describe Rdm::CLI::CompilePackage do
   include ExampleProjectHelper
 
   subject                     { described_class }
-  let(:default_compile_path)  { '/tmp/rdm_compiled' }
-  let(:new_compile_path)      { '/tmp/new_rdm_compiled' }
+  let(:tmp_rdm)               { '/tmp/rdm' }
+  let(:new_compile_path)      { '/tmp/rdm/custom_name' }
 
   describe "::compile" do
     before :each do
@@ -14,8 +14,7 @@ describe Rdm::CLI::CompilePackage do
 
     after :each do
       reset_example_project
-      FileUtils.rm_rf(default_compile_path)
-      FileUtils.rm_rf(new_compile_path)
+      FileUtils.rm_rf(tmp_rdm)
     end
 
     context "setup compile_path at Rdm.packages" do
@@ -24,7 +23,8 @@ describe Rdm::CLI::CompilePackage do
           subject.compile(
             project_path:        example_project_path,
             package_name:        'core',
-            overwrite_directory: ->() { true }
+            overwrite_directory: ->() { true },
+            compile_path:        nil
           )
         }.to output(
           <<~EOF
