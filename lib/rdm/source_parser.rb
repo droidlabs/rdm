@@ -70,18 +70,18 @@ class Rdm::SourceParser
   end
 
   def init_and_set_env_variables(source)
-    role = settings.read_setting(:role)
-
-    unless File.exists?(env_file_path(role))
-      @stdout.puts "WARNING! Environment file for role '#{role}' was not found. Please, add #{env_file_path(role)} file..."
+    return unless settings.read_setting(:env_file_name)
+    
+    unless File.exists?(env_file_path)
+      @stdout.puts "WARNING! Environment file '#{settings.read_setting(:env_file_name)}' was not found. Please, add #{env_file_path} file..."
       return
     end
 
-    File.foreach(env_file_path(role)) do |line|
+    File.foreach(env_file_path) do |line|
       key, value = line.split('=').map(&:strip)
       
       if ENV.has_key?(key) && ENV[key] != value
-        @stdout.puts "WARNING! Environment file '#{role}' overwrites ENV['#{key}'] variable from '#{ENV.fetch(key, nil)}' to '#{value}' ..."
+        @stdout.puts "WARNING! Environment file '#{settings.read_setting(:env_file_name)}' overwrites ENV['#{key}'] variable from '#{ENV.fetch(key, nil)}' to '#{value}' ..."
       end
       
       ENV[key] = value
@@ -102,8 +102,10 @@ class Rdm::SourceParser
     File.dirname(source_path)
   end
 
-  def env_file_path(role)
-    File.join(root_path, settings.read_setting(:env_files_dir), "#{role}.env")
+  def env_file_path
+    file_path = File.join(root_path, settings.read_setting(:env_files_dir), "#{settings.read_setting(:env_file_name)}")
+
+    file_path.gsub(/\.env$/, '').concat('.env')
   end
 
   # [String] Source file content

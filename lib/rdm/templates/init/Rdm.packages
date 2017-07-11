@@ -3,6 +3,10 @@ setup do
     ENV['RUBY_ENV'] || raise('please set RUBY_ENV environment variable')
   end
 
+  env_file_name do
+    ENV['ENV_FILE']
+  end
+
   configs_dir             'configs'
   config_path             ':configs_dir/:config_name/default.yml'
   role_config_path        ':configs_dir/:config_name/:role.yml'
