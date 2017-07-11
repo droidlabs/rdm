@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Rdm::SourceParser do
+  include ExampleProjectHelper
+
   describe "#parse" do
     subject { Rdm::SourceParser }
 
@@ -17,7 +19,7 @@ describe Rdm::SourceParser do
     }
 
     before :each do
-      @source = subject.read_and_init_source(source_path)
+      @source = subject.read_and_init_source(source_path, stdout: SpecLogger.new)
     end
 
     it "returns Source object" do
@@ -55,7 +57,7 @@ describe Rdm::SourceParser do
     }
 
     before :each do
-      @source = subject.read_and_init_source(source_path)
+      @source = subject.read_and_init_source(source_path, stdout: SpecLogger.new)
     end
 
     it "returns Source object" do
@@ -73,6 +75,52 @@ describe Rdm::SourceParser do
       names = @source.config_names
       expect(names.count).to be(2)
       expect(names).to include("database")
+    end
+  end
+
+  describe "::read_and_init_source" do
+    before { initialize_example_project }
+    after  { reset_example_project }
+
+    subject { described_class }
+    let(:stdout) { SpecLogger.new }
+
+    describe "#init_and_set_env_variables" do
+      context "with defined role" do
+        it "load env_file variables into ENV hash" do
+          subject.read_and_init_source(@rdm_source_file)
+
+          expect(ENV['EXAMPLE_API_KEY']).to eq('example_key_value')
+        end
+      end
+
+      context "with undefined role" do
+        it "puts warning message" do
+          Rdm::Utils::FileUtils.change_file @rdm_source_file do |line|
+            line.include?('role "production"') ? 'role "stading"' : line
+          end
+          
+          subject.read_and_init_source(@rdm_source_file, stdout: stdout)
+
+          expect(stdout.output).to include("WARNING! Environment file for role 'stading' was not found. Please, add /tmp/example/env_files/stading.env file...")
+        end
+      end
+
+      context "when try to overwrite ENV variable" do
+        before do
+          ENV['RUBY_ENV'] = 'test'
+          
+          subject.read_and_init_source(@rdm_source_file, stdout: stdout)
+        end
+
+        it 'puts warning message' do
+          expect(stdout.output).to include("WARNING! Environment file 'production' overwrites ENV['RUBY_ENV'] variable from 'test' to 'production' ...")
+        end
+
+        it 'overwrites ENV variable' do
+          expect(ENV['RUBY_ENV']).to eq('production')
+        end
+      end
     end
   end
 end

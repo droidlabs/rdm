@@ -3,15 +3,16 @@ class Rdm::SourceParser
   end
 
   class << self
-    def read_and_init_source(source_path)
-      Rdm::SourceParser.new(source_path).read_and_init_source
+    def read_and_init_source(source_path, stdout: nil)
+      Rdm::SourceParser.new(source_path, stdout).read_and_init_source
     end
   end
 
   attr_accessor :source_path
 
-  def initialize(source_path)
+  def initialize(source_path, stdout)
     @source_path = source_path
+    @stdout      = stdout || STDOUT
   end
 
   # Read source file, parse and init it's packages and configs
@@ -28,6 +29,7 @@ class Rdm::SourceParser
 
     init_and_set_packages(source)
     init_and_set_configs(source)
+    init_and_set_env_variables(source)
     source.init_with(packages: packages, configs: configs)
     source
   end
@@ -67,6 +69,25 @@ class Rdm::SourceParser
     end
   end
 
+  def init_and_set_env_variables(source)
+    role = settings.read_setting(:role)
+
+    unless File.exists?(env_file_path(role))
+      @stdout.puts "WARNING! Environment file for role '#{role}' was not found. Please, add #{env_file_path(role)} file..."
+      return
+    end
+
+    File.foreach(env_file_path(role)) do |line|
+      key, value = line.split('=').map(&:strip)
+      
+      if ENV.has_key?(key) && ENV[key] != value
+        @stdout.puts "WARNING! Environment file '#{role}' overwrites ENV['#{key}'] variable from '#{ENV.fetch(key, nil)}' to '#{value}' ..."
+      end
+      
+      ENV[key] = value
+    end
+  end
+
   # Make sure that all required settings are in place
   def validate_rdm_settings!
     if settings.read_setting(:role).nil?
@@ -79,6 +100,10 @@ class Rdm::SourceParser
 
   def root_path
     File.dirname(source_path)
+  end
+
+  def env_file_path(role)
+    File.join(root_path, settings.read_setting(:env_files_dir), "#{role}.env")
   end
 
   # [String] Source file content
