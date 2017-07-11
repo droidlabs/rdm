@@ -2,7 +2,7 @@ class Rdm::Settings
   SETTING_KEYS = [
     :role, :package_subdir_name, :configs_dir, :config_path, :role_config_path,
     :silence_missing_package_file, :silence_missing_package, :compile_path,
-    :compile_ignore_files, :compile_add_files, :env_files_dir
+    :compile_ignore_files, :compile_add_files, :env_files_dir, :env_file_name
   ].freeze
 
   SETTING_VARIABLES = [:role, :configs_dir, :config_path, :role_config_path].freeze
@@ -26,6 +26,7 @@ class Rdm::Settings
       'Gemfile',
       'Gemfile.lock',
     ])
+    compile_path('/tmp/rdm/:package_name')
   end
 
   SETTING_KEYS.each do |key|

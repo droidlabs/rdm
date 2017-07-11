@@ -91,18 +91,19 @@ describe Rdm::SourceParser do
           subject.read_and_init_source(@rdm_source_file)
 
           expect(ENV['EXAMPLE_API_KEY']).to eq('example_key_value')
+          expect(ENV['APP_NAME']).to eq('Application')
         end
       end
 
       context "with undefined role" do
         it "puts warning message" do
           Rdm::Utils::FileUtils.change_file @rdm_source_file do |line|
-            line.include?('role "production"') ? 'role "stading"' : line
+            line.include?('env_file_name "production"') ? 'env_file_name "stading"' : line
           end
           
           subject.read_and_init_source(@rdm_source_file, stdout: stdout)
 
-          expect(stdout.output).to include("WARNING! Environment file for role 'stading' was not found. Please, add /tmp/example/env_files/stading.env file...")
+          expect(stdout.output).to include("WARNING! Environment file 'stading' was not found. Please, add /tmp/example/env_files/stading.env file...")
         end
       end
 
@@ -119,6 +120,7 @@ describe Rdm::SourceParser do
 
         it 'overwrites ENV variable' do
           expect(ENV['RUBY_ENV']).to eq('production')
+          expect(ENV['APP_NAME']).to eq('Application')
         end
       end
     end
