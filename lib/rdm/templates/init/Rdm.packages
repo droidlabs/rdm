@@ -6,6 +6,8 @@ setup do
   configs_dir             'configs'
   config_path             ':configs_dir/:config_name/default.yml'
   role_config_path        ':configs_dir/:config_name/:role.yml'
+
+  env_files_dir           'env_files'
   package_subdir_name     'package'
   silence_missing_package true
 end
