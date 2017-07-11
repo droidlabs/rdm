@@ -80,7 +80,7 @@ class Rdm::SourceParser
     File.foreach(env_file_path(role)) do |line|
       key, value = line.split('=').map(&:strip)
       
-      if ENV.keys.include?(key) && ENV[key] != value
+      if ENV.has_key?(key) && ENV[key] != value
         @stdout.puts "WARNING! Environment file '#{role}' overwrites ENV['#{key}'] variable from '#{ENV.fetch(key, nil)}' to '#{value}' ..."
       end
       
