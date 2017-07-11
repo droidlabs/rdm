@@ -88,6 +88,14 @@ module Rdm
       @root = value
     end
 
-    attr_reader :root
+    def root(path = nil)
+      return @root if @root
+
+      if path
+        @root = Rdm::SourceLocator.locate(path)
+      end
+        
+      @root
+    end
   end
 end
