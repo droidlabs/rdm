@@ -3,18 +3,19 @@ class Rdm::SpecRunner::Runner
   attr_accessor :prepared_command_params
   attr_accessor :command
   
-  def initialize(package: nil, spec_matcher: nil, path: nil)
-    @package          = package,
-    @spec_matcher     = spec_matcher.to_s
-    @skipped_packages = []
-    @path             = path
-    @run_all          = @package.nil?
+  def initialize(package: nil, spec_matcher: nil, path: nil, show_missing_packages: nil)
+    @package               = package,
+    @spec_matcher          = spec_matcher.to_s
+    @skipped_packages      = []
+    @path                  = path
+    @run_all               = @package.nil?
+    @show_missing_packages = show_missing_packages
   end
 
   def run
     prepare!
     check_input_params!
-    display_missing_specs
+    display_missing_specs if @show_missing_packages
     execute_command
   end
 
