@@ -33,7 +33,10 @@ class RdmCliRunner
           console:      "irb",
           current_path: `pwd`.strip
         }
-        options_with_defaults = defaults.merge!(options.__hash__)
+        options_hash = options.__hash__
+        options_hash.delete(:trace)
+
+        options_with_defaults = defaults.merge!(options_hash)
         Rdm::CLI::Init.run(options_with_defaults)
       end
     end
@@ -58,7 +61,10 @@ class RdmCliRunner
           package_name: package_name,
           path:         package_name.downcase.gsub(/\s+/, '_')
         }
-        options_with_defaults = defaults.merge!(options.__hash__)
+        options_hash = options.__hash__
+        options_hash.delete(:trace)
+
+        options_with_defaults = defaults.merge!(options_hash)
         Rdm::CLI::GenPackage.run(options_with_defaults)
       end
     end
@@ -106,10 +112,13 @@ class RdmCliRunner
       c.option '--path [DESTINATION_PATH]', String, 'Location of generated folders'
       c.option '--OPTION_NAME [OPTION_VALUE]', String, 'Local variables for template handler'
       c.action do |args, options|
-        options_hash = options.__hash__
+        options_hash  = options.__hash__
+        options_hash.delete(:trace)
+        
+        template_name = args.first || ""
 
         Rdm::CLI::TemplateGenerator.run(
-          template_name: (args.first || ""),
+          template_name: template_name,
           current_path:  `pwd`.chomp,
           local_path:    options_hash.delete(:path),
           locals:        options_hash
@@ -129,6 +138,26 @@ class RdmCliRunner
         Rdm::CLI::DependenciesController.run(
           package_name: package_name,
           project_path: `pwd`.chomp
+        )
+      end
+    end
+
+    command :"gen.config" do |c|
+      c.syntax = 'rdm gen.config CONFIG_NAME --CONFIG_KEY=CONFIG_VALUE'
+      c.description = 'generate config file with passed arguments'
+      c.summary = '> ' + c.description
+      c.example 'generate config `mailing_system` with `host: localhost`', 
+                'rdm gen.config mailing_system --host=localhost'
+      
+      c.action do |args, options|
+        config_name  = args.first || ""
+        options_hash = options.__hash__
+        options_hash.delete(:trace)
+
+        Rdm::CLI::Config.run(
+          config_name:  config_name,
+          current_path: `pwd`.chomp,
+          config_data:  options_hash
         )
       end
     end
