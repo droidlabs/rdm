@@ -79,7 +79,7 @@ module Rdm
         template_files_list.map! do |path|
           rendered_abs_path = Rdm::Templates::TemplateRenderer.handle(get_destination_path(path), @locals)
           rendered_rel_path = Pathname.new(rendered_abs_path).relative_path_from Pathname.new(project_path)
-          
+
           if File.file?(rendered_abs_path) && File.exists?(rendered_abs_path)
             @stdout.puts "Warning! #{rendered_rel_path} already exists. Skipping file creation..."
             next
@@ -89,11 +89,10 @@ module Rdm
             FileUtils.mkdir_p rendered_abs_path
             next
           end
-          
+
           rendered_file_content = handle_file_content?(path) ?
             Rdm::Templates::TemplateRenderer.handle(File.read(path), @locals) :
             File.read(path)
-            
             
           FileUtils.mkdir_p(File.dirname(rendered_abs_path))
           File.open(rendered_abs_path, 'w') { |f| f.write rendered_file_content }
