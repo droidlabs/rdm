@@ -34,6 +34,8 @@ describe Rdm do
   end
 
   context "root=" do
+    after { Rdm.root = nil }
+
     it "sets root" do
       Rdm.root = "/some/path"
       expect(Rdm.root).to eq("/some/path")

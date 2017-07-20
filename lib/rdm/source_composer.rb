@@ -1,11 +1,10 @@
 class Rdm::SourceComposer
-  def self.run(source, root)
-    Rdm::SourceComposer.new(source, root).run
+  def self.run(source)
+    Rdm::SourceComposer.new(source).run
   end
 
-  def initialize(source, root)
+  def initialize(source)
     @source  = source
-    @root    = root
     @content = []
   end
 
@@ -28,7 +27,7 @@ class Rdm::SourceComposer
       @content.push "package \"#{package}\""
     end
 
-    File.open(Rdm.root(@root), 'w') {|f| f.puts @content}
+    File.open(Rdm.root(@source.root_path), 'w') {|f| f.puts @content}
   end
 
   def format_value(value)

@@ -12,7 +12,7 @@ describe Rdm::SourceComposer do
     context 'setup block' do
       before do
         @rdm_source = Rdm::SourceParser.read_and_init_source(rdm_source_file)
-        described_class.run(@rdm_source, rdm_source_file)
+        described_class.run(@rdm_source)
       end
 
       it "composes with explicit options" do
@@ -41,7 +41,7 @@ describe Rdm::SourceComposer do
       before do
         @rdm_source = Rdm::SourceParser.read_and_init_source(rdm_source_file)
         @rdm_source.config(:mailing_system)
-        described_class.run(@rdm_source, rdm_source_file)
+        described_class.run(@rdm_source)
       end
 
       it "composes with old configs" do
@@ -58,7 +58,7 @@ describe Rdm::SourceComposer do
       before do
         @rdm_source = Rdm::SourceParser.read_and_init_source(rdm_source_file)
         @rdm_source.package('mailing_system')
-        described_class.run(@rdm_source, rdm_source_file)
+        described_class.run(@rdm_source)
       end
       
       it "composes with old configs" do
