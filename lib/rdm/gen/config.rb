@@ -8,12 +8,13 @@ class Rdm::Gen::Config
   def initialize(config_name, current_path, config_data)
     @current_path = current_path
     @config_name  = config_name
+    @source       = get_source
 
     @config_locals  = Rdm::ConfigLocals.new(config_data)
   end
 
   def generate
-    source(@current_path)
+    @source.config(@config_name)
 
     @locals = {
       config_name:      @config_name,
@@ -29,19 +30,15 @@ class Rdm::Gen::Config
       local_path:         './'
     )
 
-    File.open(source_file(@current_path), 'a+') {|f| f.write("\nconfig :#{@config_name}")}
+    Rdm::SourceComposer.run(@source)
     
     generated_files
   end
 
   private 
 
-  def source_file(path)
-    @source_file ||= Rdm::SourceLocator.locate(path)
-  end
-
-  def source(path)
-    @source ||= Rdm::SourceParser.read_and_init_source(source_file(path))
+  def get_source
+    @source ||= Rdm::SourceParser.read_and_init_source(Rdm::SourceLocator.locate(@current_path))
   end
 
   def config_path(config_name)

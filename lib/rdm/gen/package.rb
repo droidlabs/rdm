@@ -17,14 +17,17 @@ module Rdm
         @package_name = package_name
         @local_path   = local_path
         @locals       = locals
+        @source       = get_source
       end
 
       def create
-        raise Rdm::Errors::PackageDirExists.new(@local_path) if Dir.exist?(File.join(source.root_path, @local_path))
-        raise Rdm::Errors::PackageNameNotSpecified           if @package_name.nil? || @package_name.empty?
-        raise Rdm::Errors::PackageExists                     if source.packages.keys.include?(@package_name)
+        @source.package(@local_path)
 
-        File.open(File.join(source.root_path, Rdm::SOURCE_FILENAME), 'a+') {|f| f.write("\npackage '#{@local_path}'")}
+        raise Rdm::Errors::PackageDirExists.new(@local_path) if Dir.exist?(File.join(@source.root_path, @local_path))
+        raise Rdm::Errors::PackageNameNotSpecified           if @package_name.nil? || @package_name.empty?
+        raise Rdm::Errors::PackageExists                     if @source.packages.keys.include?(@package_name)
+        
+        Rdm::SourceComposer.run(@source)
 
         Rdm::Handlers::TemplateHandler.generate(
           template_name: TEMPLATE_NAME,
@@ -34,7 +37,7 @@ module Rdm
         )
       end
 
-      def source
+      def get_source
         @source ||= Rdm::SourceParser.read_and_init_source(Rdm::SourceLocator.locate(@current_path))
       end
     end
