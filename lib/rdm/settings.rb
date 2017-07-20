@@ -1,4 +1,6 @@
 class Rdm::Settings
+  attr_reader :settings
+
   SETTING_KEYS = [
     :role, :package_subdir_name, :configs_dir, :config_path, :role_config_path,
     :silence_missing_package_file, :silence_missing_package, :compile_path,
@@ -24,13 +26,14 @@ class Rdm::Settings
     ])
     compile_add_files([
       'Gemfile',
-      'Gemfile.lock',
+      'Gemfile.lock'
     ])
     compile_path('/tmp/rdm/:package_name')
   end
 
   SETTING_KEYS.each do |key|
     define_method(key) do |value = nil, &block|
+      # debugger if key == :compile_ignore_files
       fetch_setting key, value, &block
     end
   end
@@ -39,7 +42,8 @@ class Rdm::Settings
     if value.nil? && !block_given?
       read_setting(key)
     else
-      write_setting(key, value || block)
+      write_value = value.nil? ? block : value
+      write_setting(key, write_value)
     end
   end
 
