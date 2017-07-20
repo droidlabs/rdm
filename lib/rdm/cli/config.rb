@@ -25,5 +25,7 @@ class Rdm::CLI::Config
     @stdout.puts e.message
   rescue Rdm::Errors::SourceFileDoesNotExist => e
     @stdout.puts "Rdm.packages was not found. Run 'rdm init' to create it"
+  rescue Rdm::Errors::ConfigExists => e
+    @stdout.puts "Config :#{e.message} already exists! Use other name"
   end
 end

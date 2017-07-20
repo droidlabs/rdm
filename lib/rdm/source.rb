@@ -16,7 +16,10 @@ class Rdm::Source
   # Add config to list of known configs
   # @param config_name [String] Config name
   def config(config_name)
-    @config_names << config_name.to_s
+    config_name = config_name.to_s
+    raise Rdm::Errors::ConfigExists, config_name if @config_names.include?(config_name)
+
+    @config_names << config_name
   end
 
   # Add package to list of known packages
