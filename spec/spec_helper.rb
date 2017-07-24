@@ -16,6 +16,13 @@ if ENV['CI']=='true'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
 end
 
+# setup GIT so specs for GIT run properly on Travis
+if ENV['CI'] == 'true'
+  %x{ git config --global user.email "travisci@example.com" }
+  %x{ git config --global user.name "TravisCI Developer" }
+end
+
+
 Rdm.setup do
   silence_missing_package_file true
 end
