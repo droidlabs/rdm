@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+
+## # run own tests:
+## $ TEST_RUN=1 tests/run
+
+## # run application tests:
+## $ tests/run
+
+## # run package tests:
+## $ tests/run commands
+
+## # run spec in a package:
+## $ tests/run commands some_spec.rb
+
+ENV['RUBY_ENV'] = 'test'
+require 'rdm'
+
+runignore_path = File.expand_path(File.join(File.dirname(Rdm.root(__FILE__)), '.runignore'))
+skipped_packages = File.open(runignore_path).each_line.inject([]) { |all, line| all.push(line.chomp!) }
+
+if ENV['TEST_RUN']
+  require 'minitest/autorun'
+  describe Rdm::SpecRunner::Runner do
+    before do
+      @runner = Rdm::SpecRunner::Runner.new({})
+    end
+
+    describe 'works ' do
+      it 'assert true' do
+        assert 2 == 2
+      end
+    end
+  end
+else
+  Rdm::SpecRunner.run(
+    package:          ARGV.clone.first,
+    spec_matcher:     ARGV.clone.last,
+    path:             File.expand_path(__FILE__),
+    skipped_packages: skipped_packages,
+    show_missing_packages: true
+  )
+end

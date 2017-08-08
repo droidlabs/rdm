@@ -1,12 +1,19 @@
 class Rdm::SpecRunner::Runner
-  attr_accessor :skipped_packages
+  attr_accessor :no_specs_packages
   attr_accessor :prepared_command_params
   attr_accessor :command
   
-  def initialize(package: nil, spec_matcher: nil, path: nil, show_missing_packages: nil)
+  def initialize(
+    package:               nil, 
+    spec_matcher:          nil, 
+    path:                  nil, 
+    show_missing_packages: nil,
+    skipped_packages:      []
+  )
     @package               = package,
     @spec_matcher          = spec_matcher.to_s
-    @skipped_packages      = []
+    @no_specs_packages     = []
+    @skipped_packages      = skipped_packages
     @path                  = path
     @run_all               = @package.nil?
     @show_missing_packages = show_missing_packages
@@ -45,7 +52,7 @@ class Rdm::SpecRunner::Runner
         )
       end
 
-      if skipped_packages.include?(@package_name)
+      if no_specs_packages.include?(@package_name)
         exit_with_message(
           view.no_specs_for_package(@package_name)
         )
@@ -61,10 +68,10 @@ class Rdm::SpecRunner::Runner
 
   def prepare!
     prepared_command_params = []
-    skipped_packages        = []
+    no_specs_packages       = []
     command                 = nil
     prepare_command_params
-    prepare_skipped_packages
+    prepare_no_specs_packages
     prepare_command
   end
 
@@ -78,10 +85,10 @@ class Rdm::SpecRunner::Runner
     end
   end
 
-  def prepare_skipped_packages
+  def prepare_no_specs_packages
     prepared_command_params
       .select { |cp| cp.spec_count == 0 }
-      .map { |cp| skipped_packages << cp.package_name }
+      .map { |cp| no_specs_packages << cp.package_name }
   end
 
   def prepare_command
@@ -102,17 +109,24 @@ class Rdm::SpecRunner::Runner
   end
 
   def prepare_command_for_packages(packages_command_params)
-    packages_command_params.select do |cmd_params|
-      cmd_params.spec_count > 0
-    end.sort_by do |cmd_params|
-      - cmd_params.spec_count
-    end.map(&:command).join(' && ')
+    packages_command_params
+      .select  { |cmd_params| cmd_params.spec_count > 0 }
+      .reject  { |cmd_params| @skipped_packages.include?(cmd_params.package_name) }
+      .sort_by { |cmd_params| - cmd_params.spec_count }
+      .map(&:command)
+      .join(' && ')
   end
 
   def display_missing_specs
-    unless skipped_packages.empty?
-      print_message view.missing_specs_message(skipped_packages)
+    unless no_specs_packages.empty?
+      print_message view.missing_specs_message(no_specs_packages)
     end
+
+    unless @skipped_packages.empty?
+      print_message view.skipping_specs_message(@skipped_packages)
+    end
+
+    print_message view.specs_header_message
   end
 
   def execute_command

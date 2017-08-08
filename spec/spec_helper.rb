@@ -1,4 +1,10 @@
 require 'simplecov'
+SimpleCov.start do
+  add_filter "/spec/"
+  add_filter "/.direnv/"
+  add_filter "/rdm/templates"
+end
+
 require 'rdm'
 require 'byebug'
 require 'fileutils'
@@ -6,15 +12,17 @@ require 'fileutils'
 require_relative 'helpers/example_project_helper'
 require_relative 'helpers/git_commands_helper'
 
-SimpleCov.start do
-  add_filter "/spec/"
-  add_filter "/.direnv/"
-  add_filter "/rdm/templates"
-end
 if ENV['CI']=='true'
   require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
 end
+
+# setup GIT so specs for GIT run properly on Travis
+if ENV['CI'] == 'true'
+  %x{ git config --global user.email "travisci@example.com" }
+  %x{ git config --global user.name "TravisCI Developer" }
+end
+
 
 Rdm.setup do
   silence_missing_package_file true
