@@ -1,0 +1,4 @@
+# type in packages, they will be ignored upon the start of the specs
+# for example:
+# entities
+# repository

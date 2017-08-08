@@ -11,7 +11,15 @@ class Rdm::SpecRunner::View
   end
 
   def missing_specs_message(skipped_packages)
-    "NO SPECS FOUND FOR PACKAGES: \n#{skipped_packages.map { |x| " - #{x}" }.join("\n")}\n\n**** SPECS *****: "
+    "NO SPECS FOUND FOR PACKAGES: \n#{skipped_packages.map { |x| " - #{x}" }.join("\n")}\n\n"
+  end
+
+  def skipping_specs_message(skipped_packages)
+    "FOLLOWING PACKAGES WERE SKIPPED BY .runignore FILE: \n#{skipped_packages.map { |x| " - #{x}" }.join("\n")}\n\n"
+  end
+
+  def specs_header_message
+    "**** SPECS *****"
   end
 
   def no_specs_for_package(package_name)
