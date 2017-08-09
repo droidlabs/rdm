@@ -26,6 +26,9 @@ class Rdm::SpecRunner::Runner
     prepare!
     check_input_params!
     display_missing_specs if @show_missing_packages
+    display_ignored_specs if @skip_ignored_packages
+    print_message view.specs_header_message if @show_missing_packages || @skip_ignored_packages
+    
     execute_command
   end
 
@@ -140,15 +143,15 @@ class Rdm::SpecRunner::Runner
   end
 
   def display_missing_specs
-    unless no_specs_packages.empty?
+    if !no_specs_packages.empty?
       print_message view.missing_specs_message(no_specs_packages)
     end
+  end
 
-    unless @skipped_packages.empty?
+  def display_ignored_specs
+    if !@skipped_packages.empty?
       print_message view.skipping_specs_message(@skipped_packages)
     end
-
-    print_message view.specs_header_message
   end
 
   def execute_command
