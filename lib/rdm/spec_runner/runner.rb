@@ -121,8 +121,8 @@ class Rdm::SpecRunner::Runner
         .map(&:strip)
         .reject(&:empty) rescue  []
       
-      @skipped_packages = skipped_packages.reject {|line| !package_list.include?(line)}
-      invalid_ignore_packages = skipped_package_list - skipped_packages
+      @skipped_packages = skipped_package_list.reject {|line| !package_list.include?(line)}
+      invalid_ignore_packages = skipped_package_list - @skipped_packages
 
       if !invalid_ignore_packages.empty?
         puts "WARNING: #{RUNIGNORE_PATH} contains invalid package names: #{invalid_ignore_packages.inspect}"
