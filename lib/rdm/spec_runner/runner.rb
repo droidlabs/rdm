@@ -18,7 +18,7 @@ class Rdm::SpecRunner::Runner
     @path                  = path
     @run_all               = @package.nil?
     @show_missing_packages = show_missing_packages
-    @show_ignored_packages = show_ignored_packages
+    @skip_ignored_packages = skip_ignored_packages
   end
 
   def run
