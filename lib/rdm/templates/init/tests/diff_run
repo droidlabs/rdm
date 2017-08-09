@@ -19,7 +19,8 @@ begin
     Rdm::SpecRunner.run(
       package:               package,
       path:                  PATH,
-      show_missing_packages: false
+      skip_ignored_packages: false,
+      show_missing_packages: true
     )
   end
   

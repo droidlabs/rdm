@@ -1,4 +1,6 @@
 class Rdm::SpecRunner::Runner
+  RUNIGNORE_PATH = 'tests/.runignore'.freeze
+
   attr_accessor :no_specs_packages
   attr_accessor :prepared_command_params
   attr_accessor :command
@@ -7,16 +9,16 @@ class Rdm::SpecRunner::Runner
     package:               nil, 
     spec_matcher:          nil, 
     path:                  nil, 
-    show_missing_packages: nil,
-    skipped_packages:      []
+    show_missing_packages: true,
+    skip_ignored_packages: false
   )
     @package               = package,
     @spec_matcher          = spec_matcher.to_s
     @no_specs_packages     = []
-    @skipped_packages      = skipped_packages
     @path                  = path
     @run_all               = @package.nil?
     @show_missing_packages = show_missing_packages
+    @show_ignored_packages = show_ignored_packages
   end
 
   def run
@@ -109,9 +111,28 @@ class Rdm::SpecRunner::Runner
   end
 
   def prepare_command_for_packages(packages_command_params)
+    if @skip_ignored_packages
+      runignore_path = File.expand_path(File.join(Rdm.root_dir, RUNIGNORE_PATH))
+      package_list   = Rdm::SourceParser.read_and_init_source(Rdm.root).packages.keys
+
+      skipped_package_list = File.read(runignore_path)
+        .lines
+        .map(&:strip)
+        .reject(&:empty)
+      
+      skipped_packages = skipped_packages.reject {|line| !package_list.include?(line)}
+      invalid_ignore_packages = skipped_package_list - skipped_packages
+
+      if !invalid_ignore_packages.empty?
+        puts "WARNING: #{RUNIGNORE_PATH} contains invalid package names: #{invalid_ignore_packages.inspect}"
+      end
+    else
+      skipped_packages = []
+    end
+
     packages_command_params
       .select  { |cmd_params| cmd_params.spec_count > 0 }
-      .reject  { |cmd_params| @skipped_packages.include?(cmd_params.package_name) }
+      .reject  { |cmd_params| skipped_packages.include?(cmd_params.package_name) }
       .sort_by { |cmd_params| - cmd_params.spec_count }
       .map(&:command)
       .join(' && ')

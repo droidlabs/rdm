@@ -101,5 +101,13 @@ module Rdm
         
       @root
     end
+
+    def root_dir
+      if !root
+        raise ArgumentError, "Rdm.root is not initialized. Run Rdm.root(ANY_PROJECT_FILE_PATH) to init it"
+      end
+
+      File.dirname(root)
+    end
   end
 end
