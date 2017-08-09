@@ -1,1 +1,2 @@
-app_name: "Sample app"
+app:
+  name: "Sample app"

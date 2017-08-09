@@ -15,6 +15,7 @@ module Rdm
   require 'rdm/cli/diff_package'
   require 'rdm/cli/template_generator'
   require 'rdm/cli/dependencies_controller'
+  require 'rdm/cli/config'
 
   # Runtime part
   require 'rdm/config'
@@ -27,10 +28,12 @@ module Rdm
   require 'rdm/settings'
   require 'rdm/source'
   require 'rdm/source_parser'
+  require 'rdm/source_composer'
   require 'rdm/source_locator'
   require 'rdm/git/diff_manager'
   require 'rdm/git/diff_command'
   require 'rdm/git/repository_locator'
+  require 'rdm/config_locals'
 
   # Package part
   require 'rdm/packages/compiler_service'
@@ -39,6 +42,7 @@ module Rdm
   # Handlers part
   require 'rdm/gen/package'
   require 'rdm/gen/init'
+  require 'rdm/gen/config'
   require 'rdm/handlers/diff_package_handler'
   require 'rdm/handlers/template_handler'
   require 'rdm/handlers/dependencies_handler'
