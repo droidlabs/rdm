@@ -118,7 +118,7 @@ class Rdm::SpecRunner::Runner
       skipped_package_list = File.read(runignore_path)
         .lines
         .map(&:strip)
-        .reject(&:empty)
+        .reject(&:empty) => rescue []
       
       skipped_packages = skipped_packages.reject {|line| !package_list.include?(line)}
       invalid_ignore_packages = skipped_package_list - skipped_packages
