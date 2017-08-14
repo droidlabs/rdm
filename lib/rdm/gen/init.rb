@@ -9,16 +9,17 @@ module Rdm
       LOCAL_TEMPLATES_PATH = '.rdm/templates'
 
       class << self
-        def generate(current_path:, test: 'rspec', console: 'irb')
-          Rdm::Gen::Init.new(current_path, test, console).generate
+        def generate(current_path:, test: 'rspec', console: 'irb', stdout: STDOUT)
+          Rdm::Gen::Init.new(current_path, test, console, stdout).generate
         end
       end
 
-      def initialize(current_path, test, console)
+      def initialize(current_path, test, console, stdout)
         @current_path      = current_path
         @test              = test
         @console           = console
         @template_detector = Rdm::Templates::TemplateDetector.new(current_path)
+        @stdout            = stdout
       end
 
       def generate
@@ -41,7 +42,8 @@ module Rdm
           template_name:      TEMPLATE_NAME,
           current_path:       @current_path,
           local_path:         INIT_PATH,
-          ignore_source_file: true
+          ignore_source_file: true,
+          stdout:             @stdout
         )
       end
 

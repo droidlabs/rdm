@@ -18,7 +18,8 @@ module Rdm
         generated_files_list = Rdm::Gen::Init.generate(
           current_path: @current_path,
           test:         @test,
-          console:      @console
+          console:      @console,
+          stdout:       @stdout
         )
 
         generated_files_list.compact.each { |file| @stdout.puts "Generated: #{file}" }
