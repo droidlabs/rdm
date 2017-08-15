@@ -15,8 +15,7 @@
 ENV['RUBY_ENV'] = 'test'
 require 'rdm'
 
-runignore_path = File.expand_path(File.join(File.dirname(Rdm.root(__FILE__)), '.runignore'))
-skipped_packages = File.open(runignore_path).each_line.inject([]) { |all, line| all.push(line.chomp!) }
+Rdm.root(__FILE__)
 
 if ENV['TEST_RUN']
   require 'minitest/autorun'
@@ -34,9 +33,9 @@ if ENV['TEST_RUN']
 else
   Rdm::SpecRunner.run(
     package:          ARGV.clone.first,
-    spec_matcher:     ARGV.clone.last,
+    spec_matcher:     ARGV.clone[1],
     path:             File.expand_path(__FILE__),
-    skipped_packages: skipped_packages,
+    skip_ignored_packages: true,
     show_missing_packages: true
   )
 end

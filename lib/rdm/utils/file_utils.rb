@@ -16,5 +16,9 @@ class Rdm::Utils::FileUtils
       FileUtils.cp(tmp_file, original_file)
       FileUtils.rm(tmp_file)
     end
+
+    def relative_path(path:, from:)
+      Pathname.new(path).relative_path_from(Pathname.new(from)).to_s
+    end
   end
 end

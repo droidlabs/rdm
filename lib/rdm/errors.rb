@@ -47,5 +47,11 @@ module Rdm
 
     class PackageHasNoDependencies < StandardError
     end
+
+    class SpecMatcherNoFiles < StandardError
+    end
+
+    class SpecMatcherMultipleFiles < StandardError
+    end
   end
 end

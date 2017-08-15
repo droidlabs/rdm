@@ -59,6 +59,7 @@ module Rdm
   require 'rdm/spec_runner/package_fetcher'
   require 'rdm/spec_runner/runner'
   require 'rdm/spec_runner/view'
+  require 'rdm/spec_runner/spec_filename_matcher'
 
   extend Rdm::Helpers::PathHelper
 
