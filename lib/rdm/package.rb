@@ -19,6 +19,15 @@ class Rdm::Package
     fetch_dependencies(@config_dependencies || {}, group)
   end
 
+  def local_dependencies_with_groups
+    return {} if @local_dependencies.nil?
+    @local_dependencies.each_with_object(
+      Hash.new { |h,k| h[k]=[] }
+    ) do|(k,v), h| 
+      v.map { |t| h[t] << k }
+    end
+  end
+
   # Import local dependency, e.g another package
   def import(dependency)
     @local_dependencies ||= {}
