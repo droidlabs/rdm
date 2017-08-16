@@ -33,7 +33,7 @@ if ENV['TEST_RUN']
 else
   Rdm::SpecRunner.run(
     package:          ARGV.clone.first,
-    spec_matcher:     ARGV.clone.last,
+    spec_matcher:     ARGV.clone[1],,
     path:             File.expand_path(__FILE__),
     skip_ignored_packages: true,
     show_missing_packages: true
