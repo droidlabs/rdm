@@ -7,8 +7,8 @@ describe Rdm::SpecRunner::SpecFilenameMatcher do
   after  { reset_example_project }
 
   subject              { described_class }
-  let(:existing_file)  { 'package/core.rb' }
-  let(:short_filename) { 'pkg.rb' }
+  let(:existing_file)  { 'spec/core/one_more_spec.rb' }
+  let(:short_filename) { 'sc.rb' }
   let(:package_path)   { File.join(example_project_path, 'domain/core') }
 
   context 'file_path exists' do
@@ -23,7 +23,7 @@ describe Rdm::SpecRunner::SpecFilenameMatcher do
     it 'returns array of relative to package matches' do
       expect(
         subject.find_matches(package_path: package_path, spec_matcher: short_filename)
-      ).to match(["package/core/sample_service.rb", "package/core.rb"])
+      ).to match(["spec/core/one_more_spec.rb", "spec/core/sample_service_spec.rb"])
     end
   end
 end

@@ -27,10 +27,10 @@ class Rdm::SpecRunner::Runner
       @spec_file_matches = Rdm::SpecRunner::SpecFilenameMatcher.find_matches(package_path: packages[@package].path, spec_matcher: @spec_matcher)
       case @spec_file_matches.size
       when 0
-        raise Rdm::Errors::SpecMatcherNoFiles, "No files were found for '#{@spec_matcher}'"
+        raise Rdm::Errors::SpecMatcherNoFiles, "No specs were found for '#{@spec_matcher}'"
       when 1
         @spec_matcher = @spec_file_matches.first
-        puts "Rspec running for following file: #{@spec_matcher}"
+        puts "Following spec matches your input: #{@spec_matcher}"
       else
         raise Rdm::Errors::SpecMatcherMultipleFiles, @spec_file_matches.join("\n")
     end

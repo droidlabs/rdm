@@ -19,21 +19,8 @@ describe Rdm::SpecRunner do
           stdout:       stdout
         )
 
-        expect(stdout.output).to include("No files were found for 'not_existing_file.rb'")
+        expect(stdout.output).to include("No specs were found for 'not_existing_file.rb'")
       end
-    end
-
-    context "if single file match spec_matcher" do
-      # it 'runs spec file' do
-      #   subject.run(
-      #     path:         example_project_path, 
-      #     package:      'core',
-      #     spec_matcher: 'spec/core/sample_service_spec.rb',
-      #     stdout:       stdout
-      #   )
-
-      #   expect(stdout.output).to include('No files specified by spec_matcher were found')
-      # end
     end
 
     context "if multiple files match spec_matcher" do
@@ -42,10 +29,11 @@ describe Rdm::SpecRunner do
           path:         example_project_path, 
           package:      'core',
           spec_matcher: 'spec.rb',
-          stdout:       stdout
+          stdout:       stdout,
+          stdin:        SpecLogger.new(stdin: "exit\n")
         )
 
-        expect(stdout.output).to include("Following files were found by specified spec_matcher:\n1. package/core/sample_service.rb\n2. spec/core/one_more_spec.rb\n3. spec/core/sample_service_spec.rb")
+        expect(stdout.output).to match(["Following specs match your input:", "1. spec/core/one_more_spec.rb\n2. spec/core/sample_service_spec.rb", "Enter space-separated file numbers, ex: '1 2': "])
       end
     end
   end

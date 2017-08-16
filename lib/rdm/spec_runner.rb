@@ -5,7 +5,8 @@ module Rdm::SpecRunner
     spec_matcher:          nil, 
     show_missing_packages: true, 
     skip_ignored_packages: false,
-    stdout:                STDOUT
+    stdout:                STDOUT,
+    stdin:                 STDIN
   )
     Rdm::SpecRunner::Runner.new(
       path:                  path, 
@@ -21,10 +22,10 @@ module Rdm::SpecRunner
     spec_files        = e.message.split("\n")
     format_spec_files = spec_files.map.with_index {|file, idx| "#{idx+1}. #{file}"}.join("\n")
     
-    stdout.puts "Following files were found by specified spec_matcher:"
+    stdout.puts "Following specs match your input:"
     stdout.puts format_spec_files
-    stdout.print "Enter space-separated file numbers, ex: '1 3 10': "
-    selected_files_numbers = STDIN.gets.chomp
+    stdout.print "Enter space-separated file numbers, ex: '1 2': "
+    selected_files_numbers = stdin.gets.chomp
       .split(' ')
       .map {|x| Integer(x) rescue nil }
       .compact
