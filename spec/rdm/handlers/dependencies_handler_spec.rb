@@ -47,8 +47,9 @@ describe Rdm::Handlers::DependenciesHandler do
         expect(result).to match(
           [
             "web", 
-            "└── core",
-            "    └── repository"
+            "├── core", 
+            "|   └── repository", 
+            "└── repository (test)"
           ]
         )
       end
@@ -73,9 +74,10 @@ describe Rdm::Handlers::DependenciesHandler do
         expect(result).to match(
           [
             "web", 
-            "└── core", 
-            "    └── web", 
-            "        └── ..." 
+            "├── core", 
+            "|   └── web", 
+            "|       └── ...", 
+            "└── repository (test)"
           ]
         )
       end

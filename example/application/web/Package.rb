@@ -6,3 +6,7 @@ end
 dependency do
   import "core"
 end
+
+dependency :test do
+  import "repository"
+end
