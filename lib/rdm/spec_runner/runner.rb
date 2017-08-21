@@ -24,7 +24,7 @@ class Rdm::SpecRunner::Runner
 
   def run
     if !@spec_matcher.empty?
-      @spec_file_matches = Rdm::SpecRunner::SpecFilenameMatcher.find_matches(package_path: packages[@package].path, spec_matcher: @spec_matcher)
+      @spec_file_matches = Rdm::SpecRunner::SpecFilenameMatcher.find_matches(package_path: packages[@package_name].path, spec_matcher: @spec_matcher)
       case @spec_file_matches.size
       when 0
         raise Rdm::Errors::SpecMatcherNoFiles, "No specs were found for '#{@spec_matcher}'"

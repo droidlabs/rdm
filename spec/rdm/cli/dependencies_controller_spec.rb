@@ -18,11 +18,12 @@ describe Rdm::CLI::DependenciesController do
         stdout:       stdout
       )
       
-      expect(stdout.output).to include(
+      expect(stdout.output.last).to match(
         [
           "web", 
-          "└── core",
-          "    └── repository"
+          "├── core", 
+          "|   └── repository", 
+          "└── repository (test)"
         ]
       )
     end
