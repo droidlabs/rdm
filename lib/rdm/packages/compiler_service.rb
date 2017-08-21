@@ -57,7 +57,12 @@ module Rdm
         end
 
         FileUtils.cp_r(File.join(@project_path, 'configs'), File.join(@compile_path, 'configs'))
-        FileUtils.cp_r(File.join(@project_path, Rdm.settings.env_files_dir), File.join(@compile_path, Rdm.settings.env_files_dir))
+        if Dir.exists?(File.join(@project_path, Rdm.settings.env_files_dir))
+          FileUtils.cp_r(
+            File.join(@project_path, Rdm.settings.env_files_dir), 
+            File.join(@compile_path, Rdm.settings.env_files_dir)
+          )
+        end
 
         Rdm.settings.compile_ignore_files.each do |file|
           Dir["#{@compile_path}/**/#{file}"].each do |file_to_remove|
