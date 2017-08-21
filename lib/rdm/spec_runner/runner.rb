@@ -12,7 +12,7 @@ class Rdm::SpecRunner::Runner
     show_missing_packages: true,
     skip_ignored_packages: false
   )
-    @package               = package
+    @package_name          = package
     @no_specs_packages     = []
     @spec_matcher          = spec_matcher.to_s
     @path                  = path
