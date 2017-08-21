@@ -16,7 +16,7 @@ class Rdm::SpecRunner::Runner
     @no_specs_packages     = []
     @spec_matcher          = spec_matcher.to_s
     @path                  = path
-    @run_all               = @package.nil?
+    @run_all               = @package_name.nil?
     @show_missing_packages = show_missing_packages
     @skip_ignored_packages = skip_ignored_packages
     @skipped_packages      = []
@@ -33,8 +33,8 @@ class Rdm::SpecRunner::Runner
         puts "Following spec matches your input: #{@spec_matcher}"
       else
         raise Rdm::Errors::SpecMatcherMultipleFiles, @spec_file_matches.join("\n")
+      end
     end
-  end
 
     prepare!
     check_input_params!
@@ -128,7 +128,7 @@ class Rdm::SpecRunner::Runner
   end
 
   def prepare_command_for_packages(packages_command_params)
-    if @skip_ignored_packages && !@package
+    if @skip_ignored_packages && !@package_name
       runignore_path = File.expand_path(File.join(Rdm.root_dir, RUNIGNORE_PATH))
       package_list   = Rdm::SourceParser.read_and_init_source(Rdm.root).packages.keys
 
@@ -169,7 +169,7 @@ class Rdm::SpecRunner::Runner
 
   def execute_command
     eval(command)
-    if !$?.success?
+    if $? && !$?.success?
       exit(1)
     end
   end
