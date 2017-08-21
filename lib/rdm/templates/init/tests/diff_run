@@ -6,6 +6,8 @@ require 'rdm'
 REVISION = ARGV.clone.first
 PATH     = File.expand_path(__FILE__)
 
+Rdm.root(__FILE__)
+
 begin
   changed_packages = Rdm::Handlers::DiffPackageHandler.handle(
     path:     PATH, 
