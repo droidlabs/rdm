@@ -128,14 +128,14 @@ class Rdm::SpecRunner::Runner
   end
 
   def prepare_command_for_packages(packages_command_params)
-    if @skip_ignored_packages
+    if @skip_ignored_packages && !@package
       runignore_path = File.expand_path(File.join(Rdm.root_dir, RUNIGNORE_PATH))
       package_list   = Rdm::SourceParser.read_and_init_source(Rdm.root).packages.keys
 
       skipped_package_list = File.read(runignore_path)
         .lines
         .map(&:strip)
-        .reject(&:empty?) rescue  []
+        .reject(&:empty?) rescue []
       
       @skipped_packages = skipped_package_list.reject {|line| !package_list.include?(line)}
       invalid_ignore_packages = skipped_package_list - @skipped_packages
