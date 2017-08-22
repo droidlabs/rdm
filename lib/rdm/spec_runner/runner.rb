@@ -14,7 +14,8 @@ class Rdm::SpecRunner::Runner
   )
     @package_name          = package
     @no_specs_packages     = []
-    @spec_matcher          = spec_matcher.to_s
+    @spec_matcher          = spec_matcher.to_s.split(':')[0]
+    @spec_string_number    = spec_matcher.to_s.split(':')[1].to_i
     @path                  = path
     @run_all               = @package_name.nil?
     @show_missing_packages = show_missing_packages
@@ -23,13 +24,15 @@ class Rdm::SpecRunner::Runner
   end
 
   def run
-    if !@spec_matcher.empty?
+    if !@spec_matcher.nil? && !@spec_matcher.empty?
       @spec_file_matches = Rdm::SpecRunner::SpecFilenameMatcher.find_matches(package_path: packages[@package_name].path, spec_matcher: @spec_matcher)
       case @spec_file_matches.size
       when 0
         raise Rdm::Errors::SpecMatcherNoFiles, "No specs were found for '#{@spec_matcher}'"
       when 1
-        @spec_matcher = @spec_file_matches.first
+        format_string_number = @spec_string_number == 0 ? "" : ":#{@spec_string_number}" 
+        @spec_matcher = @spec_file_matches.first + format_string_number
+
         puts "Following spec matches your input: #{@spec_matcher}"
       else
         raise Rdm::Errors::SpecMatcherMultipleFiles, @spec_file_matches.join("\n")
