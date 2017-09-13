@@ -37,6 +37,15 @@ describe Rdm::Gen::Init do
         ensure_exists(".rdm/templates/package/bin/console")
       end
     end
+
+    it "has generated config templates" do
+      subject.generate(current_path: example_project_path, stdout: stdout)
+
+      FileUtils.cd(example_project_path) do
+        ensure_exists(".rdm/templates/configs/<%=config_path%>")
+        ensure_exists(".rdm/templates/configs/<%=role_config_path%>")
+      end
+    end
   end
 
   context "prevents double execution" do

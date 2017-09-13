@@ -37,6 +37,10 @@ module Rdm
           @template_detector.gem_template_folder('package'),
           @template_detector.project_template_folder('package')
         )
+        FileUtils.cp_r(
+          @template_detector.gem_template_folder('configs'),
+          @template_detector.project_template_folder('configs')
+        )
         
         Rdm::Handlers::TemplateHandler.generate(
           template_name:      TEMPLATE_NAME,
