@@ -23,8 +23,6 @@ describe Rdm::CLI::Init do
         ensure_exists("Rdm.packages")
         ensure_exists("Gemfile")
         ensure_exists("Readme.md")
-        ensure_exists("tests/run")
-        ensure_exists("tests/diff_run")
       end
     end
 

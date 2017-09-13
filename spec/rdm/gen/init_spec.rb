@@ -17,7 +17,6 @@ describe Rdm::Gen::Init do
         ensure_exists("Rdm.packages")
         ensure_exists("Gemfile")
         ensure_exists("Readme.md")
-        ensure_exists("tests/run")
         ensure_exists("bin/console")
         ensure_exists("env_files/test.env")
         ensure_exists("env_files/development.env")
