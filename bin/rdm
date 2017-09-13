@@ -17,8 +17,8 @@ class RdmCliRunner
     program :description, 'Ruby Dependencies Manager'
 
     command :init do |c|
-      c.syntax = 'rdm init, [options]'
-      c.description = 'generates project scaffold in current folder'
+      c.syntax = 'rdm init PATH, [options]'
+      c.description = 'generates project scaffold in passed directory'
       c.summary = '> ' + c.description
       c.example 'generate scaffold with minitest', 'rdm init --test=minitest'
       c.example 'generate scaffold with rspec',    'rdm init --test=rspec'
@@ -28,10 +28,11 @@ class RdmCliRunner
       c.option '--console CONSOLE', CONSOLES, "select console: #{CONSOLES.join(", ")}"
       c.option '--current_path [ROOT_DIR]', String, 'Path for the root folder'
       c.action do |args, options|
+        init_dir = (args.first || `pwd`.strip)
         defaults = {
           test:         "rspec",
           console:      "irb",
-          current_path: `pwd`.strip
+          current_path: init_dir
         }
         options_hash = options.__hash__
         options_hash.delete(:trace)

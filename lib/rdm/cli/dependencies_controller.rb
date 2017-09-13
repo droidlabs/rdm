@@ -24,6 +24,8 @@ module Rdm
         @stdout.puts e.message
       rescue Rdm::Errors::PackageHasNoDependencies => e
         @stdout.puts "Package `#{e.message}` has no dependencies"
+      rescue Rdm::Errors::PackageDoesNotExist => e
+        @stdout.puts "Package `#{e.message}` is not defined"
       end
     end
   end
