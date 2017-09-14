@@ -33,7 +33,6 @@ class Rdm::Settings
 
   SETTING_KEYS.each do |key|
     define_method(key) do |value = nil, &block|
-      # debugger if key == :compile_ignore_files
       fetch_setting key, value, &block
     end
   end
