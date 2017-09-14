@@ -38,6 +38,8 @@ module Rdm
             package_lines.push line
           when CONFIG_LINE_REGEX
             config_lines.push line
+          when "\n"
+            # skip
           else
             setup_lines.push line
           end
@@ -47,6 +49,7 @@ module Rdm
         
         File.open(rdm_root_file_path, 'w') do |file|
           file.write setup_lines.join
+          file.write("\n\n")
           file.write config_lines.join
           file.write("\n\n")
           file.write package_lines.join
