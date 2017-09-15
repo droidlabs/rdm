@@ -34,6 +34,7 @@ module Rdm
   require 'rdm/git/diff_command'
   require 'rdm/git/repository_locator'
   require 'rdm/config_locals'
+  require 'rdm/source_modifier'
 
   # Package part
   require 'rdm/packages/compiler_service'

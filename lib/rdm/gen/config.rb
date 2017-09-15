@@ -1,7 +1,5 @@
 class Rdm::Gen::Config
   TEMPLATE_NAME      = 'configs'
-  PACKAGE_LINE_REGEX = /package\s+['"]([\d\w\/\-_]+)['"]/
-  CONFIG_LINE_REGEX  = /config\s+([:\w\-_\d]+)/
 
   def self.generate(config_name:, current_path:, config_data: {})
     Rdm::Gen::Config.new(config_name, current_path, config_data = {}).generate
@@ -30,33 +28,7 @@ class Rdm::Gen::Config
       local_path:         './'
     )
 
-    package_lines = []
-    config_lines  = []
-    setup_lines   = []
-
-    rdm_root_file_path = File.join(@source.root_path, Rdm::SOURCE_FILENAME)
-    File.open(rdm_root_file_path).each_line do |line|
-      case line
-      when PACKAGE_LINE_REGEX
-        package_lines.push line
-      when CONFIG_LINE_REGEX
-        config_lines.push line
-      when "\n"
-        # skip
-      else
-        setup_lines.push line
-      end
-    end
-
-    config_lines.push "config :#{@config_name}"
-    
-    File.open(rdm_root_file_path, 'w') do |file|
-      file.write setup_lines.join
-      file.write("\n\n")
-      file.write config_lines.join
-      file.write("\n\n")
-      file.write package_lines.join
-    end
+    Rdm::SourceModifier.add_config(@config_name, get_source.root_path)
     
     generated_files
   end
