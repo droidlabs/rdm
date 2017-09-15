@@ -31,6 +31,6 @@ end
 
 path_to_selected_console = package_consoles[select_result.to_i - 1][:path]
 exit(0) if path_to_selected_console.nil?
-system(path_to_selected_console)
+system("chmod +x #{path_to_selected_console} && #{path_to_selected_console}")
 
 

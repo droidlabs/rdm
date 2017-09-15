@@ -99,7 +99,7 @@ module Rdm
 
           rendered_rel_path
         end
-
+        
         template_files_list.compact
       end
 

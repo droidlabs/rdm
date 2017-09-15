@@ -1,5 +1,6 @@
 class Rdm::SpecRunner::Runner
-  RUNIGNORE_PATH = 'tests/.runignore'.freeze
+  RUNIGNORE_PATH    = '.rdm/.runignore'.freeze
+  RUNIGNORE_COMMENT = '#'
 
   attr_accessor :no_specs_packages
   attr_accessor :prepared_command_params
@@ -140,11 +141,12 @@ class Rdm::SpecRunner::Runner
         .map(&:strip)
         .reject(&:empty?) rescue []
       
-      @skipped_packages = skipped_package_list.reject {|line| !package_list.include?(line)}
-      invalid_ignore_packages = skipped_package_list - @skipped_packages
+      @skipped_packages       = skipped_package_list.select {|line| package_list.include?(line)}
+      comment_runignore_lines = skipped_package_list.select {|line| line.start_with?(RUNIGNORE_COMMENT)}
+      invalid_ignore_packages = skipped_package_list - @skipped_packages - comment_runignore_lines
 
       if !invalid_ignore_packages.empty?
-        puts "WARNING: #{RUNIGNORE_PATH} contains invalid package names: #{invalid_ignore_packages.inspect}"
+        puts "WARNING: #{RUNIGNORE_PATH} contains invalid package names: \n#{invalid_ignore_packages.join("\n")}"
       end
     else
       @skipped_packages = []
