@@ -16,6 +16,7 @@ module Rdm
   require 'rdm/cli/template_generator'
   require 'rdm/cli/dependencies_controller'
   require 'rdm/cli/config'
+  require 'rdm/cli/diff_spec_runner.rb'
 
   # Runtime part
   require 'rdm/config'

@@ -162,6 +162,60 @@ class RdmCliRunner
         )
       end
     end
+    
+    command :"run.tests" do |c|
+      c.syntax      = 'rdm run.tests PACKAGE_NAME SPEC_MATCHER'
+      c.description = 'run tests for specified package and spec file matcher'
+      c.summary     = '> ' + c.description
+
+      c.example     'run tests for all packages',
+                    'rdm run.tests'
+      c.example     'run tests for `mailing_system` package',
+                    'rdm run.tests mailing_system'
+      c.example     'run tests for `mailing_system` package and files, matches `events` string',
+                    'rdm run.tests mailing_system events'
+      
+      c.action do |args, options|
+        package_name = args[0]
+        spec_matcher = args[1]
+
+        ENV['RUBY_ENV'] = 'test'
+
+        Rdm.root(`pwd`.chomp)
+        Rdm::SpecRunner.run(
+          package:          package_name,
+          spec_matcher:     spec_matcher,
+          path:             `pwd`.chomp,
+          skip_ignored_packages: true,
+          show_missing_packages: true
+        )
+      end
+    end
+
+    command :"run.diff_tests" do |c|
+      c.syntax      = 'rdm run.diff_tests REVISION'
+      c.description = 'run tests for modified packages from specified git revision'
+      c.summary     = '> ' + c.description
+
+      c.example     'run tests for packages modified from HEAD',
+                    'rdm run.diff_tests'
+      c.example     'run tests for packages modified from commit by hash',
+                    'rdm run.diff_tests a7rrey'
+      c.example     'run tests for packages modified from specified branch',
+                    'rdm run.diff_tests master'
+      
+      c.action do |args, options|
+        revision = args[0]
+
+        ENV['RUBY_ENV'] = 'test'
+        Rdm.root(`pwd`.chomp)
+
+        Rdm::CLI::DiffSpecRunner.run(
+          revision: revision,
+          path:     `pwd`.chomp
+        )
+      end
+    end
 
     run!
   end
