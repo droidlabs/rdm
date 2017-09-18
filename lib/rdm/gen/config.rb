@@ -1,5 +1,5 @@
 class Rdm::Gen::Config
-  TEMPLATE_NAME      = 'configs'
+  TEMPLATE_NAME = 'configs'
 
   def self.generate(config_name:, current_path:, config_data: {})
     Rdm::Gen::Config.new(config_name, current_path, config_data = {}).generate

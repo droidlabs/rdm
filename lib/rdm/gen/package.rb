@@ -4,7 +4,7 @@ require 'pathname'
 module Rdm
   module Gen
     class Package
-      TEMPLATE_NAME      = 'package'
+      TEMPLATE_NAME = 'package'
 
       class << self
         def generate(package_name:, current_path:, local_path:, locals: {})
