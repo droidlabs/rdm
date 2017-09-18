@@ -1,5 +1,5 @@
 class Rdm::SpecRunner::Runner
-  RUNIGNORE_PATH    = '.rdm/.runignore'.freeze
+  RUNIGNORE_PATH    = 'tests/.runignore'.freeze
   RUNIGNORE_COMMENT = '#'
 
   attr_accessor :no_specs_packages

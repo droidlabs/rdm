@@ -163,7 +163,7 @@ class RdmCliRunner
       end
     end
     
-    command :"run.tests" do |c|
+    command :"rspec.run" do |c|
       c.syntax      = 'rdm run.tests PACKAGE_NAME SPEC_MATCHER'
       c.description = 'run tests for specified package and spec file matcher'
       c.summary     = '> ' + c.description
@@ -192,7 +192,7 @@ class RdmCliRunner
       end
     end
 
-    command :"run.diff_tests" do |c|
+    command :"rspec.diff_run" do |c|
       c.syntax      = 'rdm run.diff_tests REVISION'
       c.description = 'run tests for modified packages from specified git revision'
       c.summary     = '> ' + c.description

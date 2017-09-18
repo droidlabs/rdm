@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+system("bundle exec rdm rspec.run #{ARGV.join}", out: STDOUT, err: :out)
