@@ -1,9 +1,10 @@
 class Rdm::SpecRunner::CommandGenerator
   attr_accessor :package_name, :package_path, :spec_matcher
-  def initialize(package_name:, package_path:, spec_matcher:)
+  def initialize(package_name:, package_path:, spec_matcher:, show_output: true)
     @package_name = package_name
     @package_path = package_path
     @spec_matcher = spec_matcher
+    @output       = show_output ? '$stdout' : 'File::NULL'
   end
 
   def spec_count
@@ -14,7 +15,7 @@ class Rdm::SpecRunner::CommandGenerator
     "print_message(
         '**** Package: #{package_name}  *****') \\
           && system('cd #{package_path} \\
-          && bundle exec rspec --color --tty #{spec_matcher}', out: $stdout, err: :out)"
+          && bundle exec rspec --color --tty #{spec_matcher}', out: #{@output.to_s}, err: :out)"
   end
 
   def generate
