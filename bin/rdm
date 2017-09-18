@@ -164,16 +164,16 @@ class RdmCliRunner
     end
     
     command :"rspec.run" do |c|
-      c.syntax      = 'rdm run.tests PACKAGE_NAME SPEC_MATCHER'
+      c.syntax      = 'rdm rspec.run PACKAGE_NAME SPEC_MATCHER'
       c.description = 'run tests for specified package and spec file matcher'
       c.summary     = '> ' + c.description
 
       c.example     'run tests for all packages',
                     'rdm run.tests'
       c.example     'run tests for `mailing_system` package',
-                    'rdm run.tests mailing_system'
+                    'rdm rspec.run mailing_system'
       c.example     'run tests for `mailing_system` package and files, matches `events` string',
-                    'rdm run.tests mailing_system events'
+                    'rdm rspec.run mailing_system events'
       
       c.action do |args, options|
         package_name = args[0]
@@ -193,16 +193,16 @@ class RdmCliRunner
     end
 
     command :"rspec.diff_run" do |c|
-      c.syntax      = 'rdm run.diff_tests REVISION'
+      c.syntax      = 'rdm rspec.diff_run REVISION'
       c.description = 'run tests for modified packages from specified git revision'
       c.summary     = '> ' + c.description
 
       c.example     'run tests for packages modified from HEAD',
-                    'rdm run.diff_tests'
+                    'rdm rspec.diff_run'
       c.example     'run tests for packages modified from commit by hash',
-                    'rdm run.diff_tests a7rrey'
+                    'rdm rspec.diff_run a7rrey'
       c.example     'run tests for packages modified from specified branch',
-                    'rdm run.diff_tests master'
+                    'rdm rspec.diff_run master'
       
       c.action do |args, options|
         revision = args[0]
