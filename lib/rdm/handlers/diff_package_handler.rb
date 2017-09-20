@@ -21,11 +21,12 @@ module Rdm
 
         modified_packages = Rdm::Git::DiffManager
           .run(path: path, revision: revision)
+          .reject { |file| file.include?(Rdm::Gen::Init::LOCAL_TEMPLATES_PATH) }
           .map { |file| Rdm::Packages::Locator.locate(file) rescue nil }
           .map { |path_to_package| Rdm::PackageParser.parse_file(path_to_package).name rescue nil }
           .reject(&:blank?)
           .uniq
-        
+
         return get_dependencies(modified_packages) || []
       end
 

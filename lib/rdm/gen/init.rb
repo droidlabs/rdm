@@ -31,20 +31,26 @@ module Rdm
         if File.exist?(File.join(@current_path, Rdm::SOURCE_FILENAME))
           raise Rdm::Errors::ProjectAlreadyInitialized, "#{@current_path} has already #{Rdm::SOURCE_FILENAME}"
         end
-
-        FileUtils.mkdir_p(local_templates_path)
-        FileUtils.cp_r(
-          @template_detector.gem_template_folder('package'),
-          @template_detector.project_template_folder('package')
-        )
         
-        Rdm::Handlers::TemplateHandler.generate(
+        generated_files = Rdm::Handlers::TemplateHandler.generate(
           template_name:      TEMPLATE_NAME,
           current_path:       @current_path,
           local_path:         INIT_PATH,
           ignore_source_file: true,
           stdout:             @stdout
         )
+
+        FileUtils.mkdir_p(local_templates_path)
+        FileUtils.cp_r(
+          @template_detector.gem_template_folder('package'),
+          File.dirname(@template_detector.project_template_folder('package'))
+        )
+        FileUtils.cp_r(
+          @template_detector.gem_template_folder('configs'),
+          File.dirname(@template_detector.project_template_folder('configs'))
+        )
+
+        generated_files
       end
 
       private

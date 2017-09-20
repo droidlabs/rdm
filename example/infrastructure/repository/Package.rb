@@ -4,6 +4,6 @@ package do
 end
 
 dependency do
-  require "sequel"
+  # require "sequel"
   import_config :app
 end

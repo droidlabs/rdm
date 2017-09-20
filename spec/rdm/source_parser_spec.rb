@@ -98,9 +98,8 @@ describe Rdm::SourceParser do
       context "with undefined role" do
         it "puts warning message" do
           Rdm::Utils::FileUtils.change_file @rdm_source_file do |line|
-            line.include?('env_file_name "production"') ? 'env_file_name "stading"' : line
+            line.include?("ENV['ENV_FILE'] || \"production\"") ? 'env_file_name "stading"' : line
           end
-          
           subject.read_and_init_source(@rdm_source_file, stdout: stdout)
 
           expect(stdout.output).to include("WARNING! Environment file 'stading' was not found. Please, add /tmp/example/env_files/stading.env file...")

@@ -16,6 +16,7 @@ module Rdm
   require 'rdm/cli/template_generator'
   require 'rdm/cli/dependencies_controller'
   require 'rdm/cli/config'
+  require 'rdm/cli/diff_spec_runner.rb'
 
   # Runtime part
   require 'rdm/config'
@@ -28,12 +29,12 @@ module Rdm
   require 'rdm/settings'
   require 'rdm/source'
   require 'rdm/source_parser'
-  require 'rdm/source_composer'
   require 'rdm/source_locator'
   require 'rdm/git/diff_manager'
   require 'rdm/git/diff_command'
   require 'rdm/git/repository_locator'
   require 'rdm/config_locals'
+  require 'rdm/source_modifier'
 
   # Package part
   require 'rdm/packages/compiler_service'

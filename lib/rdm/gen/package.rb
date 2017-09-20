@@ -21,20 +21,20 @@ module Rdm
       end
 
       def create
-        @source.package(@local_path)
-
         raise Rdm::Errors::PackageDirExists.new(@local_path) if Dir.exist?(File.join(@source.root_path, @local_path))
         raise Rdm::Errors::PackageNameNotSpecified           if @package_name.nil? || @package_name.empty?
         raise Rdm::Errors::PackageExists                     if @source.packages.keys.include?(@package_name)
-        
-        Rdm::SourceComposer.run(@source)
-
-        Rdm::Handlers::TemplateHandler.generate(
+                
+        generated_files = Rdm::Handlers::TemplateHandler.generate(
           template_name: TEMPLATE_NAME,
           current_path:  @current_path,
           local_path:    @local_path,
           locals:        { package_name: @package_name }.merge(@locals)
         )
+
+        Rdm::SourceModifier.add_package(@local_path, get_source.root_path)
+
+        generated_files  
       end
 
       def get_source

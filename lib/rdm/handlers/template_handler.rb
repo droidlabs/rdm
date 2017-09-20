@@ -43,7 +43,7 @@ module Rdm
         template_detector = Rdm::Templates::TemplateDetector.new(project_path)
 
         render_helper_path = "#{project_path}/.rdm/helpers/render_helper.rb"
-        require_relative render_helper_path if File.exist?(render_helper_path)
+        require_relative File.expand_path(render_helper_path) if File.exist?(render_helper_path)
 
         @template_directory    = template_detector.detect_template_folder(@template_name)
         @destination_directory = File.join(project_path, @local_path)
@@ -99,7 +99,7 @@ module Rdm
 
           rendered_rel_path
         end
-
+        
         template_files_list.compact
       end
 

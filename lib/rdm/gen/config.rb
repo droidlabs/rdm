@@ -14,8 +14,6 @@ class Rdm::Gen::Config
   end
 
   def generate
-    @source.config(@config_name)
-
     @locals = {
       config_name:      @config_name,
       config_locals:    @config_locals,
@@ -30,7 +28,7 @@ class Rdm::Gen::Config
       local_path:         './'
     )
 
-    Rdm::SourceComposer.run(@source)
+    Rdm::SourceModifier.add_config(@config_name, get_source.root_path)
     
     generated_files
   end

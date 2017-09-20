@@ -1,5 +1,6 @@
 class Rdm::SpecRunner::Runner
-  RUNIGNORE_PATH = 'tests/.runignore'.freeze
+  RUNIGNORE_PATH    = 'tests/.runignore'.freeze
+  RUNIGNORE_COMMENT = '#'
 
   attr_accessor :no_specs_packages
   attr_accessor :prepared_command_params
@@ -10,7 +11,9 @@ class Rdm::SpecRunner::Runner
     spec_matcher:          nil, 
     path:                  nil, 
     show_missing_packages: true,
-    skip_ignored_packages: false
+    skip_ignored_packages: false,
+    stdout:                STDOUT,
+    show_output:           true
   )
     @package_name          = package
     @no_specs_packages     = []
@@ -21,6 +24,8 @@ class Rdm::SpecRunner::Runner
     @show_missing_packages = show_missing_packages
     @skip_ignored_packages = skip_ignored_packages
     @skipped_packages      = []
+    @stdout                = stdout
+    @show_output           = show_output
   end
 
   def run
@@ -33,7 +38,7 @@ class Rdm::SpecRunner::Runner
         format_string_number = @spec_string_number == 0 ? "" : ":#{@spec_string_number}" 
         @spec_matcher = @spec_file_matches.first + format_string_number
 
-        puts "Following spec matches your input: #{@spec_matcher}"
+        @stdout.puts "Following spec matches your input: #{@spec_matcher}"
       else
         raise Rdm::Errors::SpecMatcherMultipleFiles, @spec_file_matches.join("\n")
       end
@@ -57,7 +62,7 @@ class Rdm::SpecRunner::Runner
   end
 
   def print_message(msg)
-    puts msg
+    @stdout.puts msg
     true
   end
 
@@ -101,7 +106,10 @@ class Rdm::SpecRunner::Runner
     @prepared_command_params ||= begin
       packages.map do |_name, package|
         Rdm::SpecRunner::CommandGenerator.new(
-          package_name: package.name, package_path: package.path, spec_matcher: @spec_matcher
+          package_name: package.name, 
+          package_path: package.path, 
+          spec_matcher: @spec_matcher,
+          show_output:  @show_output
         ).generate
       end
     end
@@ -140,11 +148,12 @@ class Rdm::SpecRunner::Runner
         .map(&:strip)
         .reject(&:empty?) rescue []
       
-      @skipped_packages = skipped_package_list.reject {|line| !package_list.include?(line)}
-      invalid_ignore_packages = skipped_package_list - @skipped_packages
+      @skipped_packages       = skipped_package_list.select {|line| package_list.include?(line)}
+      comment_runignore_lines = skipped_package_list.select {|line| line.start_with?(RUNIGNORE_COMMENT)}
+      invalid_ignore_packages = skipped_package_list - @skipped_packages - comment_runignore_lines
 
       if !invalid_ignore_packages.empty?
-        puts "WARNING: #{RUNIGNORE_PATH} contains invalid package names: #{invalid_ignore_packages.inspect}"
+        @stdout.puts "WARNING: #{RUNIGNORE_PATH} contains invalid package names: \n#{invalid_ignore_packages.join("\n")}"
       end
     else
       @skipped_packages = []
@@ -175,5 +184,6 @@ class Rdm::SpecRunner::Runner
     if $? && !$?.success?
       exit(1)
     end
+
   end
 end

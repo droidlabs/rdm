@@ -17,7 +17,6 @@ describe Rdm::Gen::Init do
         ensure_exists("Rdm.packages")
         ensure_exists("Gemfile")
         ensure_exists("Readme.md")
-        ensure_exists("tests/run")
         ensure_exists("bin/console")
         ensure_exists("env_files/test.env")
         ensure_exists("env_files/development.env")
@@ -35,6 +34,15 @@ describe Rdm::Gen::Init do
         ensure_exists(".rdm/templates/package/.gitignore")
         ensure_exists(".rdm/templates/package/spec/spec_helper.rb")
         ensure_exists(".rdm/templates/package/bin/console")
+      end
+    end
+
+    it "has generated config templates" do
+      subject.generate(current_path: example_project_path, stdout: stdout)
+
+      FileUtils.cd(example_project_path) do
+        ensure_exists(".rdm/templates/configs/<%=config_path%>")
+        ensure_exists(".rdm/templates/configs/<%=role_config_path%>")
       end
     end
   end

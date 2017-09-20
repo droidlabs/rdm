@@ -1,32 +1,3 @@
 #!/usr/bin/env ruby
 
-ENV['RUBY_ENV'] = 'test'
-require 'rdm'
-
-REVISION = ARGV.clone.first
-PATH     = File.expand_path(__FILE__)
-
-begin
-  changed_packages = Rdm::Handlers::DiffPackageHandler.handle(
-    path:     PATH, 
-    revision: REVISION
-  )
-
-  puts "Tests for the following packages will run:"
-  puts changed_packages
-
-  changed_packages.each do |package| 
-    Rdm::SpecRunner.run(
-      package:               package,
-      path:                  PATH,
-      show_missing_packages: false
-    )
-  end
-  
-
-rescue Rdm::Errors::GitRepositoryNotInitialized
-  puts "Git repository is not initialized. Use `git init .`"
-  exit(1)
-end
-
-
+system("bundle exec rdm rspec.diff_run #{ARGV.join(' ')}", out: STDOUT, err: :out)

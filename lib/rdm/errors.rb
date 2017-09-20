@@ -53,5 +53,8 @@ module Rdm
 
     class SpecMatcherMultipleFiles < StandardError
     end
+
+    class ConfigExists < StandardError
+    end
   end
 end

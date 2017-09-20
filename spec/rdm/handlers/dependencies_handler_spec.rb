@@ -17,6 +17,15 @@ describe Rdm::Handlers::DependenciesHandler do
         )
       ).to match(["core", "repository", "web"])
     end
+
+    it "raises Rdm::Errors::PackageDoesNotExist for invalid package name" do
+      expect{
+        subject.show_names(
+          package_name: 'invalid_package',
+          project_path: example_project_path
+        )
+      }.to raise_error(Rdm::Errors::PackageDoesNotExist)
+    end
   end
 
   context ":show_packages" do
@@ -32,6 +41,15 @@ describe Rdm::Handlers::DependenciesHandler do
 
     it "returns array with proper size" do
       expect(result.first).to be_a Rdm::Package
+    end
+
+    it "raises Rdm::Errors::PackageDoesNotExist for invalid package name" do
+      expect{
+        subject.show_packages(
+          package_name: 'invalid_package',
+          project_path: example_project_path
+        )
+      }.to raise_error(Rdm::Errors::PackageDoesNotExist)
     end
   end
 
@@ -81,6 +99,15 @@ describe Rdm::Handlers::DependenciesHandler do
           ]
         )
       end
+    end
+
+    it "raises Rdm::Errors::PackageDoesNotExist for invalid package name" do
+      expect{
+        subject.draw(
+          package_name: 'invalid_package',
+          project_path: example_project_path
+        )
+      }.to raise_error(Rdm::Errors::PackageDoesNotExist)
     end
   end
 end

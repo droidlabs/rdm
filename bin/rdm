@@ -17,21 +17,23 @@ class RdmCliRunner
     program :description, 'Ruby Dependencies Manager'
 
     command :init do |c|
-      c.syntax = 'rdm init, [options]'
-      c.description = 'generates project scaffold in current folder'
-      c.summary = '> ' + c.description
-      c.example 'generate scaffold with minitest', 'rdm init --test=minitest'
-      c.example 'generate scaffold with rspec',    'rdm init --test=rspec'
-      c.example 'generate scaffold with irb',      'rdm init --console=irb'
-      c.example 'generate scaffold with pry',      'rdm init --console=pry'
-      c.option '--test FRAMEWORK', TESTFRAMEWORKS, "select test framework: #{TESTFRAMEWORKS.join(", ")}"
-      c.option '--console CONSOLE', CONSOLES, "select console: #{CONSOLES.join(", ")}"
-      c.option '--current_path [ROOT_DIR]', String, 'Path for the root folder'
+      c.syntax      = 'rdm init PATH, [options]'
+      c.description = 'generates project scaffold in passed directory'
+      c.summary     = '> ' + c.description
+      c.example     'generate scaffold with minitest', 'rdm init --test=minitest'
+      c.example     'generate scaffold with rspec',    'rdm init --test=rspec'
+      c.example     'generate scaffold with irb',      'rdm init --console=irb'
+      c.example     'generate scaffold with pry',      'rdm init --console=pry'
+      c.option      '--test FRAMEWORK', TESTFRAMEWORKS, "select test framework: #{TESTFRAMEWORKS.join(", ")}"
+      c.option      '--console CONSOLE', CONSOLES, "select console: #{CONSOLES.join(", ")}"
+      c.option      '--current_path [ROOT_DIR]', String, 'Path for the root folder'
+      
       c.action do |args, options|
+        init_dir = (args.first || `pwd`.strip)
         defaults = {
           test:         "rspec",
           console:      "irb",
-          current_path: `pwd`.strip
+          current_path: init_dir
         }
         options_hash = options.__hash__
         options_hash.delete(:trace)
@@ -42,18 +44,19 @@ class RdmCliRunner
     end
 
     command :"gen.package" do |c|
-      c.syntax = 'rdm gen.package PACKAGE_NAME [options]'
+      c.syntax      = 'rdm gen.package PACKAGE_NAME [options]'
       c.description = 'generates a package scaffold in specified folder'
-      c.summary = '> ' + c.description
-      c.example 'generate commands package',
-                  'rdm gen.package commands --path core/application/commands'
-      c.example 'generate pack/age package',
-                  'rdm gen.package pack/age --path subsystems/package'
-      c.example 'generate events package within /some/other/path folder',
-                  'rdm gen.package events --path core/domain/events --current_path /some/other/path'
-      c.example 'generate auth package without tests', 'rdm gen.package auth --path subsystems/auth'
-      c.option '--path [RELATIVE_PATH]', String, 'Path for the package'
-      c.option '--current_path [ROOT_DIR]', String, 'Path for the root folder'
+      c.summary     = '> ' + c.description
+      c.example     'generate commands package',
+                    'rdm gen.package commands --path core/application/commands'
+      c.example     'generate pack/age package',
+                    'rdm gen.package pack/age --path subsystems/package'
+      c.example     'generate events package within /some/other/path folder',
+                    'rdm gen.package events --path core/domain/events --current_path /some/other/path'
+      c.example     'generate auth package without tests', 'rdm gen.package auth --path subsystems/auth'
+      c.option      '--path [RELATIVE_PATH]', String, 'Path for the package'
+      c.option      '--current_path [ROOT_DIR]', String, 'Path for the root folder'
+      
       c.action do |args, options|
         package_name = (args.first || "")
         defaults = {
@@ -73,8 +76,9 @@ class RdmCliRunner
       c.syntax      = 'rdm git.diff REVISION'
       c.description = 'show list of modified packages from git revision'
       c.summary     = '> ' + c.description
-      c.example 'show list of modified packages from master',
-                'rdm git.diff master'
+      c.example     'show list of modified packages from master',
+                    'rdm git.diff master'
+      
       c.action do |args, options|
         revision = (args.first || "HEAD")
         options = {
@@ -86,12 +90,13 @@ class RdmCliRunner
     end
 
     command :"compile.package" do |c|
-      c.syntax = 'rdm compile.package PACKAGE_NAME [options]'
+      c.syntax      = 'rdm compile.package PACKAGE_NAME [options]'
       c.description = 'copy specified package and its dependencies to some folder'
-      c.summary = '> ' + c.description
-      c.example 'compilation of "commands" package to /tmp/commands dir',
-                'rdm compile.package commands --path /tmp/commands'
-      c.option '--path [COMPILE_PATH]', String, 'Path for compiled package'
+      c.summary     = '> ' + c.description
+      c.example     'compilation of "commands" package to /tmp/commands dir',
+                    'rdm compile.package commands --path /tmp/commands'
+      c.option      '--path [COMPILE_PATH]', String, 'Path for compiled package'
+      
       c.action do |args, options|
         package_name = (args.first || "")
         opts = {
@@ -104,13 +109,14 @@ class RdmCliRunner
     end
 
     command :"gen.template" do |c|
-      c.syntax = 'rdm gen.template TEMPLATE_NAME [options]'
+      c.syntax      = 'rdm gen.template TEMPLATE_NAME [options]'
       c.description = 'generates template from ROOT/.rdm/templates folder with specified variables'
-      c.summary = '> ' + c.description
-      c.example 'creating new repository, mapper and dao files',
-                'rdm gen.template repository --path infrastructure/storage'
-      c.option '--path [DESTINATION_PATH]', String, 'Location of generated folders'
-      c.option '--OPTION_NAME [OPTION_VALUE]', String, 'Local variables for template handler'
+      c.summary     = '> ' + c.description
+      c.example     'creating new repository, mapper and dao files',
+                    'rdm gen.template repository --path infrastructure/storage'
+      c.option      '--path [DESTINATION_PATH]', String, 'Location of generated folders'
+      c.option      '--OPTION_NAME [OPTION_VALUE]', String, 'Local variables for template handler'
+      
       c.action do |args, options|
         options_hash  = options.__hash__
         options_hash.delete(:trace)
@@ -127,10 +133,10 @@ class RdmCliRunner
     end
 
     command :"gen.deps" do |c|
-      c.syntax = 'rdm gen.deps PACKAGE_NAME'
+      c.syntax      = 'rdm gen.deps PACKAGE_NAME'
       c.description = 'puts list of recursive dependencies for specified package'
-      c.summary = '> ' + c.description
-      c.example 'show dependencies for `commands` package', 'rdm gen.deps commands'
+      c.summary     = '> ' + c.description
+      c.example     'show dependencies for `commands` package', 'rdm gen.deps commands'
 
       c.action do |args, options|
         package_name = args.first || ""
@@ -143,11 +149,11 @@ class RdmCliRunner
     end
 
     command :"gen.config" do |c|
-      c.syntax = 'rdm gen.config CONFIG_NAME --CONFIG_KEY=CONFIG_VALUE'
+      c.syntax      = 'rdm gen.config CONFIG_NAME --CONFIG_KEY=CONFIG_VALUE'
       c.description = 'generate config file with passed arguments'
-      c.summary = '> ' + c.description
-      c.example 'generate config `mailing_system` with `host: localhost`', 
-                'rdm gen.config mailing_system --host=localhost'
+      c.summary     = '> ' + c.description
+      c.example     'generate config `mailing_system` with `host: localhost`', 
+                    'rdm gen.config mailing_system --host=localhost'
       
       c.action do |args, options|
         config_name  = args.first || ""
@@ -158,6 +164,60 @@ class RdmCliRunner
           config_name:  config_name,
           current_path: `pwd`.chomp,
           config_data:  options_hash
+        )
+      end
+    end
+    
+    command :"rspec.run" do |c|
+      c.syntax      = 'rdm rspec.run PACKAGE_NAME SPEC_MATCHER'
+      c.description = 'run tests for specified package and spec file matcher'
+      c.summary     = '> ' + c.description
+
+      c.example     'run tests for all packages',
+                    'rdm rspec.run'
+      c.example     'run tests for `mailing_system` package',
+                    'rdm rspec.run mailing_system'
+      c.example     'run tests for `mailing_system` package and files, matches `events` string',
+                    'rdm rspec.run mailing_system events'
+      
+      c.action do |args, options|
+        package_name = args[0]
+        spec_matcher = args[1]
+
+        ENV['RUBY_ENV'] = 'test'
+
+        Rdm.root(`pwd`.chomp)
+        Rdm::SpecRunner.run(
+          package:          package_name,
+          spec_matcher:     spec_matcher,
+          path:             `pwd`.chomp,
+          skip_ignored_packages: true,
+          show_missing_packages: true
+        )
+      end
+    end
+
+    command :"rspec.diff_run" do |c|
+      c.syntax      = 'rdm rspec.diff_run REVISION'
+      c.description = 'run tests for modified packages from specified git revision'
+      c.summary     = '> ' + c.description
+
+      c.example     'run tests for packages modified from HEAD',
+                    'rdm rspec.diff_run'
+      c.example     'run tests for packages modified from commit by hash',
+                    'rdm rspec.diff_run a7rrey'
+      c.example     'run tests for packages modified from specified branch',
+                    'rdm rspec.diff_run master'
+      
+      c.action do |args, options|
+        revision = args[0]
+
+        ENV['RUBY_ENV'] = 'test'
+        Rdm.root(`pwd`.chomp)
+
+        Rdm::CLI::DiffSpecRunner.run(
+          revision: revision,
+          path:     `pwd`.chomp
         )
       end
     end

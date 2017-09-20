@@ -24,17 +24,14 @@ module Rdm
       def initialize(package_name, project_path)
         @package_name = package_name
         @project_path = project_path
+
+        check_params!(
+          package_name: @package_name, 
+          project_path: @project_path
+        )
       end
 
-      def show_names
-        if @package_name.nil? || @package_name.empty?
-          raise Rdm::Errors::InvalidParams, "Package name should be specified" 
-        end
-        
-        if @project_path.nil? || @project_path.empty?
-          raise Rdm::Errors::InvalidParams, "Project directory should be specified" 
-        end
-        
+      def show_names        
         recursive_find_dependencies([@package_name])
       end
 
@@ -89,6 +86,14 @@ module Rdm
       end
 
       private
+
+      def check_params!(package_name:, project_path:)
+        raise Rdm::Errors::InvalidParams, "Package name should be specified" if package_name.empty?
+        raise Rdm::Errors::InvalidParams, "Project directory should be specified" if project_path.empty?
+        raise Rdm::Errors::PackageDoesNotExist, package_name if source.packages[package_name].nil?
+
+        nil
+      end
 
       def source
         @source ||= Rdm::SourceParser.read_and_init_source(Rdm::SourceLocator.locate(@project_path))
