@@ -1,3 +1,7 @@
 #!/usr/bin/env ruby
 
 system("bundle exec rdm rspec.run #{ARGV.join(' ')}", out: STDOUT, err: :out)
+
+if $? && !$?.success?
+  exit(1)
+end
