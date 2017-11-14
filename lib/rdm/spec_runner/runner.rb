@@ -167,7 +167,7 @@ class Rdm::SpecRunner::Runner
     if @run_all
       puts <<~EOF
         Rspec tests will run for packages:
-        #{packages.keys.map {|pkg| " - #{pkg}"}.join("\n")}\n
+        #{(packages.keys - no_specs_packages).map {|pkg| " - #{pkg}"}.join("\n")}\n
       EOF
     end
     

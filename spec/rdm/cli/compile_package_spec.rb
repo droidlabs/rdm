@@ -28,9 +28,11 @@ describe Rdm::CLI::CompilePackage do
           )
         }.to output(
           <<~EOF
+
+            Compilation for package 'core' started.
             The following packages were copied:
-            Core
-            Repository
+             - core
+             - repository
           EOF
         ).to_stdout
       end
@@ -101,9 +103,11 @@ describe Rdm::CLI::CompilePackage do
             }.to output(
               <<~EOF
                 Destination directory exists. Overwrite it? (y/n)
+                
+                Compilation for package 'core' started.
                 The following packages were copied:
-                Core
-                Repository
+                 - core
+                 - repository
               EOF
             ).to_stdout
           end

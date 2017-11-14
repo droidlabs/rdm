@@ -23,7 +23,7 @@ describe Rdm::SpecRunner::SpecFilenameMatcher do
     it 'returns array of relative to package matches' do
       expect(
         subject.find_matches(package_path: package_path, spec_matcher: short_filename)
-      ).to match(["spec/core/one_more_spec.rb", "spec/core/sample_service_spec.rb"])
+      ).to match(["spec/core/sample_service_spec.rb", "spec/core/one_more_spec.rb"])
     end
   end
 end

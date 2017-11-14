@@ -33,7 +33,7 @@ describe Rdm::SpecRunner do
           stdin:        SpecLogger.new(stdin: "exit\n")
         )
 
-        expect(stdout.output).to match(["Following specs match your input:", "1. spec/core/one_more_spec.rb\n2. spec/core/sample_service_spec.rb", "Enter space-separated file numbers, ex: '1 2': "])
+        expect(stdout.output).to match(["Following specs match your input:", "1. spec/core/sample_service_spec.rb\n2. spec/core/one_more_spec.rb", "Enter space-separated file numbers, ex: '1 2': "])
       end
     end
   end
