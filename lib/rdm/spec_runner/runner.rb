@@ -159,10 +159,19 @@ class Rdm::SpecRunner::Runner
       @skipped_packages = []
     end
 
-    packages_command_params
+    running_packages = packages_command_params
       .select  { |cmd_params| cmd_params.spec_count > 0 }
       .reject  { |cmd_params| @skipped_packages.include?(cmd_params.package_name) }
       .sort_by { |cmd_params| - cmd_params.spec_count }
+
+    if @run_all
+      puts <<~EOF
+        Rspec tests will run for packages:
+        #{packages.keys.map {|pkg| " - #{pkg}"}.join("\n")}\n
+      EOF
+    end
+    
+    running_packages
       .map(&:command)
       .join(' && ')
   end

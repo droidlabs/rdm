@@ -17,6 +17,7 @@ module Rdm
       end
 
       def compile
+        puts "\nCompilation for package '#{@package_name}' started."
         Rdm::SourceParser.read_and_init_source(Rdm::SourceLocator.locate(@project_path))
 
         @overwrite_directory ||= ->() { STDIN.gets.chomp.downcase == YES }
@@ -43,9 +44,11 @@ module Rdm
           compile_path: @compile_path
         )
 
+        formatted_packages = compiled_packages.sort.map {|pkg| " - #{pkg}"}
+        
         puts <<~EOF
           The following packages were copied:
-          #{compiled_packages.map(&:capitalize).join("\n")}
+          #{formatted_packages.join("\n")}
         EOF
 
       rescue Rdm::Errors::SourceFileDoesNotExist => e
