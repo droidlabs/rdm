@@ -21,7 +21,7 @@ class Rdm::SpecRunner::Runner
     @spec_string_number    = spec_matcher.to_s.split(':')[1].to_i
     @path                  = path
     @run_all               = @package_name.nil?
-    @show_missing_packages = show_missing_packages
+    @show_missing_packages = show_missing_packages && !@package_name  
     @skip_ignored_packages = skip_ignored_packages
     @skipped_packages      = []
     @stdout                = stdout
@@ -162,12 +162,12 @@ class Rdm::SpecRunner::Runner
     running_packages = packages_command_params
       .select  { |cmd_params| cmd_params.spec_count > 0 }
       .reject  { |cmd_params| @skipped_packages.include?(cmd_params.package_name) }
-      .sort_by { |cmd_params| - cmd_params.spec_count }
+      .sort_by { |cmd_params| cmd_params.package_name }
 
     if @run_all
-      puts <<~EOF
+      puts "<<~EOF"
         Rspec tests will run for packages:
-        #{(packages.keys - no_specs_packages).map {|pkg| " - #{pkg}"}.join("\n")}\n
+        {(packages.keys - no_specs_packages).map {|pkg| " - #{pkg}"}.sort.join("\n")}\n
       EOF
     end
     
