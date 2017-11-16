@@ -165,9 +165,9 @@ class Rdm::SpecRunner::Runner
       .sort_by { |cmd_params| cmd_params.package_name }
 
     if @run_all
-      puts "<<~EOF"
+      puts <<~EOF
         Rspec tests will run for packages:
-        {(packages.keys - no_specs_packages).map {|pkg| " - #{pkg}"}.sort.join("\n")}\n
+        #{(packages.keys - no_specs_packages).map {|pkg| " - #{pkg}"}.sort.join("\n")}\n
       EOF
     end
     
