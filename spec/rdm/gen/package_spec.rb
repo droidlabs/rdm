@@ -54,7 +54,7 @@ describe Rdm::Gen::Package do
       )
 
       FileUtils.cd(example_project_path) do
-        ensure_content("Rdm.packages", 'package "domain/some"')
+        ensure_content("Rdm.packages", "package 'domain/some'")
       end
     end
   end

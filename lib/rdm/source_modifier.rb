@@ -22,7 +22,7 @@ class Rdm::SourceModifier
 
   def add_package(package_path)
     rebuild_file do
-      @package_lines.push "package \"#{package_path}\""
+      @package_lines.push "package '#{package_path}'"
     end
   end
 
@@ -36,12 +36,14 @@ class Rdm::SourceModifier
 
   def rebuild_file
     File.open(@source_path).each_line do |line|
+      line.gsub!("\n", '')
+
       case line
       when PACKAGE_LINE_REGEX
         @package_lines.push line
       when CONFIG_LINE_REGEX
         @config_lines.push line
-      when "\n"
+      when ""
         # DO NOTHING
       else
         @setup_lines.push line
@@ -51,13 +53,13 @@ class Rdm::SourceModifier
     yield 
     
     File.open(@source_path, 'w') do |file|
-      file.write @setup_lines.join
+      file.write @setup_lines.join("\n")
       file.write(RDM_CONTENT_SPACES)
 
-      file.write @config_lines.join
+      file.write @config_lines.join("\n")
       file.write(RDM_CONTENT_SPACES)
 
-      file.write @package_lines.join
+      file.write @package_lines.join("\n")
     end
 
     @package_lines = []
