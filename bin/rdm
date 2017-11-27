@@ -169,7 +169,7 @@ class RdmCliRunner
     end
     
     command :"rspec.run" do |c|
-      c.syntax      = 'rdm rspec.run PACKAGE_NAME SPEC_MATCHER'
+      c.syntax      = 'rdm rspec.run PACKAGE_NAME SPEC_MATCHER --from=START_FROM_PACKAGE_NAME'
       c.description = 'run tests for specified package and spec file matcher'
       c.summary     = '> ' + c.description
 
@@ -179,20 +179,28 @@ class RdmCliRunner
                     'rdm rspec.run mailing_system'
       c.example     'run tests for `mailing_system` package and files, matches `events` string',
                     'rdm rspec.run mailing_system events'
+      c.example     'run tests for all packages from cache_system',
+                    'rdm rspec.run --from=cache_system'
+      
+      c.option '--from [FROM_PACKAGE_NAME]', String, 'Rspec will start for all package from passed package_name'
       
       c.action do |args, options|
         package_name = args[0]
         spec_matcher = args[1]
 
         ENV['RUBY_ENV'] = 'test'
+        
+        options_hash = options.__hash__
+        options_hash.delete(:trace)
 
         Rdm.root(`pwd`.chomp)
         Rdm::SpecRunner.run(
-          package:          package_name,
-          spec_matcher:     spec_matcher,
-          path:             `pwd`.chomp,
-          skip_ignored_packages: true,
-          show_missing_packages: true
+          package:                package_name,
+          spec_matcher:           spec_matcher,
+          path:                   `pwd`.chomp,
+          skip_ignored_packages:  true,
+          show_missing_packages:  true,
+          from:                   options_hash[:from]
         )
       end
     end

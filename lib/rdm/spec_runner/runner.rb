@@ -10,6 +10,7 @@ class Rdm::SpecRunner::Runner
     package:               nil, 
     spec_matcher:          nil, 
     path:                  nil, 
+    from:                  nil,
     show_missing_packages: true,
     skip_ignored_packages: false,
     stdout:                STDOUT,
@@ -26,6 +27,7 @@ class Rdm::SpecRunner::Runner
     @skipped_packages      = []
     @stdout                = stdout
     @show_output           = show_output
+    @from                  = from
   end
 
   def run
@@ -163,6 +165,22 @@ class Rdm::SpecRunner::Runner
       .select  { |cmd_params| cmd_params.spec_count > 0 }
       .reject  { |cmd_params| @skipped_packages.include?(cmd_params.package_name) }
       .sort_by { |cmd_params| cmd_params.package_name }
+
+    if @from
+      start_from = running_packages.index {|cmd_params| cmd_params.package_name == @from}
+
+      if start_from.nil?
+        puts "Pacakge :#{@from} does not exists"
+        exit(1)
+      end
+
+      if @skipped_packages.include?(start_from)
+        puts "Package :#{@from} skipped by .runignore file"
+        exit(1)
+      end
+
+      running_packages = running_packages[start_from..-1]
+    end
 
     if @run_all
       puts <<~EOF
