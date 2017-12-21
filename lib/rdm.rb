@@ -62,6 +62,11 @@ module Rdm
   require 'rdm/spec_runner/view'
   require 'rdm/spec_runner/spec_filename_matcher'
 
+  require 'rdm/yml_config/env_config_dsl'
+  require 'rdm/yml_config/validate_config'
+  require 'rdm/yml_config/env_config'
+  require 'rdm/yml_config/config_caster'
+
   extend Rdm::Helpers::PathHelper
 
   class << self
