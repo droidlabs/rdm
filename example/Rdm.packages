@@ -3,24 +3,8 @@ setup do
     ENV['RUBY_ENV'] || "production"
   end
 
-  env_file_name do
-    ENV['ENV_FILE'] || "production"
-  end
-
-  env_files_dir "env_files"
-
-  configs_dir "configs"
-  config_path ":configs_dir/:config_name/default.yml"
-  role_config_path ":configs_dir/:config_name/:role.yml"
-
-  package_subdir_name "package"
-
-
-  compile_path "/tmp/rdm/:package_name"
+  config_path 'config/app.yml'
 end
-
-config :database
-config :app
 
 package "server"
 package "application/web"

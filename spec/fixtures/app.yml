@@ -1,0 +1,17 @@
+core:
+  some_key:
+    - value1
+    - value2
+    - value3
+    
+web:
+  some_key:
+    - value1
+    - value2
+    - value3
+
+factory:
+  some_key:
+    - value1
+    - value2
+    - value3

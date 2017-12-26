@@ -26,6 +26,7 @@ end
 
 Rdm.setup do
   silence_missing_package_file true
+  config_path                  File.join(__dir__, 'fixtures', 'app.yml')
 end
 
 RSpec.configure do |config|

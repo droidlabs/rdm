@@ -1,10 +1,8 @@
 setup do
-  role "example"
-  config_path "config"
+  role                    'example'
+  config_path             'app.yml'
   silence_missing_package true
 end
-
-config :database
 
 package "application/web"
 package "domain/core"

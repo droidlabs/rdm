@@ -45,10 +45,6 @@ module Rdm
           @template_detector.gem_template_folder('package'),
           File.dirname(@template_detector.project_template_folder('package'))
         )
-        FileUtils.cp_r(
-          @template_detector.gem_template_folder('configs'),
-          File.dirname(@template_detector.project_template_folder('configs'))
-        )
 
         generated_files
       end

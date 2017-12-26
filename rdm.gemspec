@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "codecov"
   spec.add_dependency "activesupport"
   spec.add_dependency "commander", "~> 4.4"
+  spec.add_dependency "morf"
 end

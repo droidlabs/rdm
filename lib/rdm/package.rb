@@ -2,6 +2,7 @@ class Rdm::Package
   DEFAULT_GROUP = '_default_'.freeze
 
   attr_accessor :metadata, :local_dependencies, :external_dependencies, :file_dependencies, :config_dependencies, :path
+  attr_reader :environments
 
   def local_dependencies(group = nil)
     fetch_dependencies(@local_dependencies || {}, group)
@@ -82,6 +83,17 @@ class Rdm::Package
     return false if other_package.class != self.class
 
     other_package.name == name
+  end
+
+  def environment(&block)
+    envs = Rdm::EnvConfigDSL.new.instance_exec(&block) if block_given?
+
+    @environments = Rdm::EnvConfig.new(
+      name:     name,
+      type:     Rdm::EnvConfig::Types::HASH,
+      optional: false,
+      each:     envs
+    )
   end
 
   private

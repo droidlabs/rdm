@@ -1,0 +1,6 @@
+database:
+  username: "root"
+  password: "root"
+core:
+  app_name: "RdmExampleProject"
+

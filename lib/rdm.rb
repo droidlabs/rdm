@@ -15,13 +15,9 @@ module Rdm
   require 'rdm/cli/diff_package'
   require 'rdm/cli/template_generator'
   require 'rdm/cli/dependencies_controller'
-  require 'rdm/cli/config'
   require 'rdm/cli/diff_spec_runner.rb'
 
   # Runtime part
-  require 'rdm/config'
-  require 'rdm/config_scope'
-  require 'rdm/config_manager'
   require 'rdm/errors'
   require 'rdm/package'
   require 'rdm/package_parser'
@@ -33,7 +29,6 @@ module Rdm
   require 'rdm/git/diff_manager'
   require 'rdm/git/diff_command'
   require 'rdm/git/repository_locator'
-  require 'rdm/config_locals'
   require 'rdm/source_modifier'
 
   # Package part
@@ -43,7 +38,6 @@ module Rdm
   # Handlers part
   require 'rdm/gen/package'
   require 'rdm/gen/init'
-  require 'rdm/gen/config'
   require 'rdm/handlers/diff_package_handler'
   require 'rdm/handlers/template_handler'
   require 'rdm/handlers/dependencies_handler'
@@ -66,6 +60,7 @@ module Rdm
   require 'rdm/yml_config/validate_config'
   require 'rdm/yml_config/env_config'
   require 'rdm/yml_config/config_caster'
+  require 'rdm/yml_config/config_manager'
 
   extend Rdm::Helpers::PathHelper
 
@@ -84,7 +79,7 @@ module Rdm
 
     # Rdm's managed configuration
     def config
-      @config ||= Rdm::ConfigManager.new
+      @config ||= Rdm::ConfigManager
     end
 
     # Setup Rdm's internal settings

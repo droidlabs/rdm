@@ -3,7 +3,6 @@ class Rdm::Source
 
   def initialize(root_path:)
     @root_path = root_path
-    @config_names = []
     @package_paths = []
   end
 
@@ -11,15 +10,6 @@ class Rdm::Source
   # @param block [Proc] Setup block
   def setup(&block)
     @setup_block = block
-  end
-
-  # Add config to list of known configs
-  # @param config_name [String] Config name
-  def config(config_name)
-    config_name = config_name.to_s
-    raise Rdm::Errors::ConfigExists, config_name if @config_names.include?(config_name)
-
-    @config_names << config_name
   end
 
   # Add package to list of known packages
@@ -32,20 +22,13 @@ class Rdm::Source
   # @param value [Hash<String: Rdm::Package>] Hash of packages by it's name
   # @param value [Hash<String: Rdm::Config>] Hash of configs by it's name
   # @return [Hash<String: Rdm::Package>] Hash of packages by it's name
-  def init_with(packages:, configs:)
+  def init_with(packages:)
     @packages = packages
-    @configs = configs
   end
 
   # Read initialized packages
   # @return [Hash<String: Rdm::Package>] Hash of packages by it's name
   def packages
     @packages || {}
-  end
-
-  # Read initialized configs
-  # @return [Hash<String: Rdm::Config>] Hash of configs by it's name
-  def configs
-    @configs || {}
   end
 end

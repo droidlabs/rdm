@@ -1,15 +1,10 @@
-GIT
-  remote: https://github.com/droidlabs/hcast
-  revision: 44a0717183bbf744c562a1f030e9933ff3acdec1
-  specs:
-    hcast (0.3.0)
-
 PATH
   remote: .
   specs:
     rdm (0.4.14)
       activesupport
       commander (~> 4.4)
+      morf
 
 GEM
   remote: https://rubygems.org/
@@ -32,11 +27,12 @@ GEM
     concurrent-ruby (1.0.5)
     diff-lcs (1.3)
     docile (1.1.5)
-    highline (1.7.8)
+    highline (1.7.10)
     i18n (0.9.1)
       concurrent-ruby (~> 1.0)
     json (2.0.3)
-    minitest (5.10.2)
+    minitest (5.10.3)
+    morf (0.0.3)
     parser (2.3.3.1)
       ast (~> 2.2)
     powerpack (0.1.1)
@@ -81,7 +77,6 @@ DEPENDENCIES
   bundler (~> 1.3)
   byebug
   codecov
-  hcast!
   rake
   rdm!
   rspec

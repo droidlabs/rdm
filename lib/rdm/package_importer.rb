@@ -46,10 +46,6 @@ class Rdm::PackageImporter
     @imported_packages ||= []
   end
 
-  def imported_configs
-    @imported_configs ||= []
-  end
-
   # Import package and initialize module
   def import_package(package_name, source:, group: nil)
     return imported_packages if imported_packages.include?(package_name.to_s)
@@ -69,6 +65,8 @@ class Rdm::PackageImporter
     package.config_dependencies(group).each do |dependency|
       import_config(dependency, source: source)
     end
+
+    Rdm::ConfigManager.load_config(envs: package.environments, path_to_config: Rdm.settings.config_path)
     
     # only after importing dependencies - require package itself
     begin
@@ -108,14 +106,6 @@ class Rdm::PackageImporter
     unless ActiveSupport::Dependencies.autoload_paths.include?(package_dir_name)
       ActiveSupport::Dependencies.autoload_paths << package_dir_name
     end
-  end
-
-  def import_config(config_name, source:)
-    return if imported_configs.include?(config_name)
-    config = source.configs[config_name.to_s]
-    raise "Can't find config with name: #{config_name}" if config.nil?
-    Rdm.config.load_config(config, source: source)
-    imported_configs << config_name
   end
 
   def read_and_init_source(source_path)

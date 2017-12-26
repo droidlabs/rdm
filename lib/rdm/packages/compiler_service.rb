@@ -56,13 +56,7 @@ module Rdm
           end
         end
 
-        FileUtils.cp_r(File.join(@project_path, 'configs'), File.join(@compile_path, 'configs'))
-        if Dir.exists?(File.join(@project_path, Rdm.settings.env_files_dir))
-          FileUtils.cp_r(
-            File.join(@project_path, Rdm.settings.env_files_dir), 
-            File.join(@compile_path, Rdm.settings.env_files_dir)
-          )
-        end
+        # TODO: paste generated env files to compile directory
 
         Rdm.settings.compile_ignore_files.each do |file|
           Dir["#{@compile_path}/**/#{file}"].each do |file_to_remove|

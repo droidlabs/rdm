@@ -29,7 +29,7 @@ describe Rdm do
 
   context "config" do
     it "returns config" do
-      expect(Rdm.config).to be_a(Rdm::ConfigManager)
+      expect(Rdm.config).to eq(Rdm::ConfigManager)
     end
   end
 
