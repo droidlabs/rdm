@@ -9,7 +9,9 @@ describe Rdm::PackageImporter do
       package.import(dependency)
     end
     package.environment do
-      array 'some_key', each: :string
+      array 'some_key', each: :string do
+        length({ min: 3 })
+      end
     end
 
     package

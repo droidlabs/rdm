@@ -24,7 +24,7 @@ describe Rdm::ConfigCaster do
         Rdm::EnvConfig.new(
           name:        :array_env,
           type:        :array,
-          each: [
+          children: [
             Rdm::EnvConfig.new(
               name:        :string_env,
               type:        :string
@@ -45,7 +45,7 @@ describe Rdm::ConfigCaster do
         Rdm::EnvConfig.new(
           name:        :hash_env,
           type:        :hash,
-          each: [
+          children: [
             Rdm::EnvConfig.new(
               name:        :string_env,
               type:        :string

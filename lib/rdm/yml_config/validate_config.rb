@@ -1,11 +1,13 @@
 class Rdm::ValidateConfig
-  attr_accessor :length, :size, :inclusion
+  def initialize
+    @data = {}
+  end
+
+  def method_missing(method, *args, &block)
+    @data[method] = args.first
+  end
 
   def to_hash
-    {
-      length:     @length,
-      size:       @size,
-      inclusion: @inclusion
-    }.delete_if {|_, v| v.nil? || v.empty?}
+    @data
   end
 end

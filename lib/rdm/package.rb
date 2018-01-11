@@ -92,7 +92,7 @@ class Rdm::Package
       name:     name,
       type:     Rdm::EnvConfig::Types::HASH,
       optional: false,
-      each:     envs
+      children: envs
     )
   end
 

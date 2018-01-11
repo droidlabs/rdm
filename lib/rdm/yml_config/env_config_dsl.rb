@@ -16,7 +16,7 @@ class Rdm::EnvConfigDSL
   end
 
   def string(name, opts = {}, &block)
-    validations = EnvValidateDSL.new
+    validations = Rdm::ValidateConfig.new
     validations.instance_exec(&block) if block_given?
 
     @data.push(
@@ -25,28 +25,28 @@ class Rdm::EnvConfigDSL
         type:        Types::STRING,
         optional:    opts[:optional],
         default:     opts[:default],
-        validates:   validations.data
+        validates:   validations
       )
     )
   end
 
   def symbol(name, opts = {}, &block)
-    validations = EnvValidateDSL.new
+    validations = Rdm::ValidateConfig.new
     validations.instance_exec(&block) if block_given?
-
+    
     @data.push(
       Rdm::EnvConfig.new(
         name:        name,
         type:        Types::SYMBOL,
         optional:    opts[:optional],
         default:     opts[:default],
-        validates:   validations.data
+        validates:   validations
       )
     )
   end
 
   def integer(name, opts = {}, &block)
-    validations = EnvValidateDSL.new
+    validations = Rdm::ValidateConfig.new
     validations.instance_exec(&block) if block_given?
 
     @data.push(
@@ -55,7 +55,7 @@ class Rdm::EnvConfigDSL
         type:        Types::INTEGER,
         optional:    opts[:optional],
         default:     opts[:default],
-        validates:   validations.data
+        validates:   validations
       )
     )
   end
@@ -70,7 +70,7 @@ class Rdm::EnvConfigDSL
         type:        Types::ARRAY,
         optional:    opts[:optional],
         default:     opts[:default],
-        each:        array_values.data
+        children:    array_values.data
       )
     )
   end
@@ -85,20 +85,8 @@ class Rdm::EnvConfigDSL
         type:        Types::HASH,
         optional:    opts[:optional],
         default:     opts[:default],
-        each:        hash_values.data
+        children:    hash_values.data
       )
     )
-  end
-
-  class EnvValidateDSL
-    attr_reader :data
-
-    def initialize
-      @data = Rdm::ValidateConfig.new
-    end
-
-    def method_missing(name, *args)
-      @data.send("#{name}=", *args)
-    end
   end
 end

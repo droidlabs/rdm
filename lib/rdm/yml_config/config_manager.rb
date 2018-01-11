@@ -3,7 +3,10 @@ require 'yaml'
 class Rdm::ConfigManager
   class << self
     def load_config(envs:, path_to_config:)
-      instance.config.merge! Rdm::ConfigCaster.new(*envs).cast(YAML.load(File.read(path_to_config)))
+      new_config = Rdm::ConfigCaster.new(*envs).cast(YAML.load(File.read(path_to_config)))
+      validate_params!(new_config, envs)
+      
+      instance.config.merge! new_config
     end
 
     def reset!
@@ -16,6 +19,12 @@ class Rdm::ConfigManager
 
     def instance
       @instance ||= new
+    end
+
+    private
+
+    def validate_params!(config, envs)
+      Rdm::ConfigValidator.new(envs).validate!(config)
     end
   end
 

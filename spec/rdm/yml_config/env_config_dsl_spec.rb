@@ -33,6 +33,7 @@ describe Rdm::EnvConfigDSL do
   it 'handle dsl' do
     subject.instance_exec(&env_context)
     
+    expect(subject.data.first).to be_a(Rdm::EnvConfig)
     expect(subject.data.map(&:to_hash)).to match(
       [
         {
@@ -52,7 +53,7 @@ describe Rdm::EnvConfigDSL do
           type: :array,
           optional: false,
           default: [4],
-          each: [
+          children: [
             {
               type: :string,
               optional: false,
@@ -69,7 +70,7 @@ describe Rdm::EnvConfigDSL do
           name:     :log_level,
           type:     :hash,
           optional: false,
-          each: [
+          children: [
             {
               name: :output,
               type: :symbol,
@@ -91,11 +92,11 @@ describe Rdm::EnvConfigDSL do
           name: :some_array,
           type: :array,
           optional: false,
-          each: [
+          children: [
             {
               type: :hash,
               optional: false,
-              each: [
+              children: [
                 {
                   name: :key,
                   type: :string,

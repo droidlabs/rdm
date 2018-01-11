@@ -9,14 +9,14 @@ class Rdm::EnvConfig
     ALL = [STRING, ARRAY, HASH, SYMBOL, INTEGER]
   end
 
-  attr_reader :name, :type, :optional, :default, :each
+  attr_reader :name, :type, :optional, :default, :children, :validates
 
-  def initialize(name:, type:, optional: false, default: nil, validates: nil, each: [])
+  def initialize(name:, type:, optional: false, default: nil, validates: nil, children: [])
     @name      = name
     @type      = Types::ALL.include?(type) ? type: (raise ArgumentError, "Invalid env type")
     @optional  = !!optional
     @validates = validates || Rdm::ValidateConfig.new
-    @each      = each.select {|e| e.is_a?(Rdm::EnvConfig)}
+    @children  = children.select {|e| e.is_a?(Rdm::EnvConfig)}
     @default   = default
   end
 
@@ -28,7 +28,7 @@ class Rdm::EnvConfig
       default:   @default,
     }.delete_if { |_, v| v.nil? }
 
-    hash[:each]      = @each.map(&:to_hash) if @each.any?
+    hash[:children]  = @children.map(&:to_hash) if @children.any?
     hash[:validates] = @validates.to_hash   if @validates.to_hash.any?
 
     hash

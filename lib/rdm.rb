@@ -61,6 +61,7 @@ module Rdm
   require 'rdm/yml_config/env_config'
   require 'rdm/yml_config/config_caster'
   require 'rdm/yml_config/config_manager'
+  require 'rdm/yml_config/config_validator'
 
   extend Rdm::Helpers::PathHelper
 
