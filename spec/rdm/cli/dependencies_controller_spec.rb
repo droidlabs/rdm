@@ -18,12 +18,14 @@ describe Rdm::CLI::DependenciesController do
         stdout:       stdout
       )
       
+      mod = Rdm::Handlers::DependenciesHandler
+
       expect(stdout.output.last).to match(
         [
           "web", 
-          "├── core", 
-          "|   └── repository", 
-          "└── repository (test)"
+          "#{mod::MIDDLE_CORNER}core", 
+          "|   #{mod::CORNER}repository", 
+          "#{mod::CORNER}repository (test)"
         ]
       )
     end

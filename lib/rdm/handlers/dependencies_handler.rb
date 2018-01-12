@@ -2,6 +2,9 @@ module Rdm
   module Handlers
     class DependenciesHandler
       ALREADY_MENTIONED_DEPS = '...'
+      HYPHEN                 = "\xE2\x94\x80" * 2
+      CORNER                 = "\xE2\x94\x80" + HYPHEN + " "
+      MIDDLE_CORNER          = "\xE2\x94\x9C" + HYPHEN + " "
       
       class << self
         def show_names(package_name:, project_path:)
@@ -67,10 +70,10 @@ module Rdm
           local_dependencies.delete(k)
 
           if local_dependencies.empty?
-            tmp_self_predicate = child_predicate  + '└── '
+            tmp_self_predicate = child_predicate  + CORNER
             tmp_child_predicate = child_predicate + '    '
           else
-            tmp_self_predicate = child_predicate  + '├── '
+            tmp_self_predicate = child_predicate  + MIDDLE_CORNER
             tmp_child_predicate = child_predicate + '|   '
           end
 

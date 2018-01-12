@@ -62,12 +62,14 @@ describe Rdm::Handlers::DependenciesHandler do
         )
       }
       it "returns hash structure of dependencies" do
+        mod = Rdm::Handlers::DependenciesHandler
+
         expect(result).to match(
           [
             "web", 
-            "├── core", 
-            "|   └── repository", 
-            "└── repository (test)"
+            "#{mod::MIDDLE_CORNER}core", 
+            "|   #{mod::CORNER}repository", 
+            "#{mod::CORNER}repository (test)"
           ]
         )
       end
@@ -89,13 +91,15 @@ describe Rdm::Handlers::DependenciesHandler do
       }
 
       it "use one at time" do
+        mod = Rdm::Handlers::DependenciesHandler
+        
         expect(result).to match(
           [
             "web", 
-            "├── core", 
-            "|   └── web", 
-            "|       └── ...", 
-            "└── repository (test)"
+            "#{mod::MIDDLE_CORNER}core", 
+            "|   #{mod::CORNER}web", 
+            "|       #{mod::CORNER}...", 
+            "#{mod::CORNER}repository (test)"
           ]
         )
       end
