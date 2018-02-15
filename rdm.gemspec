@@ -24,5 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activesupport"
   spec.add_dependency "commander", "~> 4.4"
   spec.add_dependency "morf"
+  spec.add_dependency "hcast"
   spec.add_dependency "attr_validator"
 end

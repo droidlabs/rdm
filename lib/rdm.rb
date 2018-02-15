@@ -1,4 +1,5 @@
 require 'byebug'
+require 'morf'
 
 module Rdm
   SOURCE_FILENAME = 'Rdm.packages'.freeze
