@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rdm (0.4.15)
+    rdm (0.4.16)
       activesupport
       attr_validator
       commander (~> 4.4)
