@@ -3,7 +3,7 @@ require 'yaml'
 class Rdm::ConfigManager
   class << self
     def load_config(envs:, path_to_config:)
-      new_config = Rdm::ConfigCaster.new(*envs).cast(YAML.load(File.read(path_to_config)))
+      new_config = Rdm::ConfigCaster.new(envs).cast(YAML.load(File.read(path_to_config)))
       validate_params!(new_config, envs)
       
       instance.config.merge! new_config
@@ -29,9 +29,8 @@ class Rdm::ConfigManager
   end
 
   def method_missing(meth)
-    config.fetch(meth) 
-  rescue KeyError
-    raise ArgumentError, ":#{meth} configuration was not defined for current package. Add `import '#{meth}'` to your Package.rb file"
+    config.keys.include?(meth) ? Rdm::Utils::Ostruct.to_recursive_ostruct(config).send(meth) : 
+                                 (raise ArgumentError, ":#{meth} configuration was not defined for current package. Add `import '#{meth}'` to your Package.rb file")
   end
 
   def config

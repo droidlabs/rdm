@@ -98,6 +98,4 @@ describe Rdm::CLI::GenPackage do
       expect(stdout.output).to include("Package name was not specified!")
     end
   end
-
-
 end

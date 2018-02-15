@@ -3,6 +3,7 @@ PATH
   specs:
     rdm (0.4.14)
       activesupport
+      attr_validator
       commander (~> 4.4)
       morf
 

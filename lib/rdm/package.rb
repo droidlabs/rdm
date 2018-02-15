@@ -16,10 +16,6 @@ class Rdm::Package
     fetch_dependencies(@file_dependencies || {}, group)
   end
 
-  def config_dependencies(group = nil)
-    fetch_dependencies(@config_dependencies || {}, group)
-  end
-
   def local_dependencies_with_groups
     return {} if @local_dependencies.nil?
     @local_dependencies.each_with_object(
@@ -50,13 +46,6 @@ class Rdm::Package
     @file_dependencies[current_group] << file
   end
 
-  # Import config dependency
-  def import_config(dependency)
-    @config_dependencies ||= {}
-    @config_dependencies[current_group] ||= []
-    @config_dependencies[current_group] << dependency
-  end
-
   def package
     yield
   end
@@ -85,14 +74,15 @@ class Rdm::Package
     other_package.name == name
   end
 
-  def environment(&block)
-    envs = Rdm::EnvConfigDSL.new.instance_exec(&block) if block_given?
+  def set_environments(&block)
+    environments.children = Rdm::EnvConfigDSL.new.instance_exec(&block) if block_given?
+  end
 
-    @environments = Rdm::EnvConfig.new(
+  def environments
+    @environments ||= Rdm::EnvConfig.new(
       name:     name,
       type:     Rdm::EnvConfig::Types::HASH,
-      optional: false,
-      children: envs
+      optional: false
     )
   end
 

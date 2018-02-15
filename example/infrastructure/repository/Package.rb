@@ -5,5 +5,4 @@ end
 
 dependency do
   # require "sequel"
-  import_config :app
 end

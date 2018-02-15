@@ -82,6 +82,7 @@ describe Rdm::Gen::Package do
         package_name: "some",
         local_path:   "domain/some",
       )
+      
       expect {
         subject.generate(
           current_path: example_project_path,

@@ -8,7 +8,7 @@ describe Rdm::PackageImporter do
     dependencies.each do |dependency|
       package.import(dependency)
     end
-    package.environment do
+    package.set_environments do
       array 'some_key', each: :string do
         length({ min: 3 })
       end
@@ -86,8 +86,8 @@ describe Rdm::PackageImporter do
 
         imported = subject.import_package("web", source: source)
 
-        expect(Rdm::ConfigManager.web).to match({:some_key => ["value1", "value2", "value3"]})
-        expect(Rdm::ConfigManager.core).to match({:some_key => ["value1", "value2", "value3"]})
+        expect(Rdm::ConfigManager.web.some_key).to match(["value1", "value2", "value3"])
+        expect(Rdm::ConfigManager.core.some_key).to match(["value1", "value2", "value3"])
 
         expect{
           Rdm::ConfigManager.factory

@@ -23,7 +23,7 @@ class Rdm::ConfigValidator
 
     dto
   rescue AttrValidator::Errors::ValidationError => e
-    raise ArgumentError, e.message
+    raise Rdm::Errors::InvalidConfig, e.message
   end
 
   private
@@ -34,7 +34,7 @@ class Rdm::ConfigValidator
     validator_class = Class.new
     validator_class.include(AttrValidator::Validator)
 
-    validator_class.class_eval to_attr_validator_string(name, env_config)
+    validator_class.class_eval( to_attr_validator_string(name, env_config) )
 
     @validator = validator_class.new
   end

@@ -16,6 +16,7 @@ class Rdm::PackageParser
 
     def parse(package_content)
       spec = Rdm::Package.new
+
       spec.instance_eval(package_content)
       spec
     end

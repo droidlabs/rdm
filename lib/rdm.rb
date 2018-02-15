@@ -1,3 +1,5 @@
+require 'byebug'
+
 module Rdm
   SOURCE_FILENAME = 'Rdm.packages'.freeze
   PACKAGE_FILENAME = 'Package.rb'.freeze
@@ -6,6 +8,7 @@ module Rdm
   require 'rdm/utils/render_util'
   require 'rdm/utils/string_utils'
   require 'rdm/utils/file_utils'
+  require 'rdm/utils/ostruct_utils'
   require 'rdm/version'
 
   # CLI part
@@ -71,6 +74,9 @@ module Rdm
       @stdout = stdout
       
       Rdm::PackageImporter.import_file(package_path, group: group)
+    rescue Rdm::Errors::InvalidConfig => e
+      puts e.message
+      exit(0)
     end
 
     # Rdm's internal settings

@@ -56,5 +56,8 @@ module Rdm
 
     class ConfigExists < StandardError
     end
+
+    class InvalidConfig < StandardError
+    end
   end
 end

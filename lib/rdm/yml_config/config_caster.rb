@@ -1,11 +1,12 @@
 require 'morf'
 
 class Rdm::ConfigCaster
-  def initialize(*envs)
+  def initialize(envs)
     @envs = envs
   end
 
-  def cast(hash = {})
+  def cast(hash)
+    hash[@envs.name] ||= {}
     caster.cast(hash, input_keys: :string, skip_unexpected_attributes: true)
   end
   
@@ -24,7 +25,7 @@ class Rdm::ConfigCaster
     @caster ||= Class.new
     @caster.include(Morf::Caster)
 
-    @caster.class_eval "attributes do\n #{@envs.map {|e| to_hcast_string(e)}.join("\n")}\n end"
+    @caster.class_eval "attributes do\n #{to_hcast_string(@envs)}\n end"
 
     @caster
   end

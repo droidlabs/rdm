@@ -31,6 +31,7 @@ class Rdm::PackageImporter
   # @return [Rdm::Package] Current package
   def import_file(package_path, group: nil)
     package = Rdm::PackageParser.parse_file(package_path)
+
     source  = read_and_init_source(package.source)
 
     # Init Rdm.root based on Rdm.packages directory
@@ -61,13 +62,6 @@ class Rdm::PackageImporter
       import_package(dependency, source: source)
     end
 
-    # also import config dependencies
-    package.config_dependencies(group).each do |dependency|
-      import_config(dependency, source: source)
-    end
-
-    Rdm::ConfigManager.load_config(envs: package.environments, path_to_config: Rdm.settings.config_path)
-    
     # only after importing dependencies - require package itself
     begin
       require package_name
@@ -102,6 +96,8 @@ class Rdm::PackageImporter
     package.file_dependencies(group).each do |file_path|
       require File.join(package.path, file_path)
     end
+
+    Rdm::ConfigManager.load_config(envs: package.environments, path_to_config: Rdm.settings.config_path)
 
     unless ActiveSupport::Dependencies.autoload_paths.include?(package_dir_name)
       ActiveSupport::Dependencies.autoload_paths << package_dir_name

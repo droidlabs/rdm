@@ -93,7 +93,7 @@ describe Rdm::ConfigValidator do
       it 'raises ArgumentError if invalid params' do
         expect {
           described_class.new(symbol_config).validate!({example_symbol_config: :unpermitted_parameter})
-        }.to raise_error ArgumentError
+        }.to raise_error Rdm::Errors::InvalidConfig
       end
 
       it 'returns OpenStruct' do
@@ -113,7 +113,7 @@ describe Rdm::ConfigValidator do
       it 'raises ArgumentError if invalid params' do
         expect {
           described_class.new(email_config).validate!({example_email_config: 'helloworld'})
-        }.to raise_error ArgumentError
+        }.to raise_error Rdm::Errors::InvalidConfig
       end
 
       it 'returns OpenStruct' do
@@ -133,7 +133,7 @@ describe Rdm::ConfigValidator do
       it 'not raises error for valid params' do
         expect {
           described_class.new(integer_config).validate!({example_integer_config: 4})
-        }.to raise_error ArgumentError
+        }.to raise_error Rdm::Errors::InvalidConfig
       end
 
       it 'returns OpenStruct' do
