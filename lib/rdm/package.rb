@@ -4,6 +4,10 @@ class Rdm::Package
   attr_accessor :metadata, :local_dependencies, :external_dependencies, :file_dependencies, :config_dependencies, :path
   attr_reader :environments
 
+  def inspect
+    "Rdm::Package(name: #{name}, path: #{path})"
+  end
+
   def local_dependencies(group = nil)
     fetch_dependencies(@local_dependencies || {}, group)
   end
@@ -44,6 +48,9 @@ class Rdm::Package
     @file_dependencies ||= {}
     @file_dependencies[current_group] ||= []
     @file_dependencies[current_group] << file
+  end
+
+  def import_config(*args)
   end
 
   def package
