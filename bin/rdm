@@ -60,7 +60,7 @@ class RdmCliRunner
       c.action do |args, options|
         package_name = (args.first || "")
         defaults = {
-          current_path: `pwd`.chomp,
+          current_path: File.expand_path(`pwd`.chomp),
           package_name: package_name,
           path:         package_name.downcase.gsub(/\s+/, '_')
         }
@@ -82,7 +82,7 @@ class RdmCliRunner
       c.action do |args, options|
         revision = (args.first || "HEAD")
         options = {
-          path:     `pwd`.chomp,
+          path:     File.expand_path(`pwd`.chomp),
           revision: revision,
         }
         Rdm::CLI::DiffPackage.run(options)
@@ -100,7 +100,7 @@ class RdmCliRunner
       c.action do |args, options|
         package_name = (args.first || "")
         opts = {
-          project_path: `pwd`.chomp,
+          project_path: File.expand_path(`pwd`.chomp),
           package_name: package_name,
           compile_path: options.path
         }
@@ -125,7 +125,7 @@ class RdmCliRunner
 
         Rdm::CLI::TemplateGenerator.run(
           template_name: template_name,
-          current_path:  `pwd`.chomp,
+          current_path:  File.expand_path(`pwd`.chomp),
           local_path:    options_hash.delete(:path),
           locals:        options_hash
         )
@@ -143,7 +143,7 @@ class RdmCliRunner
 
         Rdm::CLI::DependenciesController.run(
           package_name: package_name,
-          project_path: `pwd`.chomp
+          project_path: File.expand_path(`pwd`.chom)p
         )
       end
     end
@@ -162,7 +162,7 @@ class RdmCliRunner
 
         Rdm::CLI::Config.run(
           config_name:  config_name,
-          current_path: `pwd`.chomp,
+          current_path: File.expand_path(`pwd`.chomp),
           config_data:  options_hash
         )
       end
@@ -193,11 +193,11 @@ class RdmCliRunner
         options_hash = options.__hash__
         options_hash.delete(:trace)
 
-        Rdm.root(`pwd`.chomp)
+        Rdm.root(File.expand_path(`pwd`.chomp))
         Rdm::SpecRunner.run(
           package:                package_name,
           spec_matcher:           spec_matcher,
-          path:                   `pwd`.chomp,
+          path:                   File.expand_path(`pwd`.chomp),
           skip_ignored_packages:  true,
           show_missing_packages:  true,
           from:                   options_hash[:from]
@@ -221,11 +221,11 @@ class RdmCliRunner
         revision = args[0]
 
         ENV['RUBY_ENV'] = 'test'
-        Rdm.root(`pwd`.chomp)
+        Rdm.root(File.expand_path(`pwd`.chomp))
 
         Rdm::CLI::DiffSpecRunner.run(
           revision: revision,
-          path:     `pwd`.chomp
+          path:     File.expand_path(`pwd`.chom)p
         )
       end
     end
