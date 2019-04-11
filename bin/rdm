@@ -143,7 +143,7 @@ class RdmCliRunner
 
         Rdm::CLI::DependenciesController.run(
           package_name: package_name,
-          project_path: File.expand_path(`pwd`.chom)p
+          project_path: File.expand_path(`pwd`.chomp)
         )
       end
     end
@@ -225,7 +225,7 @@ class RdmCliRunner
 
         Rdm::CLI::DiffSpecRunner.run(
           revision: revision,
-          path:     File.expand_path(`pwd`.chom)p
+          path:     File.expand_path(`pwd`.chomp)
         )
       end
     end
