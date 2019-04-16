@@ -170,7 +170,7 @@ class Rdm::SpecRunner::Runner
       start_from = running_packages.index {|cmd_params| cmd_params.package_name == @from}
 
       if start_from.nil?
-        puts "Pacakge :#{@from} does not exists"
+        puts "Package :#{@from} does not exists"
         exit(1)
       end
 
@@ -208,9 +208,9 @@ class Rdm::SpecRunner::Runner
 
   def execute_command
     eval(command)
-    # if $? && !$?.success?
-    #   exit(1)
-    # end
+    if $? && !$?.success?
+      exit(0)
+    end
 
   end
 end
