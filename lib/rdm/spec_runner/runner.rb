@@ -191,7 +191,7 @@ class Rdm::SpecRunner::Runner
     
     running_packages
       .map(&:command)
-      .join(' && ')
+      .join('; ')
   end
 
   def display_missing_specs
