@@ -208,9 +208,9 @@ class Rdm::SpecRunner::Runner
 
   def execute_command
     eval(command)
-    if $? && !$?.success?
-      exit(1)
-    end
+    # if $? && !$?.success?
+    #   exit(1)
+    # end
 
   end
 end
