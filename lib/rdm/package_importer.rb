@@ -62,14 +62,14 @@ class Rdm::PackageImporter
 
     # also import local dependencies
     package.local_dependencies(group).each do |dependency|
-      import_package(dependency, source: source)
+      import_package(dependency, source: source, group: group)
     end
 
     # also import config dependencies
     package.config_dependencies(group).each do |dependency|
       import_config(dependency, source: source)
     end
-    
+
     # only after importing dependencies - require package itself
     begin
       require package_name
