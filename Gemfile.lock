@@ -13,7 +13,7 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    ast (2.3.0)
+    ast (2.4.1)
     byebug (9.0.6)
     codecov (0.2.5)
       colorize
@@ -30,11 +30,13 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.3.1)
     minitest (5.14.2)
-    parser (2.3.3.1)
-      ast (~> 2.2)
-    powerpack (0.1.1)
-    rainbow (2.2.1)
+    parallel (1.19.2)
+    parser (2.7.1.5)
+      ast (~> 2.4.1)
+    rainbow (3.0.0)
     rake (12.0.0)
+    regexp_parser (1.8.1)
+    rexml (3.2.4)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
@@ -48,13 +50,18 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
-    rubocop (0.46.0)
-      parser (>= 2.3.1.1, < 3.0)
-      powerpack (~> 0.1)
-      rainbow (>= 1.99.1, < 3.0)
+    rubocop (0.92.0)
+      parallel (~> 1.10)
+      parser (>= 2.7.1.5)
+      rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 1.7)
+      rexml
+      rubocop-ast (>= 0.5.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (~> 1.0, >= 1.0.1)
-    ruby-progressbar (1.8.1)
+      unicode-display_width (>= 1.4.0, < 2.0)
+    rubocop-ast (0.7.1)
+      parser (>= 2.7.1.5)
+    ruby-progressbar (1.10.1)
     simplecov (0.17.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -63,7 +70,7 @@ GEM
     thread_safe (0.3.6)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
-    unicode-display_width (1.1.2)
+    unicode-display_width (1.7.0)
 
 PLATFORMS
   ruby
@@ -75,7 +82,7 @@ DEPENDENCIES
   rake
   rdm!
   rspec
-  rubocop (~> 0.46)
+  rubocop (~> 0.92)
 
 BUNDLED WITH
    2.1.4
