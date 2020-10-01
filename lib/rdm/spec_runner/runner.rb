@@ -4,12 +4,11 @@ class Rdm::SpecRunner::Runner
 
   attr_accessor :no_specs_packages
   attr_accessor :prepared_command_params
-  attr_accessor :command
-  
+
   def initialize(
-    package:               nil, 
-    spec_matcher:          nil, 
-    path:                  nil, 
+    package:               nil,
+    spec_matcher:          nil,
+    path:                  nil,
     from:                  nil,
     show_missing_packages: true,
     skip_ignored_packages: false,
@@ -22,12 +21,13 @@ class Rdm::SpecRunner::Runner
     @spec_string_number    = spec_matcher.to_s.split(':')[1].to_i
     @path                  = path
     @run_all               = @package_name.nil?
-    @show_missing_packages = show_missing_packages && !@package_name  
+    @show_missing_packages = show_missing_packages && !@package_name
     @skip_ignored_packages = skip_ignored_packages
     @skipped_packages      = []
     @stdout                = stdout
     @show_output           = show_output
     @from                  = from
+    @command_list          = []
   end
 
   def run
@@ -37,7 +37,7 @@ class Rdm::SpecRunner::Runner
       when 0
         raise Rdm::Errors::SpecMatcherNoFiles, "No specs were found for '#{@spec_matcher}'"
       when 1
-        format_string_number = @spec_string_number == 0 ? "" : ":#{@spec_string_number}" 
+        format_string_number = @spec_string_number == 0 ? "" : ":#{@spec_string_number}"
         @spec_matcher = @spec_file_matches.first + format_string_number
 
         @stdout.puts "Following spec matches your input: #{@spec_matcher}"
@@ -51,7 +51,7 @@ class Rdm::SpecRunner::Runner
     display_missing_specs if @show_missing_packages
     display_ignored_specs if @skip_ignored_packages
     print_message view.specs_header_message if @show_missing_packages || @skip_ignored_packages
-    
+
     execute_command
   end
 
@@ -98,7 +98,7 @@ class Rdm::SpecRunner::Runner
   def prepare!
     prepared_command_params = []
     no_specs_packages       = []
-    command                 = nil
+    @command_list            = []
     prepare_command_params
     prepare_no_specs_packages
     prepare_command
@@ -108,8 +108,8 @@ class Rdm::SpecRunner::Runner
     @prepared_command_params ||= begin
       packages.map do |_name, package|
         Rdm::SpecRunner::CommandGenerator.new(
-          package_name: package.name, 
-          package_path: package.path, 
+          package_name: package.name,
+          package_path: package.path,
           spec_matcher: @spec_matcher,
           show_output:  @show_output
         ).generate
@@ -124,23 +124,21 @@ class Rdm::SpecRunner::Runner
   end
 
   def prepare_command
-    @command ||= begin
-      if @package_name
-        prepare_single_package_command(@package_name)
-      else
-        prepare_command_for_packages(prepared_command_params)
-      end
+    if @package_name
+      @command_list += prepare_single_package_command(@package_name)
+    else
+      @command_list += prepare_commands_for_packages(prepared_command_params)
     end
   end
 
   def prepare_single_package_command(package_name)
-    selected = prepared_command_params.select do |cmd_params|
+    selected = prepared_command_params.detect do |cmd_params|
       cmd_params.package_name == package_name
     end
-    prepare_command_for_packages(selected)
+    prepare_commands_for_packages([selected])
   end
 
-  def prepare_command_for_packages(packages_command_params)
+  def prepare_commands_for_packages(packages_command_params)
     if @skip_ignored_packages && !@package_name
       runignore_path = File.expand_path(File.join(Rdm.root_dir, RUNIGNORE_PATH))
       package_list   = Rdm::SourceParser.read_and_init_source(Rdm.root).packages.keys
@@ -149,7 +147,7 @@ class Rdm::SpecRunner::Runner
         .lines
         .map(&:strip)
         .reject(&:empty?) rescue []
-      
+
       @skipped_packages       = skipped_package_list.select {|line| package_list.include?(line)}
       comment_runignore_lines = skipped_package_list.select {|line| line.start_with?(RUNIGNORE_COMMENT)}
       invalid_ignore_packages = skipped_package_list - @skipped_packages - comment_runignore_lines
@@ -188,10 +186,8 @@ class Rdm::SpecRunner::Runner
         #{(packages.keys - no_specs_packages).map {|pkg| " - #{pkg}"}.sort.join("\n")}\n
       EOF
     end
-    
-    running_packages
-      .map(&:command)
-      .join('; ')
+
+    running_packages.map(&:command)
   end
 
   def display_missing_specs
@@ -207,10 +203,11 @@ class Rdm::SpecRunner::Runner
   end
 
   def execute_command
-    eval(command)
-    if $? && !$?.success?
-      exit(1)
-    end
+    has_failed_packages = @command_list
+      .map {|cmd| eval(cmd); $?}
+      .reject {|result| result.success?}
+      .any?
 
+    exit(1) if has_failed_packages
   end
 end
