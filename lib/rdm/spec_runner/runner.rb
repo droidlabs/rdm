@@ -27,7 +27,7 @@ class Rdm::SpecRunner::Runner
     @stdout                = stdout
     @show_output           = show_output
     @from                  = from
-    @command_list          = []
+    @command_params_list          = []
   end
 
   def run
@@ -98,7 +98,7 @@ class Rdm::SpecRunner::Runner
   def prepare!
     prepared_command_params = []
     no_specs_packages       = []
-    @command_list            = []
+    @command_params_list            = []
     prepare_command_params
     prepare_no_specs_packages
     prepare_command
@@ -125,9 +125,9 @@ class Rdm::SpecRunner::Runner
 
   def prepare_command
     if @package_name
-      @command_list += prepare_single_package_command(@package_name)
+      @command_params_list += prepare_single_package_command(@package_name)
     else
-      @command_list += prepare_commands_for_packages(prepared_command_params)
+      @command_params_list += prepare_commands_for_packages(prepared_command_params)
     end
   end
 
@@ -187,7 +187,7 @@ class Rdm::SpecRunner::Runner
       EOF
     end
 
-    running_packages.map(&:command)
+    running_packages
   end
 
   def display_missing_specs
@@ -203,11 +203,23 @@ class Rdm::SpecRunner::Runner
   end
 
   def execute_command
-    has_failed_packages = @command_list
-      .map {|cmd| eval(cmd); $?}
-      .reject {|result| result.success?}
-      .any?
+    @command_params_list.each do |command_param|
+      eval(command_param.command);
 
-    exit(1) if has_failed_packages
+      command_param.exitstatus = $?.exitstatus
+    end
+
+    failed = @command_params_list.select {|cmd_param| !cmd_param.success?}
+
+    if failed.any?
+      total_count = @command_params_list.count
+      failed_count = failed.count
+
+      print_message("#{failed_count} of #{total_count} packages failed:")
+      print_message(failed.map(&:package_name))
+      print_message("\n")
+
+      exit(1)
+    end
   end
 end
