@@ -1,18 +1,19 @@
 PATH
   remote: .
   specs:
-    rdm (0.4.19)
+    rdm (0.4.20)
       activesupport
       commander (~> 4.4)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (5.2.4.4)
+    activesupport (6.0.3.4)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+      zeitwerk (~> 2.2, >= 2.2.2)
     ast (2.4.1)
     byebug (9.0.6)
     codecov (0.2.5)
@@ -71,6 +72,7 @@ GEM
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
     unicode-display_width (1.7.0)
+    zeitwerk (2.4.0)
 
 PLATFORMS
   ruby
