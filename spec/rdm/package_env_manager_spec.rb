@@ -10,6 +10,7 @@ describe Rdm::PackageEnvManager do
         baz: 'bar'
       }
     })
+
     env_instance.load_hash({
       logging: {
         app_name: 'nikita'

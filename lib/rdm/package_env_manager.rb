@@ -8,7 +8,12 @@ class Rdm::PackageEnvManager
   end
 
   def load_hash(hash)
-    @data.merge!(hash)
+    symbolized_hash = hash.inject({}) do |options, (key, value)|
+      options[(key.to_sym rescue key) || key] = value
+      options
+    end
+
+    @data.merge!(symbolized_hash)
   end
 
   def load_yaml_file(file_path, env_name)
@@ -34,7 +39,7 @@ class Rdm::PackageEnvManager
 
     new_namespace = @namespace_list + [method]
 
-    result = @data.fetch(method.to_s) { raise StandardError.new("package_config :#{namespace_chain(new_namespace)} is not provided") }
+    result = @data.fetch(method) { raise StandardError.new("package_config :#{namespace_chain(new_namespace)} is not provided") }
 
     if result.is_a?(Hash)
       return self.class.new(result, new_namespace)
