@@ -1,0 +1,5 @@
+server:
+  process_count: 1
+  host:
+    name: 'rdm.example.com'
+    port: 443

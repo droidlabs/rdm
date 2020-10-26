@@ -3,10 +3,6 @@ setup do
     ENV['RUBY_ENV'] || "production"
   end
 
-  env_file_name do
-    ENV['ENV_FILE'] || "production"
-  end
-
   env_files_dir "env_files"
 
   configs_dir "configs"

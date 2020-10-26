@@ -1,0 +1,5 @@
+server:
+  process_count: 1
+  host:
+    name: 'rdm.example.dev'
+    port: 80

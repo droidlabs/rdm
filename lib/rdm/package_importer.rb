@@ -70,6 +70,13 @@ class Rdm::PackageImporter
       import_config(dependency, source: source)
     end
 
+    if package.package_env_file
+      Rdm.env.load_yaml_file(
+        File.join(package.path, package.package_env_file),
+        Rdm.settings.read_setting(:role)
+      )
+    end
+
     # only after importing dependencies - require package itself
     begin
       require package_name

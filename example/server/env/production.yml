@@ -1,0 +1,5 @@
+server:
+  process_count: <%= ENV['server.process_count'] %>
+  host:
+    name: <%= ENV['server.host.name'] %>
+    port: <%= ENV['server.host.port'] %>
