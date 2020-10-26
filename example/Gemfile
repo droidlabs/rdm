@@ -3,3 +3,5 @@ source "https://rubygems.org"
 gem "sequel"
 gem "rspec"
 gem "rdm", path: "../"
+
+gem 'byebug'

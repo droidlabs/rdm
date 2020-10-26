@@ -22,6 +22,7 @@ module Rdm
   require 'rdm/config'
   require 'rdm/config_scope'
   require 'rdm/config_manager'
+  require 'rdm/package_env_manager'
   require 'rdm/errors'
   require 'rdm/package'
   require 'rdm/package_parser'
@@ -68,7 +69,7 @@ module Rdm
     # Initialize current package using Package.rb
     def init(package_path, group = nil, stdout: $stdout)
       @stdout = stdout
-      
+
       Rdm::PackageImporter.import_file(package_path, group: group)
     end
 
@@ -80,6 +81,11 @@ module Rdm
     # Rdm's managed configuration
     def config
       @config ||= Rdm::ConfigManager.new
+    end
+
+    # Rdm's managed configuration
+    def env
+      @env ||= Rdm::PackageEnvManager.new
     end
 
     # Setup Rdm's internal settings
@@ -100,7 +106,7 @@ module Rdm
       if path
         @root = Rdm::SourceLocator.locate(path)
       end
-        
+
       @root
     end
 

@@ -4,5 +4,7 @@ package do
 end
 
 dependency do
+  set_package_env_file "env/%{env_name}.yml"
+
   import "web"
 end

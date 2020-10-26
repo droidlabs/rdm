@@ -5,7 +5,7 @@ module Rdm
 
       class << self
         def compile(opts = {})
-          Rdm::CLI::CompilePackage.new(opts).compile
+          Rdm::CLI::CompilePackage.new(**opts).compile
         end
       end
 

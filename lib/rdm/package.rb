@@ -1,7 +1,8 @@
 class Rdm::Package
   DEFAULT_GROUP = '_default_'.freeze
 
-  attr_accessor :metadata, :local_dependencies, :external_dependencies, :file_dependencies, :config_dependencies, :path
+  attr_accessor :metadata, :local_dependencies, :external_dependencies, :file_dependencies,
+    :config_dependencies, :path, :package_env_file
 
   def local_dependencies(group = nil)
     fetch_dependencies(@local_dependencies || {}, group)
@@ -23,7 +24,7 @@ class Rdm::Package
     return {} if @local_dependencies.nil?
     @local_dependencies.each_with_object(
       Hash.new { |h,k| h[k]=[] }
-    ) do|(k,v), h| 
+    ) do|(k,v), h|
       v.map { |t| h[t] << k }
     end
   end
@@ -54,6 +55,10 @@ class Rdm::Package
     @config_dependencies ||= {}
     @config_dependencies[current_group] ||= []
     @config_dependencies[current_group] << dependency
+  end
+
+  def set_package_env_file(file_path)
+    @package_env_file = file_path
   end
 
   def package
