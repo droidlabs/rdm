@@ -39,7 +39,7 @@ class RdmCliRunner
         options_hash.delete(:trace)
 
         options_with_defaults = defaults.merge!(options_hash)
-        Rdm::CLI::Init.run(options_with_defaults)
+        Rdm::CLI::Init.run(**options_with_defaults)
       end
     end
 
@@ -68,7 +68,7 @@ class RdmCliRunner
         options_hash.delete(:trace)
 
         options_with_defaults = defaults.merge!(options_hash)
-        Rdm::CLI::GenPackage.run(options_with_defaults)
+        Rdm::CLI::GenPackage.run(**options_with_defaults)
       end
     end
     
@@ -79,7 +79,7 @@ class RdmCliRunner
       c.example     'show list of modified packages from master',
                     'rdm git.diff master'
       
-      c.action do |args, options|
+      c.action do |args, _|
         revision = (args.first || "HEAD")
         options = {
           path:     File.expand_path(`pwd`.chomp),
@@ -138,7 +138,7 @@ class RdmCliRunner
       c.summary     = '> ' + c.description
       c.example     'show dependencies for `commands` package', 'rdm gen.deps commands'
 
-      c.action do |args, options|
+      c.action do |args, _|
         package_name = args.first || ""
 
         Rdm::CLI::DependenciesController.run(
@@ -217,7 +217,7 @@ class RdmCliRunner
       c.example     'run tests for packages modified from specified branch',
                     'rdm rspec.diff_run master'
       
-      c.action do |args, options|
+      c.action do |args, _|
         revision = args[0]
 
         ENV['RUBY_ENV'] = 'test'
