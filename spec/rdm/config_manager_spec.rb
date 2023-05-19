@@ -55,7 +55,7 @@ describe Rdm::ConfigManager do
 
   describe "#update_using_hash" do
     before :each do
-      subject.update_using_hash(
+      subject.update_using_hash({
         database: {
           username: "foo",
           password: "bar"
@@ -65,7 +65,7 @@ describe Rdm::ConfigManager do
         published: true,
         draft: false,
         features: ["dependency_manager", "config_manager"]
-      )
+      })
     end
 
     it "returns given value for string" do
@@ -96,12 +96,12 @@ describe Rdm::ConfigManager do
 
     context "when already has config" do
       before :each do
-        subject.update_using_hash(
-          database: {
-            username: "new_username",
-            password: "new_password"
-          }
-        )
+        subject.update_using_hash({
+            database: {
+              username: "new_username",
+              password: "new_password"
+            }
+          })
       end
 
       it "keeps old configs" do
@@ -116,13 +116,13 @@ describe Rdm::ConfigManager do
 
   describe "to_h" do
     before :each do
-      subject.update_using_hash(
+      subject.update_using_hash({
         site_name: "Sample app",
         database: {
           username: "username",
           password: "password"
         }
-      )
+      })
     end
 
     it "returns attributes in root scope" do

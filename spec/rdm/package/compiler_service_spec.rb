@@ -45,7 +45,7 @@ describe Rdm::Packages::CompilerService do
         
         it "deletes old unused package from file structure" do
           expect(
-            File.exists?(File.join(fixed_compile_path, 'application/web/package/web.rb'))
+            File.exist?(File.join(fixed_compile_path, 'application/web/package/web.rb'))
           ).to be false
         end
 
@@ -72,16 +72,16 @@ describe Rdm::Packages::CompilerService do
       end
       
       it "creates folder" do
-        expect(Dir.exists?(compile_path('repository'))).to be true
+        expect(Dir.exist?(compile_path('repository'))).to be true
       end
 
       it "creates Rdm.packges" do
-        expect(File.exists?(source_path('repository'))).to be true
+        expect(File.exist?(source_path('repository'))).to be true
       end
 
       it "copies files structure from original package" do
         expect(
-          File.exists?(File.join(compile_path('repository'), 'infrastructure/repository/package/repository.rb'))
+          File.exist?(File.join(compile_path('repository'), 'infrastructure/repository/package/repository.rb'))
         ).to be true
       end
 
@@ -108,11 +108,11 @@ describe Rdm::Packages::CompilerService do
 
       it "copies files structure for each dependent package" do
         expect(
-          File.exists?(File.join(compile_path('web'), 'domain/core/package/core.rb'))
+          File.exist?(File.join(compile_path('web'), 'domain/core/package/core.rb'))
         ).to be true
 
         expect(
-          File.exists?(File.join(compile_path('web'), 'application/web/package/web.rb'))
+          File.exist?(File.join(compile_path('web'), 'application/web/package/web.rb'))
         ).to be true
       end
 

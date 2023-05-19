@@ -13,7 +13,7 @@ class Rdm::SpecRunner::SpecFilenameMatcher
   def find_matches
     expected_filename = File.join(@package_path, @spec_matcher)
 
-    if File.exists?(expected_filename)
+    if File.exist?(expected_filename)
       return Rdm::Utils::FileUtils.relative_path(path: expected_filename, from: @package_path).split
     end
 
