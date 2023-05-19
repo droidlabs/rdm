@@ -65,7 +65,7 @@ describe Rdm::ConfigManager do
         published: true,
         draft: false,
         features: ["dependency_manager", "config_manager"]
-                                })
+      })
     end
 
     it "returns given value for string" do
