@@ -29,7 +29,7 @@ module Rdm
       def template_file_path(template_name, relative_path)
         file_path = [detect_template_folder(template_name), DEFAULT_TEMPLATES_DIRECTORY]
           .map {|folder| File.join(folder, relative_path)}
-          .detect {|file| File.exists?(file)}
+          .detect {|file| File.exist?(file)}
 
         raise Rdm::Errors::TemplateFileDoesNotExists if file_path.nil?
 

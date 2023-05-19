@@ -20,7 +20,7 @@ module Rdm
       end
 
       def compile
-        FileUtils.rm_rf(@compile_path) if Dir.exists?(@compile_path)
+        FileUtils.rm_rf(@compile_path) if Dir.exist?(@compile_path)
         FileUtils.mkdir_p(@compile_path)
 
         dependent_packages = Rdm::Handlers::DependenciesHandler.show_packages(
@@ -57,7 +57,7 @@ module Rdm
         end
 
         FileUtils.cp_r(File.join(@project_path, 'configs'), File.join(@compile_path, 'configs'))
-        if Dir.exists?(File.join(@project_path, Rdm.settings.env_files_dir))
+        if Dir.exist?(File.join(@project_path, Rdm.settings.env_files_dir))
           FileUtils.cp_r(
             File.join(@project_path, Rdm.settings.env_files_dir), 
             File.join(@compile_path, Rdm.settings.env_files_dir)

@@ -33,7 +33,7 @@ RSpec.configure do |config|
 end
 
 def ensure_exists(file)
-  expect(File.exists?(file)).to be true
+  expect(File.exist?(file)).to be true
 end
 
 def ensure_content(file, content)

@@ -72,7 +72,7 @@ class Rdm::SourceParser
   def init_and_set_env_variables(source)
     return unless settings.read_setting(:env_file_name)
     
-    unless File.exists?(env_file_path)
+    unless File.exist?(env_file_path)
       @stdout.puts "WARNING! Environment file '#{settings.read_setting(:env_file_name)}' was not found. Please, add #{env_file_path} file..."
       return
     end

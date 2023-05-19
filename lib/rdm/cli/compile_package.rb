@@ -5,7 +5,7 @@ module Rdm
 
       class << self
         def compile(opts = {})
-          Rdm::CLI::CompilePackage.new(opts).compile
+          Rdm::CLI::CompilePackage.new(**opts).compile
         end
       end
 
@@ -32,7 +32,7 @@ module Rdm
           return
         end
 
-        if Dir.exists?(@compile_path)
+        if Dir.exist?(@compile_path)
           puts "Destination directory exists. Overwrite it? (y/n)"
           return unless @overwrite_directory.call
         end
